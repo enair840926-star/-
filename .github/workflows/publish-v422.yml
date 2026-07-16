@@ -1,0 +1,58 @@
+name: Publish verified v4.2.2 artifacts
+
+on:
+  push:
+    paths:
+      - ".github/workflows/publish-v422.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Rebuild and verify exact artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat \
+            .payload/payload.part00 \
+            .payload/payload.part01 \
+            .payload/payload.part02 \
+            .payload/payload.part03 \
+            .payload/payload.part04.00 \
+            .payload/payload.part04.01 \
+            .payload/payload.part04.02 \
+            .payload/payload.part04.03 \
+            .payload/payload.part05.00 \
+            .payload/payload.part05.01 \
+            .payload/payload.part05.02 \
+            > /tmp/artifacts-v4.2.2.b64
+
+          base64 --decode /tmp/artifacts-v4.2.2.b64 > /tmp/artifacts-v4.2.2.tar.gz
+          echo "3d9ae139b71125dc885dbd2d36c4e5aa032946f50f96bb17553fa8619ebcf8c0  /tmp/artifacts-v4.2.2.tar.gz" | sha256sum --check --strict
+
+          tar -xzf /tmp/artifacts-v4.2.2.tar.gz -C .
+
+          echo "4b65e28b14cc3a88bb2c6ff8549a02f829ac5a826b5f81634dc1e151c37122e2  ruleset-v4.2.2-exec.txt" | sha256sum --check --strict
+          echo "f83a513867f0b3f67069ee5a1a8fab64fa643c7dc3f391b7c8f08061f06a2574  xauusd-ticket-v4.2.2.skill" | sha256sum --check --strict
+          echo "55484693264a14cb54a82159b2299e31decc786a6190a123c364e80584a269c7  xauusd-verify-v4.2.2.skill" | sha256sum --check --strict
+
+          rm -rf .payload
+          rm -f .github/workflows/publish-v422.yml
+
+      - name: Commit verified artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish verified v4.2.2 artifacts"
+          git push origin HEAD:main
