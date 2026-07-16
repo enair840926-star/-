@@ -1,22 +1,25 @@
-# trigger: verified-publication-v422-pr
 name: Publish verified v4.2.2 artifacts
 
 on:
-  push:
-    paths:
-      - ".github/workflows/publish-v422.yml"
-  workflow_dispatch:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
 
 jobs:
   publish:
-    if: github.actor != 'github-actions[bot]'
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'publish-v422-execute' &&
+      github.actor == 'enair840926-star'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Rebuild and verify exact artifacts
         shell: bash
