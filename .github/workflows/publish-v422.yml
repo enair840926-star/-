@@ -1,4 +1,4 @@
-# trigger: verified-publication-v422
+# trigger: verified-publication-v422-pr
 name: Publish verified v4.2.2 artifacts
 
 on:
