@@ -1,47 +1,131 @@
 {
   "version": 1,
-  "generatedAt": null,
+  "generatedAt": "2026-07-27T08:01:27+09:00",
   "schedule": "08:00 · 16:00 · 22:00 KST",
   "assets": {
     "NAS100": {
-      "direction": null,
-      "confidence": null,
-      "rationale": "",
-      "drivers": [],
-      "event": "없음",
-      "asof": null,
-      "setAt": null,
-      "source": null
+      "direction": 0,
+      "confidence": "낮음",
+      "rationale": "중동 완화로 선물은 강세지만 고금리·FOMC·빅테크 실적이 충돌",
+      "drivers": [
+        {
+          "name": "위험선호",
+          "read": "상승",
+          "note": "나스닥100 선물 +1.2%"
+        },
+        {
+          "name": "미국 10년물",
+          "read": "하락",
+          "note": "7/24 종가 4.69%"
+        },
+        {
+          "name": "Fed",
+          "read": "하락",
+          "note": "7/29 결정·인상 확률 38%"
+        },
+        {
+          "name": "빅테크",
+          "read": "중립",
+          "note": "주요 실적 집중·변동성 대기"
+        }
+      ],
+      "event": "FOMC 7/30 03:00 KST",
+      "asof": "2026-07-27 08:01 KST",
+      "setAt": "2026-07-27T08:01:27+09:00",
+      "source": "scheduled"
     },
     "XAUUSD": {
-      "direction": null,
-      "confidence": null,
-      "rationale": "",
-      "drivers": [],
-      "event": "없음",
-      "asof": null,
-      "setAt": null,
-      "source": null
+      "direction": -1,
+      "confidence": "중간",
+      "rationale": "달러·금리 강세와 중동 완화가 금을 압박하나 FOMC 전 변동성 유의",
+      "drivers": [
+        {
+          "name": "달러",
+          "read": "하락",
+          "note": "강달러·EURUSD 1.1377"
+        },
+        {
+          "name": "미국 금리",
+          "read": "하락",
+          "note": "10년물 4.69%·실질금리 고점권"
+        },
+        {
+          "name": "지정학",
+          "read": "하락",
+          "note": "미·이란 협상 재개"
+        },
+        {
+          "name": "금 가격",
+          "read": "중립",
+          "note": "주간 +1.37%·4,067.6달러"
+        }
+      ],
+      "event": "FOMC 7/30 03:00 KST",
+      "asof": "2026-07-27 08:01 KST",
+      "setAt": "2026-07-27T08:01:27+09:00",
+      "source": "scheduled"
     },
     "USOIL": {
-      "direction": null,
-      "confidence": null,
-      "rationale": "",
-      "drivers": [],
-      "event": "없음",
-      "asof": null,
-      "setAt": null,
-      "source": null
+      "direction": -2,
+      "confidence": "중간",
+      "rationale": "미·이란 협상 재개로 공급 차질 우려가 급감하며 위험 프리미엄 축소",
+      "drivers": [
+        {
+          "name": "지정학",
+          "read": "하락",
+          "note": "미·이란 협상 재개"
+        },
+        {
+          "name": "WTI",
+          "read": "하락",
+          "note": "선물 -6%·약 84달러"
+        },
+        {
+          "name": "공급 위험",
+          "read": "하락",
+          "note": "호르무즈 긴장 완화 기대"
+        },
+        {
+          "name": "미국 재고",
+          "read": "중립",
+          "note": "EIA 주간 통계 발표 대기"
+        }
+      ],
+      "event": "EIA 재고 7/29 23:30 KST",
+      "asof": "2026-07-27 08:01 KST",
+      "setAt": "2026-07-27T08:01:27+09:00",
+      "source": "scheduled"
     },
     "EURUSD": {
-      "direction": null,
-      "confidence": null,
-      "rationale": "",
-      "drivers": [],
-      "event": "없음",
-      "asof": null,
-      "setAt": null,
-      "source": null
+      "direction": 0,
+      "confidence": "낮음",
+      "rationale": "미·유럽 금리차와 강달러는 하방이나 FOMC·유로존 GDP 전 관망",
+      "drivers": [
+        {
+          "name": "금리차",
+          "read": "하락",
+          "note": "Fed 3.50~3.75%·ECB 2.25%"
+        },
+        {
+          "name": "ECB",
+          "read": "중립",
+          "note": "7/23 동결·추가 인상 여지"
+        },
+        {
+          "name": "유로존 물가",
+          "read": "하락",
+          "note": "6월 2.8%·3.2%서 둔화"
+        },
+        {
+          "name": "현물",
+          "read": "하락",
+          "note": "7/24 EURUSD 1.1377"
+        }
+      ],
+      "event": "FOMC 7/30 03:00 KST",
+      "asof": "2026-07-27 08:01 KST",
+      "setAt": "2026-07-27T08:01:27+09:00",
+      "source": "scheduled"
     }
   }
 }
