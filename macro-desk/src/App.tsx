@@ -1,0 +1,745 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+
+const KST = "Asia/Seoul";
+const STORE_KEY = "macrodesk:v4:overrides";
+
+const CITIES = [
+  ["Asia/Tokyo", "아시아"],
+  ["Europe/London", "런던"],
+  ["America/New_York", "뉴욕"],
+] as const;
+
+const ASSETS = [
+  {
+    id: "NAS100",
+    name: "NAS100",
+    sub: "나스닥100",
+    drivers: "美 국채금리 · Fed · 빅테크 실적 · 위험선호",
+  },
+  {
+    id: "XAUUSD",
+    name: "XAUUSD",
+    sub: "골드",
+    drivers: "DXY · 실질금리 · Fed·물가·고용 · 안전자산/지정학",
+  },
+  {
+    id: "USOIL",
+    name: "USOIL",
+    sub: "WTI 원유",
+    drivers: "EIA/API 재고 · OPEC+ · 공급/지정학 · 달러 · 수요",
+  },
+  {
+    id: "EURUSD",
+    name: "EURUSD",
+    sub: "유로달러",
+    drivers: "Fed·ECB · 美-EZ 금리차 · 양 지역 지표 · 달러/유로 강도",
+  },
+] as const;
+
+type AssetId = (typeof ASSETS)[number]["id"];
+type Direction = -2 | -1 | 0 | 1 | 2;
+
+const DIRS: Array<{
+  v: Direction;
+  short: string;
+  label: string;
+  color: string;
+}> = [
+  { v: -2, short: "강하락", label: "강한 하락", color: "#f0546a" },
+  { v: -1, short: "하락", label: "하락", color: "#d46173" },
+  { v: 0, short: "중립", label: "중립", color: "#e4b455" },
+  { v: 1, short: "상승", label: "상승", color: "#3bb68c" },
+  { v: 2, short: "강상승", label: "강한 상승", color: "#2fd4a0" },
+];
+
+const EVENTS = [
+  {
+    label: "미국 주요지표 (CPI·고용 등)",
+    tz: "America/New_York",
+    h: 8,
+    m: 30,
+    note: "발표일",
+  },
+  {
+    label: "FOMC 성명",
+    tz: "America/New_York",
+    h: 14,
+    m: 0,
+    note: "FOMC일·익일새벽",
+  },
+  {
+    label: "EIA 원유재고",
+    tz: "America/New_York",
+    h: 10,
+    m: 30,
+    note: "수요일",
+  },
+  {
+    label: "ECB 통화정책",
+    tz: "Europe/Berlin",
+    h: 14,
+    m: 15,
+    note: "ECB일",
+  },
+] as const;
+
+interface Driver {
+  name: string;
+  read: "상승" | "하락" | "중립";
+  note: string;
+}
+
+interface Bias {
+  direction: Direction | null;
+  confidence: "높음" | "중간" | "낮음" | null;
+  rationale: string;
+  drivers: Driver[];
+  event: string;
+  asof: string | null;
+  setAt: string | null;
+  source: "scheduled" | "manual" | null;
+  note?: string;
+}
+
+interface MacroPayload {
+  version: number;
+  generatedAt: string | null;
+  schedule: string;
+  assets: Record<AssetId, Bias>;
+}
+
+type Overrides = Partial<Record<AssetId, Partial<Bias>>>;
+
+const EMPTY_BIAS: Bias = {
+  direction: null,
+  confidence: null,
+  rationale: "",
+  drivers: [],
+  event: "없음",
+  asof: null,
+  setAt: null,
+  source: null,
+};
+
+const EMPTY_PAYLOAD: MacroPayload = {
+  version: 1,
+  generatedAt: null,
+  schedule: "08:00 · 16:00 · 22:00 KST",
+  assets: Object.fromEntries(
+    ASSETS.map((asset) => [asset.id, { ...EMPTY_BIAS }]),
+  ) as Record<AssetId, Bias>,
+};
+
+function tzOffsetHours(tz: string, date: Date) {
+  const dtf = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  const p: Record<string, string> = {};
+  dtf.formatToParts(date).forEach((x) => {
+    p[x.type] = x.value;
+  });
+  const hh = p.hour === "24" ? "00" : p.hour;
+  const asUTC = Date.UTC(
+    Number(p.year),
+    Number(p.month) - 1,
+    Number(p.day),
+    Number(hh),
+    Number(p.minute),
+    Number(p.second),
+  );
+  return (asUTC - date.getTime()) / 3_600_000;
+}
+
+function ymdInTz(tz: string, date: Date) {
+  const dtf = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const p: Record<string, string> = {};
+  dtf.formatToParts(date).forEach((x) => {
+    p[x.type] = x.value;
+  });
+  return { y: Number(p.year), m: Number(p.month), d: Number(p.day) };
+}
+
+function instantFromCity(
+  tz: string,
+  y: number,
+  m: number,
+  d: number,
+  hh: number,
+  mm: number,
+) {
+  const guess = Date.UTC(y, m - 1, d, hh, mm, 0);
+  return guess - tzOffsetHours(tz, new Date(guess)) * 3_600_000;
+}
+
+const mod24 = (x: number) => ((x % 24) + 24) % 24;
+const inWrap = (x: number, a: number, b: number) =>
+  a <= b ? x >= a && x < b : x >= a || x < b;
+
+function kstHourFloat(date: Date) {
+  const dtf = new Intl.DateTimeFormat("en-GB", {
+    timeZone: KST,
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  const p: Record<string, string> = {};
+  dtf.formatToParts(date).forEach((x) => {
+    p[x.type] = x.value;
+  });
+  const hh = p.hour === "24" ? 0 : Number(p.hour);
+  return hh + Number(p.minute) / 60 + Number(p.second) / 3600;
+}
+
+function buildBoundaries(now: Date) {
+  const out: Array<{ t: number; label: string; kind: string }> = [];
+  for (let off = -1; off <= 2; off += 1) {
+    const base = new Date(now.getTime() + off * 86_400_000);
+    for (const [tz, label] of CITIES) {
+      const { y, m, d } = ymdInTz(tz, base);
+      out.push({
+        t: instantFromCity(tz, y, m, d, 8, 0),
+        label,
+        kind: "개장",
+      });
+      out.push({
+        t: instantFromCity(tz, y, m, d, 17, 0),
+        label,
+        kind: "폐장",
+      });
+    }
+  }
+  return out
+    .sort((a, b) => a.t - b.t)
+    .filter((b, i, arr) => i === 0 || Math.abs(b.t - arr[i - 1].t) > 60_000);
+}
+
+function activeSessions(now: Date) {
+  const nowK = kstHourFloat(now);
+  return CITIES.map(([tz, label]) => {
+    const off = tzOffsetHours(tz, now);
+    const open = mod24(8 + (9 - off));
+    const close = mod24(17 + (9 - off));
+    return { label, open, close, active: inWrap(nowK, open, close) };
+  });
+}
+
+function freshness(
+  setAt: string | null,
+  now: Date,
+  boundaries: ReturnType<typeof buildBoundaries>,
+) {
+  if (!setAt) return { state: "unset", frac: 0 } as const;
+  const start = Date.parse(setAt);
+  if (!Number.isFinite(start)) return { state: "stale", frac: 0 } as const;
+  const current = now.getTime();
+  const crossed = boundaries.filter((b) => b.t > start && b.t <= current).length;
+  const next = boundaries.find((b) => b.t > start);
+  const elapsed = current - start;
+  const state =
+    crossed >= 2 || elapsed > 12 * 3_600_000
+      ? "stale"
+      : crossed >= 1
+        ? "review"
+        : "fresh";
+  const frac = next
+    ? Math.max(0, Math.min(1, 1 - (current - start) / (next.t - start)))
+    : 1;
+  return {
+    state,
+    frac,
+    crossed,
+    elapsed,
+    validUntil: next?.t ?? null,
+    boundaryLabel: next ? `${next.label} ${next.kind}` : null,
+  };
+}
+
+function fmtClock(ts: number) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: KST,
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(new Date(ts));
+}
+
+function fmtDate(ts: number) {
+  return new Intl.DateTimeFormat("ko-KR", {
+    timeZone: KST,
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  }).format(new Date(ts));
+}
+
+function fmtKST(ts: number | string) {
+  return new Intl.DateTimeFormat("ko-KR", {
+    timeZone: KST,
+    month: "numeric",
+    day: "numeric",
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(ts));
+}
+
+function fmtDur(ms: number) {
+  const minutes = Math.max(0, Math.round(ms / 60_000));
+  const hours = Math.floor(minutes / 60);
+  return hours ? `${hours}시간 ${minutes % 60}분` : `${minutes}분`;
+}
+
+function segsFor(open: number, close: number) {
+  const o = mod24(open);
+  const c = mod24(close);
+  const pct = (h: number) => (h / 24) * 100;
+  if (o < c) return [{ left: pct(o), width: pct(c) - pct(o) }];
+  return [
+    { left: pct(o), width: 100 - pct(o) },
+    { left: 0, width: pct(c) },
+  ];
+}
+
+function readClass(read: Driver["read"]) {
+  return read === "상승" ? "up" : read === "하락" ? "down" : "neutral";
+}
+
+function readLabel(read: Driver["read"]) {
+  return read === "상승" ? "상승요인" : read === "하락" ? "하락요인" : "중립";
+}
+
+function normalizePayload(value: unknown): MacroPayload {
+  if (!value || typeof value !== "object") throw new Error("데이터 형식 오류");
+  const input = value as Partial<MacroPayload>;
+  const assets = { ...EMPTY_PAYLOAD.assets };
+  for (const asset of ASSETS) {
+    const raw = input.assets?.[asset.id];
+    if (!raw) continue;
+    const direction =
+      raw.direction === null || raw.direction === undefined
+        ? Number.NaN
+        : Number(raw.direction);
+    assets[asset.id] = {
+      ...EMPTY_BIAS,
+      ...raw,
+      direction:
+        Number.isInteger(direction) && direction >= -2 && direction <= 2
+          ? (direction as Direction)
+          : null,
+      drivers: Array.isArray(raw.drivers) ? raw.drivers.slice(0, 5) : [],
+      source: raw.source === "manual" ? "manual" : "scheduled",
+    };
+  }
+  return {
+    version: Number(input.version) || 1,
+    generatedAt: input.generatedAt || null,
+    schedule: input.schedule || EMPTY_PAYLOAD.schedule,
+    assets,
+  };
+}
+
+export default function App() {
+  const [now, setNow] = useState(new Date());
+  const [payload, setPayload] = useState<MacroPayload>(EMPTY_PAYLOAD);
+  const [overrides, setOverrides] = useState<Overrides>(() => {
+    try {
+      return JSON.parse(localStorage.getItem(STORE_KEY) || "{}") as Overrides;
+    } catch {
+      return {};
+    }
+  });
+  const [expanded, setExpanded] = useState<Partial<Record<AssetId, boolean>>>({});
+  const [showEvents, setShowEvents] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const loadedOnce = useRef(false);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(STORE_KEY, JSON.stringify(overrides));
+  }, [overrides]);
+
+  async function loadRemote() {
+    if (loadedOnce.current) setRefreshing(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${import.meta.env.BASE_URL}macro.json?t=${Date.now()}`,
+        { cache: "no-store" },
+      );
+      if (!response.ok) throw new Error(`데이터 연결 실패 (${response.status})`);
+      setPayload(normalizePayload(await response.json()));
+      loadedOnce.current = true;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "데이터를 불러오지 못했습니다");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadRemote();
+  }, []);
+
+  const boundaries = useMemo(
+    () => buildBoundaries(now),
+    [Math.floor(now.getTime() / 60_000)],
+  );
+  const sessions = useMemo(
+    () => activeSessions(now),
+    [Math.floor(now.getTime() / 60_000)],
+  );
+  const activeNow = sessions.filter((s) => s.active).map((s) => s.label);
+  const nowK = kstHourFloat(now);
+
+  function mergedBias(id: AssetId): Bias {
+    return { ...payload.assets[id], ...(overrides[id] || {}) };
+  }
+
+  function setDirection(id: AssetId, direction: Direction) {
+    setOverrides((prev) => ({
+      ...prev,
+      [id]: {
+        ...(prev[id] || {}),
+        direction,
+        setAt: new Date().toISOString(),
+        source: "manual",
+        confidence: null,
+        drivers: [],
+        event: "없음",
+        asof: null,
+      },
+    }));
+  }
+
+  function clearOverride(id: AssetId) {
+    setOverrides((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  }
+
+  function setNote(id: AssetId, note: string) {
+    setOverrides((prev) => ({
+      ...prev,
+      [id]: { ...(prev[id] || {}), note },
+    }));
+  }
+
+  return (
+    <div className="md-root">
+      <header className="md-head">
+        <div className="md-head-top">
+          <span className="md-eyebrow">MACRO DESK</span>
+          <span className="md-tzpill">KST · UTC+9</span>
+        </div>
+        <div className="md-clock">{fmtClock(now.getTime())}</div>
+        <div className="md-date">{fmtDate(now.getTime())}</div>
+
+        <div className="md-sessions">
+          {sessions.map((session) => (
+            <span
+              key={session.label}
+              className={`md-session ${session.active ? "on" : ""}`}
+            >
+              <i />
+              {session.label}
+              <em>
+                {String(Math.floor(session.open)).padStart(2, "0")}–
+                {String(Math.floor(session.close)).padStart(2, "0")}
+              </em>
+            </span>
+          ))}
+        </div>
+        <div className="md-live">
+          {activeNow.length
+            ? `${activeNow.join(" · ")} 세션 진행 중`
+            : "메이저 세션 공백 구간"}
+        </div>
+
+        <button
+          className="md-refresh"
+          onClick={() => void loadRemote()}
+          disabled={refreshing}
+        >
+          <span className={refreshing ? "spin" : ""}>⟳</span>
+          {refreshing ? "예약 분석 불러오는 중…" : "최신 예약 분석 불러오기"}
+        </button>
+        <div className="md-refresh-note">
+          매일 {payload.schedule} 자동 갱신 · 외부 컨텍스트 전용 · 기술 번들과 별개
+        </div>
+        {error && <div className="md-global-error">{error}</div>}
+      </header>
+
+      <main className="md-cards" aria-busy={loading}>
+        {ASSETS.map((asset) => {
+          const bias = mergedBias(asset.id);
+          const setAt = bias.setAt ? Date.parse(bias.setAt) : null;
+          const fresh = freshness(bias.setAt, now, boundaries);
+          const selected = DIRS.find((d) => d.v === bias.direction);
+          const isSet = bias.direction !== null;
+          const isManual = bias.source === "manual";
+          const isExpanded = !!expanded[asset.id];
+          const hasEvent = bias.event && bias.event !== "없음";
+          const barColor =
+            !isSet || fresh.state === "unset"
+              ? "#39435a"
+              : fresh.state === "stale"
+                ? "#f0546a"
+                : fresh.state === "review"
+                  ? "#f0a93c"
+                  : fresh.frac > 0.5
+                    ? "#3bb68c"
+                    : "#e4b455";
+
+          return (
+            <section
+              key={asset.id}
+              className={`md-card ${isSet ? fresh.state : "unset"}`}
+            >
+              <div className="md-drain">
+                <div
+                  className="md-drain-fill"
+                  style={{
+                    width: `${isSet ? fresh.frac * 100 : 0}%`,
+                    background: barColor,
+                  }}
+                />
+              </div>
+
+              <div className="md-card-head">
+                <div className="md-asset">
+                  <span className="md-asset-name">{asset.name}</span>
+                  <span className="md-asset-sub">{asset.sub}</span>
+                </div>
+                <div className="md-badges">
+                  {isSet && (
+                    <span className={`md-source ${isManual ? "manual" : ""}`}>
+                      {isManual ? "수동" : "예약"}
+                    </span>
+                  )}
+                  {!isSet && <span className="md-badge unset">미설정</span>}
+                  {isSet && fresh.state === "fresh" && (
+                    <span className="md-badge fresh">
+                      <b>{selected?.label}</b>
+                      {selected && selected.v > 0
+                        ? " ▲"
+                        : selected && selected.v < 0
+                          ? " ▼"
+                          : " ●"}
+                    </span>
+                  )}
+                  {isSet && fresh.state === "review" && (
+                    <span className="md-badge review">세션 전환 · 재확인</span>
+                  )}
+                  {isSet && fresh.state === "stale" && (
+                    <span className="md-badge stale">만료 · 재분석</span>
+                  )}
+                  {overrides[asset.id] && (
+                    <button
+                      className="md-reset"
+                      onClick={() => clearOverride(asset.id)}
+                      title="예약 분석으로 복원"
+                      aria-label={`${asset.name} 예약 분석으로 복원`}
+                    >
+                      ⟲
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="md-gauge" role="group" aria-label={`${asset.name} 방향`}>
+                {DIRS.map((direction) => {
+                  const active = direction.v === bias.direction;
+                  return (
+                    <button
+                      key={direction.v}
+                      className={`md-segment ${active ? "selected" : ""}`}
+                      style={
+                        active
+                          ? {
+                              background: direction.color,
+                              borderColor: direction.color,
+                              color: "#0b0e14",
+                            }
+                          : undefined
+                      }
+                      onClick={() => setDirection(asset.id, direction.v)}
+                    >
+                      {direction.short}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="md-meta">
+                {isSet && setAt ? (
+                  <>
+                    <span>
+                      기준 <b>{fmtKST(setAt)}</b> ·{" "}
+                      {fresh.elapsed !== undefined
+                        ? `${fmtDur(fresh.elapsed)} 전`
+                        : "시간 확인 필요"}
+                    </span>
+                    {!isManual && bias.confidence && (
+                      <span className="ai">컨피던스 {bias.confidence}</span>
+                    )}
+                    {hasEvent && <span className="event">⚡ {bias.event}</span>}
+                    {fresh.state === "fresh" && fresh.validUntil && (
+                      <span className="ok">
+                        유효 ~{fmtKST(fresh.validUntil)}
+                      </span>
+                    )}
+                    {fresh.state === "review" && (
+                      <span className="warn">세션 경계 통과 — 다시 볼 시점</span>
+                    )}
+                    {fresh.state === "stale" && (
+                      <span className="danger">이전 세션 데이터</span>
+                    )}
+                  </>
+                ) : (
+                  <span className="hint">
+                    첫 예약 분석 대기 · 방향 버튼으로 수동 설정 가능
+                  </span>
+                )}
+              </div>
+
+              {bias.drivers.length > 0 && (
+                <div className="md-detail">
+                  <button
+                    className="md-detail-toggle"
+                    onClick={() =>
+                      setExpanded((prev) => ({
+                        ...prev,
+                        [asset.id]: !prev[asset.id],
+                      }))
+                    }
+                  >
+                    {isExpanded ? "▾" : "▸"} 근거 상세
+                    <span>{bias.drivers.length}개 드라이버</span>
+                  </button>
+                  {isExpanded && (
+                    <div className="md-driver-list">
+                      {bias.drivers.map((driver, index) => (
+                        <div className="md-driver" key={`${driver.name}-${index}`}>
+                          <span className={`md-driver-read ${readClass(driver.read)}`}>
+                            {readLabel(driver.read)}
+                          </span>
+                          <span className="md-driver-body">
+                            <b>{driver.name}</b>
+                            <span>{driver.note}</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <input
+                className="md-note"
+                value={bias.note ?? bias.rationale}
+                placeholder="근거 메모"
+                onChange={(event) => setNote(asset.id, event.target.value)}
+                aria-label={`${asset.name} 근거 메모`}
+              />
+              <div className="md-driver-names">{asset.drivers}</div>
+            </section>
+          );
+        })}
+      </main>
+
+      <section className="md-timeline">
+        <div className="md-section-title">
+          세션 타임라인 <span>KST · DST 자동반영</span>
+        </div>
+        <div className="md-timeline-grid">
+          {sessions.map((session) => (
+            <div className="md-timeline-row" key={session.label}>
+              <span className="md-timeline-label">{session.label}</span>
+              <div className="md-timeline-track">
+                {segsFor(session.open, session.close).map((segment, index) => (
+                  <div
+                    key={index}
+                    className={`md-timeline-bar ${session.active ? "on" : ""}`}
+                    style={{ left: `${segment.left}%`, width: `${segment.width}%` }}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+          <div className="md-now" style={{ left: `${(nowK / 24) * 100}%` }}>
+            <span>now</span>
+          </div>
+        </div>
+        <div className="md-axis">
+          {[0, 6, 12, 18, 24].map((hour) => (
+            <span key={hour} style={{ left: `${(hour / 24) * 100}%` }}>
+              {String(hour % 24).padStart(2, "0")}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      <section className="md-events">
+        <button
+          className="md-events-toggle"
+          onClick={() => setShowEvents((value) => !value)}
+        >
+          {showEvents ? "▾" : "▸"} 주요 지표 시각 (KST 환산)
+          <span>바이어스 재검토 시점</span>
+        </button>
+        {showEvents && (
+          <div className="md-event-list">
+            {EVENTS.map((event) => {
+              const off = tzOffsetHours(event.tz, now);
+              const mins =
+                Math.round(mod24(event.h + (9 - off)) * 60 + event.m) % 1440;
+              const hh = String(Math.floor(mins / 60) % 24).padStart(2, "0");
+              const mm = String(mins % 60).padStart(2, "0");
+              return (
+                <div className="md-event" key={event.label}>
+                  <span className="md-event-time">
+                    {hh}:{mm}
+                  </span>
+                  <span className="md-event-label">{event.label}</span>
+                  <span className="md-event-note">{event.note}</span>
+                </div>
+              );
+            })}
+            <p>각 이벤트는 해당 발표일에만 유효 · 서머타임 자동환산</p>
+          </div>
+        )}
+      </section>
+
+      <footer className="md-footer">
+        예약 분석은 <b>웹검색 기반 외부 컨텍스트 초안</b> · 체결과 시세 정본은{" "}
+        <b>MT5</b> · 세션 경계를 넘으면 재분석 신호
+        {payload.generatedAt && (
+          <small>마지막 자동 갱신 {fmtKST(payload.generatedAt)}</small>
+        )}
+      </footer>
+    </div>
+  );
+}

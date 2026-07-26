@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "generatedAt": null,
+  "schedule": "08:00 · 16:00 · 22:00 KST",
+  "assets": {
+    "NAS100": {
+      "direction": null,
+      "confidence": null,
+      "rationale": "",
+      "drivers": [],
+      "event": "없음",
+      "asof": null,
+      "setAt": null,
+      "source": null
+    },
+    "XAUUSD": {
+      "direction": null,
+      "confidence": null,
+      "rationale": "",
+      "drivers": [],
+      "event": "없음",
+      "asof": null,
+      "setAt": null,
+      "source": null
+    },
+    "USOIL": {
+      "direction": null,
+      "confidence": null,
+      "rationale": "",
+      "drivers": [],
+      "event": "없음",
+      "asof": null,
+      "setAt": null,
+      "source": null
+    },
+    "EURUSD": {
+      "direction": null,
+      "confidence": null,
+      "rationale": "",
+      "drivers": [],
+      "event": "없음",
+      "asof": null,
+      "setAt": null,
+      "source": null
+    }
+  }
+}
