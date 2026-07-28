@@ -1,43 +1,43 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-28T22:04:21+09:00",
+  "generatedAt": "2026-07-29T08:00:38+09:00",
   "schedule": "08:00 · 16:00 · 22:00 KST",
   "assets": {
     "NAS100": {
-      "direction": -1,
-      "confidence": "중간",
-      "rationale": "AI 투자 회수 우려와 반도체 매도가 금리 하락의 지지를 압도",
+      "direction": 0,
+      "confidence": "낮음",
+      "rationale": "반도체 급락과 약한 소비심리를 시장 폭 개선·FOMC 대기가 상쇄",
       "drivers": [
         {
-          "name": "나스닥100 선물",
+          "name": "나스닥",
           "read": "하락",
-          "note": "장전 약 -0.7%"
+          "note": "종합지수 -0.22%"
         },
         {
-          "name": "빅테크",
+          "name": "반도체",
           "read": "하락",
-          "note": "엔비디아 장전 -1%·전일 -5%"
+          "note": "필라델피아 반도체 -4.5%"
         },
         {
-          "name": "미국 10년물",
+          "name": "시장 폭",
           "read": "상승",
-          "note": "4.625%·3.3bp 하락"
+          "note": "S&P500 +0.21%·상승종목 우세"
         },
         {
-          "name": "Fed",
+          "name": "소비심리",
           "read": "하락",
-          "note": "금주 인상 확률 약 40%"
+          "note": "소비자신뢰 90.8·예상 92.3"
         }
       ],
-      "event": "미 소비자신뢰 7/28 23:00 KST",
-      "asof": "2026-07-28 22:04 KST",
-      "setAt": "2026-07-28T22:04:21+09:00",
+      "event": "FOMC 7/30 03:00 KST",
+      "asof": "2026-07-29 08:00 KST",
+      "setAt": "2026-07-29T08:00:38+09:00",
       "source": "scheduled"
     },
     "XAUUSD": {
-      "direction": -1,
-      "confidence": "중간",
-      "rationale": "달러 강세·인상 경계·중동 완화가 금리 하락의 지지를 압도",
+      "direction": 0,
+      "confidence": "낮음",
+      "rationale": "달러 강세·유가 급락과 약한 소비심리·FOMC 대기가 충돌",
       "drivers": [
         {
           "name": "금 가격",
@@ -47,84 +47,84 @@
         {
           "name": "달러",
           "read": "하락",
-          "note": "DXY 101.58·4주 고점"
+          "note": "DXY 101.49·5주 고점권"
         },
         {
-          "name": "미국 10년물",
+          "name": "소비심리",
           "read": "상승",
-          "note": "4.625%·3.3bp 하락"
+          "note": "소비자신뢰 90.8·예상 하회"
+        },
+        {
+          "name": "유가·물가",
+          "read": "하락",
+          "note": "WTI -4.1%·79.26달러"
+        }
+      ],
+      "event": "FOMC 7/30 03:00 KST",
+      "asof": "2026-07-29 08:00 KST",
+      "setAt": "2026-07-29T08:00:38+09:00",
+      "source": "scheduled"
+    },
+    "USOIL": {
+      "direction": 0,
+      "confidence": "낮음",
+      "rationale": "협상 기대와 급락세에 호르무즈 차질·EIA 발표 위험이 충돌",
+      "drivers": [
+        {
+          "name": "WTI",
+          "read": "하락",
+          "note": "-4.1%·79.26달러"
+        },
+        {
+          "name": "브렌트",
+          "read": "하락",
+          "note": "-4.8%·84.09달러"
         },
         {
           "name": "지정학",
           "read": "하락",
           "note": "미·이란 공격 중단 지속"
-        }
-      ],
-      "event": "미 소비자신뢰 7/28 23:00 KST",
-      "asof": "2026-07-28 22:04 KST",
-      "setAt": "2026-07-28T22:04:21+09:00",
-      "source": "scheduled"
-    },
-    "USOIL": {
-      "direction": -1,
-      "confidence": "중간",
-      "rationale": "협상·공급 재개로 3일째 하락하나 낮은 중동 통항량이 낙폭을 제한",
-      "drivers": [
-        {
-          "name": "WTI",
-          "read": "하락",
-          "note": "81.55달러·3거래일 연속 하락"
-        },
-        {
-          "name": "브렌트",
-          "read": "하락",
-          "note": "86.96달러"
-        },
-        {
-          "name": "지정학",
-          "read": "하락",
-          "note": "미·이란 협상·호르무즈 재개 논의"
         },
         {
           "name": "공급 위험",
-          "read": "중립",
-          "note": "걸프 통항 전쟁 전의 41%"
+          "read": "상승",
+          "note": "호르무즈 폐쇄·홍해 공격 지속"
         }
       ],
       "event": "EIA 재고 7/29 23:30 KST",
-      "asof": "2026-07-28 22:04 KST",
-      "setAt": "2026-07-28T22:04:21+09:00",
+      "asof": "2026-07-29 08:00 KST",
+      "setAt": "2026-07-29T08:00:38+09:00",
       "source": "scheduled"
     },
     "EURUSD": {
       "direction": 0,
       "confidence": "낮음",
-      "rationale": "달러·금리차는 하방이나 유가 하락과 FOMC 직전 변동성이 충돌",
+      "rationale": "약한 미국 소비·유가 하락과 달러 고점권·FOMC 불확실성이 충돌",
       "drivers": [
         {
           "name": "현물",
-          "read": "중립",
-          "note": "유로 당일 보합권"
+          "read": "상승",
+          "note": "EURUSD +0.5%·1.13725"
         },
         {
           "name": "달러",
           "read": "하락",
-          "note": "DXY 101.58·4주 고점"
+          "note": "DXY 101.49·5주 고점권"
+        },
+        {
+          "name": "미국 지표",
+          "read": "상승",
+          "note": "소비자신뢰 90.8·예상 하회"
         },
         {
           "name": "금리차",
           "read": "하락",
           "note": "미국 금리 우위 지속"
-        },
-        {
-          "name": "유가",
-          "read": "상승",
-          "note": "브렌트 86.96달러로 하락"
         }
       ],
-      "event": "미 소비자신뢰 7/28 23:00 KST",
-      "asof": "2026-07-28 22:04 KST",
-      "setAt": "2026-07-28T22:04:21+09:00",
+      "event": "FOMC 7/30 03:00 KST",
+      "asof": "2026-07-29 08:00 KST",
+      "setAt": "2026-07-29T08:00:38+09:00",
       "source": "scheduled"
     }
   }
