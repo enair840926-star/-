@@ -177,9 +177,6 @@ function main() {
 
   console.error(`기준 ${snapshot.generatedAt} · ruleset ${snapshot.ruleset}`);
   console.error(summarize(snapshot));
-  console.error("\n── 알림 문구 (그대로 마지막 답변에 쓴다) ──");
-  console.error(renderNotification(snapshot));
-  console.error("── 알림 문구 끝 ──");
   if (snapshot.scoreboard) console.error(scoreboardLine(snapshot.scoreboard));
 
   const flagged = Object.entries(snapshot.assets).filter(
@@ -191,6 +188,12 @@ function main() {
       console.error(`  ${asset}: ${value!.fusion!.flags.join(", ")}`);
     }
   }
+
+  // 알림 문구는 반드시 출력의 맨 마지막에 둔다.
+  // 예약 루틴이 이 블록을 그대로 집어 답변으로 쓰기 때문이다.
+  console.error("\n── 알림 문구 ──");
+  console.error(renderNotification(snapshot));
+  console.error("── 알림 문구 끝 ──");
 }
 
 main();
