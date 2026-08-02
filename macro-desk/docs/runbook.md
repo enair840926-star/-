@@ -99,11 +99,32 @@ npm run snapshot -- --input data/session/latest.json --no-history   # 기록 건
 ```bash
 git add macro-desk/public/macro.json macro-desk/data/session/latest.json macro-desk/data/history/predictions.jsonl
 git commit -m "chore: refresh macro desk <아침|오후|야간> snapshot"
-git push -u origin main
 ```
 
-`main`에 들어가면 `.github/workflows/macro-desk-pages.yml`이 Pages를 재배포한다.
 **`predictions.jsonl`을 반드시 함께 커밋한다.** 이게 빠지면 다음 실행에서 채점할 대상이 사라진다.
+
+### 푸시 — 두 경로
+
+```bash
+git push origin HEAD:main || git push -f origin HEAD:claude/macro-data
+```
+
+`main`에 직접 들어가면 `.github/workflows/macro-desk-pages.yml`이 Pages를 재배포한다.
+
+**main 푸시가 거부되면** `claude/macro-data`로 보낸다. 예약 루틴 세션은 저장소를 클론만
+할 수 있고 `claude/` 접두 브랜치에만 푸시할 수 있는 경우가 있다 — 그때 403이 난다.
+이 브랜치에 푸시되면 `.github/workflows/macro-data-sync.yml`이 **데이터 파일만** main으로
+옮기고 Pages를 배포한다. 옮기는 경로는 아래로 고정되어 있어 엔진 코드는 절대 넘어가지 않는다.
+
+| 경로 | 쓰는 쪽 |
+|---|---|
+| `macro-desk/public/macro.json` | 스냅샷 |
+| `macro-desk/data/**` | 스냅샷 (입력·예측 기록) |
+| `macro-desk/src/engine/params.json` | 주간 보정 |
+| `macro-desk/docs/calibration/**` | 주간 보정 |
+
+루틴 세션은 **항상 기본 브랜치를 클론**한다. 그래서 기록을 브랜치에 남겨두면 다음 실행이
+이전 예측을 채점하지 못한다. 반드시 main으로 되돌아가야 한다 — 워크플로가 그 일을 한다.
 
 ## 7. 주간 보정
 
@@ -134,7 +155,8 @@ npm run build   # 프로덕션 번들
 ```
 NAS100·XAUUSD·USOIL·EURUSD의 당일 방향성 스냅샷을 갱신한다.
 
-1. main 브랜치에서 작업한다 (Pages 배포가 main 푸시에만 동작).
+1. main 브랜치에서 작업한다. 푸시는 main을 먼저 시도하고, 거부되면
+   claude/macro-data로 보낸다 (워크플로가 데이터만 main으로 옮긴다).
 2. docs/fusion-ruleset.md §1.3 루브릭의 팩터 키만 쓴다.
    - 수치형은 value(지표 실측치)만 넣는다. stance를 직접 넣지 않는다.
    - 서수형은 앵커 문구에 대응시킨다.
@@ -145,6 +167,7 @@ NAS100·XAUUSD·USOIL·EURUSD의 당일 방향성 스냅샷을 갱신한다.
 4. 48시간 내 지표를 events에 넣는다.
 5. npm run snapshot 을 돌리고 플래그를 확인한다.
    STANCE_UNVERIFIED가 뜨면 value로 고쳐 다시 돌린다.
-6. macro.json · latest.json · predictions.jsonl 세 파일을 커밋해 main에 푸시한다.
+6. macro.json · latest.json · predictions.jsonl 세 파일을 커밋해 푸시한다.
+   git push origin HEAD:main || git push -f origin HEAD:claude/macro-data
 7. 자산별 한 줄 요약과 적중률로 답변을 끝낸다.
 ```

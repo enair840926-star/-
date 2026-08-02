@@ -165,8 +165,12 @@ npm run calibrate -- --all   # ruleset 버전 무관하게 전체 집계
 
 리포트는 `docs/calibration/YYYY-MM-DD.md`에 주차별로 누적된다. 삭제하지 않는다.
 
-**주간 루틴**: 일요일 10:00 KST. 스크립트 실행 → `params.json`·리포트 커밋 → main 푸시 →
+**주간 루틴**: 일요일 10:00 KST. 스크립트 실행 → `params.json`·리포트 커밋 → 푸시 →
 바뀐 값과 승인 대기 항목을 푸시 알림으로 전송.
+
+푸시는 `git push origin HEAD:main || git push -f origin HEAD:claude/macro-data` 순으로 한다.
+루틴 세션이 main에 직접 푸시하지 못하면 워크플로가 `params.json`과 리포트만 main으로 옮긴다
+([`runbook.md` §6](runbook.md) 참고).
 
 ---
 
