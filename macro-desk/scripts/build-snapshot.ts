@@ -14,6 +14,7 @@ import { runSnapshot, validateInput } from "../src/engine/index";
 import {
   buildScoreboard,
   openPrediction,
+  upsertPrediction,
   parsePredictions,
   scoreboardLine,
   scorePredictions,
@@ -145,19 +146,21 @@ function main() {
     }
     const { scored, stale } = scorePredictions(records, prices, generatedAt);
 
-    // 2) 이번 예측을 새로 연다
+    // 2) 이번 예측을 연다 (같은 세션 재실행이면 갈아끼운다)
+    let updated = records;
     for (const value of Object.values(snapshot.assets)) {
-      records.push(openPrediction(value!.fusion!, generatedAt));
+      updated = upsertPrediction(updated, openPrediction(value!.fusion!, generatedAt));
     }
+    updated.sort((a, b) => Date.parse(a.ts) - Date.parse(b.ts));
 
-    snapshot.scoreboard = buildScoreboard(records, generatedAt);
+    snapshot.scoreboard = buildScoreboard(updated, generatedAt);
 
     if (!options.print) {
       mkdirSync(dirname(historyPath), { recursive: true });
-      writeFileSync(historyPath, serializePredictions(records), "utf8");
+      writeFileSync(historyPath, serializePredictions(updated), "utf8");
     }
     console.error(
-      `기록: 채점 ${scored}건${stale ? ` · 누락 마감 ${stale}건` : ""} · 누적 ${records.length}건`,
+      `기록: 채점 ${scored}건${stale ? ` · 누락 마감 ${stale}건` : ""} · 누적 ${updated.length}건`,
     );
   }
 

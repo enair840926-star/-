@@ -47,6 +47,28 @@ export function openPrediction(fusion: FusionResult, generatedAt: Date): Predict
   };
 }
 
+/**
+ * 같은 세션의 예측을 갈아끼운다.
+ *
+ * 런북은 플래그가 뜨면 고쳐서 다시 돌리라고 지시하므로 한 세션에 여러 번 실행될 수 있다.
+ * 아직 채점되지 않은 같은 자산의 최근 기록은 새 예측으로 대체해 중복을 막는다.
+ */
+export function upsertPrediction(
+  records: PredictionRecord[],
+  prediction: PredictionRecord,
+  windowHours = 2,
+): PredictionRecord[] {
+  const ts = Date.parse(prediction.ts);
+  const next = records.filter(
+    (record) =>
+      record.outcome !== null ||
+      record.asset !== prediction.asset ||
+      Math.abs(Date.parse(record.ts) - ts) > windowHours * HOUR,
+  );
+  next.push(prediction);
+  return next;
+}
+
 function realizedDirection(movePct: number, asset: AssetId): Direction {
   const band = NEUTRAL_BAND_PCT[asset];
   if (movePct > band) return 1;

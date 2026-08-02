@@ -6,6 +6,7 @@ import {
   scoreboardLine,
   scorePredictions,
   serializePredictions,
+  upsertPrediction,
 } from "../scoreboard";
 import { computeEvents } from "../events";
 import { fuse } from "../fusion";
@@ -221,5 +222,46 @@ describe("jsonl 직렬화", () => {
     const { records, broken } = parsePredictions(text);
     expect(records).toHaveLength(1);
     expect(broken).toBe(2);
+  });
+});
+
+describe("upsertPrediction", () => {
+  it("같은 세션에서 다시 돌리면 기존 예측을 갈아끼운다", () => {
+    const first = record({ asset: "USOIL", direction: 1, conviction: 30 });
+    const retry = record({
+      asset: "USOIL",
+      direction: 1,
+      conviction: 45,
+      ts: new Date(NOW.getTime() + 15 * 60_000).toISOString(),
+    });
+    const out = upsertPrediction([first], retry);
+    expect(out).toHaveLength(1);
+    expect(out[0].conviction).toBe(45);
+  });
+
+  it("다른 자산은 건드리지 않는다", () => {
+    const other = record({ asset: "NAS100", direction: -1 });
+    const out = upsertPrediction([other], record({ asset: "USOIL", direction: 1 }));
+    expect(out).toHaveLength(2);
+  });
+
+  it("이미 채점된 기록은 남긴다", () => {
+    const closed = record({
+      asset: "USOIL",
+      direction: 1,
+      outcome: { scoredAt: NOW.toISOString(), endPrice: 100, movePct: 2, realized: 1, hit: true },
+    });
+    const out = upsertPrediction([closed], record({ asset: "USOIL", direction: -1 }));
+    expect(out).toHaveLength(2);
+  });
+
+  it("다음 세션(2시간 초과)의 예측은 새로 쌓인다", () => {
+    const first = record({ asset: "USOIL", direction: 1 });
+    const nextSession = record({
+      asset: "USOIL",
+      direction: -1,
+      ts: new Date(NOW.getTime() + 8 * 3_600_000).toISOString(),
+    });
+    expect(upsertPrediction([first], nextSession)).toHaveLength(2);
   });
 });
