@@ -1,15 +1,15 @@
 # 운영 절차 (Runbook)
 
 하루 3회(08:00 · 16:00 · 22:00 KST) 스냅샷을 만드는 절차다.
-매크로는 웹 리서치로, 차트는 v4 통합 번들로 채운 뒤 엔진이 둘을 융합한다.
+**기본은 번들 없이 도는 `macro-only` 모드**이며, 웹 리서치만으로 완결된다.
 
 ```
-[웹 리서치] ──► data/session/latest.json (factors, events)
-                          │
-[v4 번들 ZIP] ─► npm run bundle ──► 같은 파일의 candles 블록
+[웹 리서치] ──► data/session/latest.json (factors, events, levels)
                           │
                           ▼
                  npm run snapshot ──► public/macro.json ──► GitHub Pages
+                          ▲
+[v4 번들 ZIP] ─► npm run bundle ──┘   (선택 · fusion 모드일 때만)
 ```
 
 ---
@@ -30,13 +30,16 @@
 `events`에는 앞으로 48시간 내 지표만 넣는다. 티어 기준은 ruleset §3.
 시각은 ISO8601로 쓰고 오프셋을 반드시 붙인다(`2026-08-07T12:30:00Z`).
 
+`levels`에는 리서치에서 **실제로 인용된 숫자만** 넣는다. 지지·저항을 지어내지 않는다.
+출처가 없으면 그 필드는 비워둔다 — 화면에 "관측 레벨 미수집"으로 표시된다.
+
 > 이 저장소 환경에서는 FMP MCP의 chart/quote/economics 엔드포인트가 현재 플랜에서 막혀 있고,
 > 외부 시세 API(Yahoo·stooq)도 네트워크 정책상 직접 호출되지 않는다.
 > 그래서 매크로 레이어는 **웹 검색 결과**를 근거로 채운다. 시세 정본은 항상 MT5다.
 
-## 2. 차트 레이어 붙이기
+## 2. (선택) 차트 레이어 붙이기
 
-MT5에서 뽑은 v4 통합 번들을 그대로 쓴다.
+번들을 붙일 수 있는 날에만 한다. 평소에는 건너뛴다.
 
 ```bash
 npm run bundle -- --asset XAUUSD --zip ~/bundles/xauusd-2026-08-03.zip
@@ -46,8 +49,8 @@ npm run bundle -- --asset NAS100 --raw /tmp/extract/rawbundle.json
 - ZIP 안의 `rawbundle.json`만 읽는다. `hud_lite`/`by_tf`/`derived`는 읽지 않는다.
 - `is_complete=false` 봉은 자동으로 빠진다.
 - TF당 기본 180봉까지 가져온다(`--max-bars`로 조정).
-- 번들을 아직 못 붙이는 세션이면 해당 자산에 `"technicalPending": true`를 두고 넘어간다.
-  방향은 중립으로 잠기고 플레이북이 "차트 레이어 대기"로 표시된다.
+- 번들을 붙인 자산은 `"mode": "fusion"`으로 바꿔야 캔들이 실제로 쓰인다.
+  스냅샷 기본값(`"mode": "macro-only"`)이 자산 설정보다 우선순위가 낮다.
 
 ## 3. 스냅샷 생성
 
@@ -59,9 +62,9 @@ npm run snapshot -- --input data/session/latest.json --print   # 파일 안 쓰�
 입력 검증에 걸리면 그대로 멈춘다(알 수 없는 팩터 키, 파싱 안 되는 이벤트 시각, 빈 캔들 등).
 출력 요약에서 확인할 것:
 
-- **레짐**: CONFLICT면 그 자산은 그날 관망 후보다.
+- **레짐**: `요인 상충`이면 그 자산은 그날 방향 없음이다.
 - **플래그**: `MACRO_COVERAGE_LOW`가 뜨면 팩터를 더 채운다. `TF_*_WARMUP`이면 번들 기간을 늘린다.
-- **확신도**: 35 미만이면 방향이 중립으로 강등된 상태다.
+- **확신도**: macro-only는 25 미만이면 중립으로 강등되고, 상한은 70이다.
 
 ## 4. 커밋과 배포
 
@@ -77,7 +80,7 @@ git push -u origin <branch>
 
 ```bash
 npm run check   # 타입
-npm test        # 엔진 74개 테스트
+npm test        # 엔진 86개 테스트
 npm run build   # 프로덕션 번들
 ```
 
@@ -95,9 +98,10 @@ macro-desk 스냅샷을 갱신해줘.
    - stance는 해당 자산 가격에 대한 압력 기준으로 -2~+2, note에는 숫자를 넣는다.
    - 확인 못 한 팩터는 넣지 말고, 오래된 값은 confidence를 낮춘다.
 2. 앞으로 48시간 내 지표를 events에 넣는다(티어는 ruleset §3).
-3. data/session/latest.json을 갱신한다. 번들이 없는 자산은 technicalPending: true를 유지한다.
-4. npm run snapshot 을 돌리고 요약과 플래그를 확인한다.
-5. macro.json과 latest.json을 커밋·푸시한다.
+3. 리서치에서 인용된 지지·저항이 있으면 levels에 넣는다(없으면 생략).
+4. data/session/latest.json을 갱신한다(mode는 macro-only 유지).
+5. npm run snapshot 을 돌리고 요약과 플래그를 확인한다.
+6. macro.json과 latest.json을 커밋·푸시한 뒤, 자산별 한 줄 요약을 알려준다.
 
 레이어 잠금 규칙을 지킨다: 매크로 결론으로 차트 점수를 고쳐 쓰지 않는다.
 ```

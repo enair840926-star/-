@@ -1,11 +1,14 @@
 import { clamp, round } from "./indicators";
 import { nextSessionBoundary } from "./sessions";
 import type {
+  AnalysisMode,
   AssetId,
   ConfidenceLabel,
   Direction,
   EventLayer,
   FusionResult,
+  LevelInput,
+  MacroFactorResult,
   MacroLayer,
   Regime,
   TechnicalLayer,
@@ -17,6 +20,17 @@ const SIGNAL_THRESHOLD = 0.5;
 /** 이 확신도 미만이면 방향을 중립으로 강등한다 */
 const DIRECTION_GATE = 35;
 
+/** 매크로 전용 모드 파라미터 */
+const MACRO_ONLY = {
+  /** 차트 확인이 없으므로 방향 게이트를 낮추되 확신도 상한을 건다 */
+  gate: 25,
+  cap: 70,
+  /** 차트 미확인 할인 */
+  discount: 0.9,
+  /** 이 점수에서 확신도 100% 스케일에 도달 */
+  fullScale: 1.5,
+};
+
 const REGIME_MULTIPLIER: Record<Regime, number> = {
   ALIGNED: 1.15,
   PARTIAL: 0.9,
@@ -24,15 +38,23 @@ const REGIME_MULTIPLIER: Record<Regime, number> = {
   RANGE: 0.6,
 };
 
-const REGIME_LABEL: Record<Regime, string> = {
-  ALIGNED: "동조",
-  PARTIAL: "부분 동조",
-  CONFLICT: "상충",
-  RANGE: "양측 중립",
+const REGIME_LABEL: Record<AnalysisMode, Record<Regime, string>> = {
+  fusion: {
+    ALIGNED: "동조",
+    PARTIAL: "부분 동조",
+    CONFLICT: "상충",
+    RANGE: "양측 중립",
+  },
+  "macro-only": {
+    ALIGNED: "요인 일치",
+    PARTIAL: "우세·일부 상충",
+    CONFLICT: "요인 상충",
+    RANGE: "요인 중립",
+  },
 };
 
-export function regimeLabel(regime: Regime): string {
-  return REGIME_LABEL[regime];
+export function regimeLabel(regime: Regime, mode: AnalysisMode = "fusion"): string {
+  return REGIME_LABEL[mode][regime];
 }
 
 function fmtKST(ts: number): string {
@@ -54,8 +76,19 @@ function classifyRegime(technicalScore: number, macroScore: number): Regime {
   return "PARTIAL";
 }
 
-function discretize(score: number, conviction: number): Direction {
-  if (conviction < DIRECTION_GATE) return 0;
+/**
+ * 매크로 전용 레짐: 편향 세기(|score|)와 팩터 분산으로 4분면을 만든다.
+ * 차트가 없으므로 "동조/상충"이 아니라 "매크로 팩터끼리 일치하는가"를 본다.
+ */
+function classifyMacroRegime(macro: MacroLayer): Regime {
+  const strong = Math.abs(macro.score) >= SIGNAL_THRESHOLD;
+  const mixed = macro.dispersion > 0.5;
+  if (strong) return mixed ? "PARTIAL" : "ALIGNED";
+  return mixed ? "CONFLICT" : "RANGE";
+}
+
+function discretize(score: number, conviction: number, gate = DIRECTION_GATE): Direction {
+  if (conviction < gate) return 0;
   if (score >= 1) return 2;
   if (score >= 0.35) return 1;
   if (score <= -1) return -2;
@@ -88,11 +121,6 @@ function buildPlaybook(
   if (events.activeBlackout) {
     const until = fmtKST(Date.parse(events.activeBlackout.blackoutEnd));
     return `블랙아웃: ${events.activeBlackout.label} 영향권 — ${until}까지 신규 진입 보류, 기존 포지션은 리스크 축소`;
-  }
-
-  if (technical.flags.includes("TECH_PENDING")) {
-    const lean = macroLean;
-    return `차트 레이어 대기 · 매크로 편향 ${lean} — v4 통합 번들을 붙여야 방향·무효화 레벨이 확정된다`;
   }
 
   const side = direction > 0 ? "롱" : direction < 0 ? "숏" : null;
@@ -129,6 +157,109 @@ function buildPlaybook(
   return `${base} · ${caution} · ${level}`;
 }
 
+const sign = (factor: MacroFactorResult) =>
+  factor.stance > 0 ? "＋" : factor.stance < 0 ? "－" : "0";
+
+function dominantFactors(macro: MacroLayer) {
+  const positive = macro.factors.filter((factor) => factor.contribution > 0);
+  const negative = macro.factors.filter((factor) => factor.contribution < 0);
+  return {
+    up: positive.sort((a, b) => b.contribution - a.contribution)[0] ?? null,
+    down: negative.sort((a, b) => a.contribution - b.contribution)[0] ?? null,
+  };
+}
+
+/**
+ * 매크로 전용 플레이북. 진입·손절 지시가 아니라 "무엇이 편향을 만들고 무엇이 반대하는가"를
+ * 한 줄로 말해주는 것이 목적이다.
+ */
+function buildMacroPlaybook(
+  regime: Regime,
+  direction: Direction,
+  macro: MacroLayer,
+  events: EventLayer,
+  levels: LevelInput | undefined,
+): string {
+  if (events.activeBlackout) {
+    const until = fmtKST(Date.parse(events.activeBlackout.blackoutEnd));
+    return `${events.activeBlackout.label} 발표 영향권 — ${until}까지 방향 판단 보류`;
+  }
+
+  const { up, down } = dominantFactors(macro);
+  const lean = directionWord(direction);
+  const confirm = levelHint(direction, levels);
+
+  if (regime === "CONFLICT") {
+    const pair =
+      up && down ? `${up.label}(＋) vs ${down.label}(－)` : "상반된 요인이 맞물림";
+    return `요인 상충: ${pair} — 한쪽이 꺾이기 전까지 방향 없음${confirm ? ` · ${confirm}` : ""}`;
+  }
+  if (direction === 0) {
+    return `뚜렷한 주도 요인 없음 — 다음 지표까지 방향 대기${confirm ? ` · ${confirm}` : ""}`;
+  }
+
+  const driver = up && direction > 0 ? up : down && direction < 0 ? down : null;
+  const against = direction > 0 ? down : up;
+  const head = driver ? `${lean} 편향 · ${driver.label} 주도` : `${lean} 편향`;
+  const counter = against ? ` · 반대 요인 ${against.label}` : "";
+  return `${head}${counter}${confirm ? ` · ${confirm}` : ""}`;
+}
+
+/** 관측 레벨을 "이 선을 넘으면 편향 확인 / 이탈하면 무효" 문장으로 만든다. */
+function levelHint(direction: Direction, levels: LevelInput | undefined): string {
+  if (!levels) return "";
+  const resistance = levels.resistance?.[0];
+  const support = levels.support?.[0];
+  if (direction > 0 && resistance !== undefined) {
+    return support !== undefined
+      ? `${resistance} 상향 돌파 시 편향 확인, ${support} 이탈 시 무효`
+      : `${resistance} 상향 돌파 시 편향 확인`;
+  }
+  if (direction < 0 && support !== undefined) {
+    return resistance !== undefined
+      ? `${support} 하향 이탈 시 편향 확인, ${resistance} 회복 시 무효`
+      : `${support} 하향 이탈 시 편향 확인`;
+  }
+  if (support !== undefined && resistance !== undefined) {
+    return `관측 범위 ${support} ~ ${resistance}`;
+  }
+  return "";
+}
+
+function buildMacroTriggers(
+  macro: MacroLayer,
+  events: EventLayer,
+  levels: LevelInput | undefined,
+  validUntil: number | null,
+): string[] {
+  const triggers: string[] = [];
+  if (levels?.support?.length) triggers.push(`지지 ${levels.support.join(" / ")} 이탈 시 재평가`);
+  if (levels?.resistance?.length) {
+    triggers.push(`저항 ${levels.resistance.join(" / ")} 돌파 시 재평가`);
+  }
+  const headline = events.headline;
+  if (headline) {
+    triggers.push(`${headline.label} ${fmtKST(Date.parse(headline.time))} 발표 결과`);
+  }
+  const top = macro.factors[0];
+  if (top) triggers.push(`${top.label} 방향 전환 시 즉시 재수집`);
+  if (validUntil) triggers.push(`${fmtKST(validUntil)} 스냅샷 만료`);
+  return triggers;
+}
+
+function buildMacroRationale(
+  regime: Regime,
+  direction: Direction,
+  macro: MacroLayer,
+  mode: AnalysisMode,
+): string {
+  const top = macro.factors
+    .slice(0, 3)
+    .map((factor) => `${factor.label} ${sign(factor)}`)
+    .join("·");
+  return `${REGIME_LABEL[mode][regime]} · ${top || "근거 부족"} → ${directionWord(direction)}`;
+}
+
 function buildRationale(
   regime: Regime,
   direction: Direction,
@@ -143,7 +274,7 @@ function buildRationale(
     : "매크로 근거 부족";
   const higher = technical.timeframes.find((read) => read.tf === "H4" || read.tf === "D1");
   const techText = higher ? `${higher.tf} ${higher.note}` : "기술 근거 부족";
-  return `${REGIME_LABEL[regime]} · ${macroText} / ${techText} → ${directionWord(direction)}`;
+  return `${REGIME_LABEL.fusion[regime]} · ${macroText} / ${techText} → ${directionWord(direction)}`;
 }
 
 function buildTriggers(
@@ -202,7 +333,12 @@ export function fuse(
   technical: TechnicalLayer,
   events: EventLayer,
   now: Date,
+  options: { mode?: AnalysisMode; levels?: LevelInput } = {},
 ): FusionResult {
+  const mode = options.mode ?? "fusion";
+  if (mode === "macro-only") {
+    return fuseMacroOnly(asset, macro, technical, events, now, options.levels);
+  }
   const weights = BASE_FUSION_WEIGHTS[events.maxTier];
   const eT = weights.technical * technical.confidence;
   const eM = weights.macro * macro.confidence;
@@ -216,13 +352,15 @@ export function fuse(
   if (events.activeBlackout) conviction = Math.min(conviction, 30);
   conviction = Math.round(clamp(conviction, 0, 100));
 
-  const direction = discretize(score, conviction);
+  // 블랙아웃 중에는 확신도와 무관하게 방향을 비운다(발표 대기 상태).
+  const direction = events.activeBlackout ? 0 : discretize(score, conviction);
   const validUntil = resolveValidUntil(now, events);
   const flags = [...macro.flags, ...technical.flags, ...events.flags];
   if (den <= 0) flags.push("FUSION_NO_CONFIDENCE");
 
   return {
     asset,
+    mode: "fusion",
     direction,
     conviction,
     confidence: confidenceLabel(conviction),
@@ -238,6 +376,55 @@ export function fuse(
     ),
     rationale: buildRationale(regime, direction, macro, technical),
     reanalyzeTriggers: buildTriggers(direction, technical, events, validUntil),
+    validUntil: validUntil ? new Date(validUntil).toISOString() : null,
+    macro,
+    technical,
+    events,
+    flags,
+  };
+}
+
+/**
+ * 매크로 전용 판단. 차트 확인이 없으므로
+ *  - 확신도 = 100 × min(1, |매크로점수|/1.5) × (0.5 + 0.5×매크로컨피던스) × 0.9
+ *  - 상한 70 (차트 확인 없이 "높음" 상단은 주지 않는다)
+ *  - 방향 게이트 25 (융합보다 낮지만, 그만큼 확신도 라벨이 낮게 붙는다)
+ * 무효화 "가격"은 계산하지 않고, 리서치 관측 레벨만 확인 포인트로 제시한다.
+ */
+function fuseMacroOnly(
+  asset: AssetId,
+  macro: MacroLayer,
+  technical: TechnicalLayer,
+  events: EventLayer,
+  now: Date,
+  levels: LevelInput | undefined,
+): FusionResult {
+  const regime = classifyMacroRegime(macro);
+  const scale = Math.min(1, Math.abs(macro.score) / MACRO_ONLY.fullScale);
+  let conviction = 100 * scale * (0.5 + 0.5 * macro.confidence) * MACRO_ONLY.discount;
+  conviction = Math.min(conviction, MACRO_ONLY.cap, events.convictionCap);
+  if (events.activeBlackout) conviction = Math.min(conviction, 30);
+  conviction = Math.round(clamp(conviction, 0, 100));
+
+  const direction = events.activeBlackout
+    ? 0
+    : discretize(macro.score, conviction, MACRO_ONLY.gate);
+  const validUntil = resolveValidUntil(now, events);
+  const flags = ["MACRO_ONLY", ...macro.flags, ...events.flags];
+
+  return {
+    asset,
+    mode: "macro-only",
+    ...(levels ? { levels } : {}),
+    direction,
+    conviction,
+    confidence: confidenceLabel(conviction),
+    score: round(macro.score, 3),
+    regime,
+    weights: { technical: 0, macro: 1 },
+    playbook: buildMacroPlaybook(regime, direction, macro, events, levels),
+    rationale: buildMacroRationale(regime, direction, macro, "macro-only"),
+    reanalyzeTriggers: buildMacroTriggers(macro, events, levels, validUntil),
     validUntil: validUntil ? new Date(validUntil).toISOString() : null,
     macro,
     technical,

@@ -1,6 +1,7 @@
 {
+  "mode": "macro-only",
   "schedule": "08:00 · 16:00 · 22:00 KST",
-  "note": "2026-08-02(일) 주간 준비 스냅샷 · 매크로 레이어는 7/31(금) 마감 기준 실데이터, 차트 레이어는 v4 통합 번들 첨부 시 채워짐",
+  "note": "2026-08-02(일) 주간 준비 스냅샷 · 7/31(금) 마감 기준 외부요인 · 번들 없이 매크로 전용 모드",
   "events": [
     {
       "label": "ISM 제조업 PMI",
@@ -24,7 +25,9 @@
       "label": "EIA 원유재고",
       "time": "2026-08-05T14:30:00Z",
       "tier": 2,
-      "assets": ["USOIL"],
+      "assets": [
+        "USOIL"
+      ],
       "note": "10:30 ET"
     },
     {
@@ -36,8 +39,6 @@
   ],
   "assets": {
     "NAS100": {
-      "technicalPending": true,
-      "candles": {},
       "factors": [
         {
           "key": "usRates",
@@ -81,11 +82,21 @@
           "note": "DXY 99.91(-0.05%) · 주간 엔 대비 -3.3%",
           "source": "Reuters/FXStreet 2026-07-31"
         }
-      ]
+      ],
+      "levels": {
+        "last": 28106.35,
+        "support": [
+          27900,
+          27157
+        ],
+        "resistance": [
+          28607
+        ],
+        "note": "7/31 종가 28,106 · 일봉 27,900 하회 시 하락 트리거 · 200일선 27,052",
+        "source": "OneUpTrader/Yahoo 2026-07-31"
+      }
     },
     "XAUUSD": {
-      "technicalPending": true,
-      "candles": {},
       "factors": [
         {
           "key": "realYield",
@@ -129,11 +140,20 @@
           "note": "7월 월간 +0.5%로 2월 이후 첫 월간 상승",
           "source": "Reuters 2026-07-31"
         }
-      ]
+      ],
+      "levels": {
+        "last": 4042.97,
+        "support": [
+          4000
+        ],
+        "resistance": [
+          4100
+        ],
+        "note": "금리 급등에 4,100 회복 실패",
+        "source": "FXStreet/TradingEconomics 2026-07-31"
+      }
     },
     "USOIL": {
-      "technicalPending": true,
-      "candles": {},
       "factors": [
         {
           "key": "supplyRisk",
@@ -177,11 +197,17 @@
           "note": "DXY 99.91 소폭 약세",
           "source": "FXStreet 2026-07-31"
         }
-      ]
+      ],
+      "levels": {
+        "last": 84.67,
+        "resistance": [
+          85
+        ],
+        "note": "7월 +20% · 금요일 장중 85달러 상회",
+        "source": "Bloomberg/TradingEconomics 2026-07-31"
+      }
     },
     "EURUSD": {
-      "technicalPending": true,
-      "candles": {},
       "factors": [
         {
           "key": "rateDiff",
@@ -225,7 +251,19 @@
           "note": "미 증시 강세로 안전자산 달러 수요 완화",
           "source": "CNBC 2026-07-31"
         }
-      ]
+      ],
+      "levels": {
+        "last": 1.1485,
+        "support": [
+          1.14
+        ],
+        "resistance": [
+          1.15,
+          1.185
+        ],
+        "note": "1.1400은 2022~2026 랠리의 23.6% 되돌림 · 1.15 회복 전까지 방향 불명",
+        "source": "Investing.com/FXEmpire 2026-07-31"
+      }
     }
   }
 }

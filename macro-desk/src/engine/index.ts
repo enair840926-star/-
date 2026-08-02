@@ -3,6 +3,7 @@ import { fuse } from "./fusion";
 import { computeMacro } from "./macro";
 import { computeTechnical } from "./technical";
 import type {
+  AnalysisMode,
   AssetId,
   FusionResult,
   Snapshot,
@@ -22,6 +23,8 @@ export { MACRO_WEIGHTS, TF_WEIGHTS, EVENT_TIERS } from "./weights";
 export { sessionBoundaries, nextSessionBoundary } from "./sessions";
 
 const DEFAULT_SCHEDULE = "08:00 · 16:00 · 22:00 KST";
+/** 번들 없이 폰만으로 쓰는 것이 기본 운영 형태다. */
+const DEFAULT_MODE: AnalysisMode = "macro-only";
 
 function fmtKST(ts: number): string {
   return new Intl.DateTimeFormat("ko-KR", {
@@ -91,9 +94,10 @@ export function validateInput(input: SnapshotInput): string[] {
       }
       if (!factor.note) errors.push(`${assetId}.${factor.key}: note가 비어 있습니다`);
     }
-    if (!asset.technicalPending && (!asset.candles || !Object.keys(asset.candles).length)) {
+    if (!asset.factors?.length) errors.push(`${assetId}: factors가 비어 있습니다`);
+    if (modeOf(input, assetId as AssetId) === "fusion" && !Object.keys(asset.candles ?? {}).length) {
       errors.push(
-        `${assetId}: candles가 비어 있습니다 (매크로만 먼저 올리려면 technicalPending: true)`,
+        `${assetId}: fusion 모드인데 candles가 비어 있습니다 (번들 없이 쓰려면 mode: "macro-only")`,
       );
     }
   }
@@ -108,6 +112,11 @@ export function validateInput(input: SnapshotInput): string[] {
   return errors;
 }
 
+/** 이 자산에 적용되는 모드. 자산 설정이 스냅샷 기본값을 덮어쓴다. */
+export function modeOf(input: SnapshotInput, asset: AssetId): AnalysisMode {
+  return input.assets[asset]?.mode ?? input.mode ?? DEFAULT_MODE;
+}
+
 /** 자산 1건 분석 */
 export function analyzeAsset(
   asset: AssetId,
@@ -115,14 +124,15 @@ export function analyzeAsset(
   now: Date = new Date(),
 ): FusionResult {
   const assetInput = input.assets[asset];
+  const mode = modeOf(input, asset);
   const macro = computeMacro(asset, assetInput?.factors ?? []);
-  const technical = computeTechnical(assetInput?.candles ?? {});
-  if (assetInput?.technicalPending) {
-    // 번들 미첨부는 "데이터 오류"가 아니라 명시된 운영 상태다. 누락 플래그를 하나로 접는다.
-    technical.flags = ["TECH_PENDING", ...technical.flags.filter((flag) => !flag.endsWith("_MISSING"))];
+  const technical = computeTechnical(mode === "macro-only" ? {} : (assetInput?.candles ?? {}));
+  if (mode === "macro-only") {
+    // 차트를 아예 쓰지 않는 모드다. 누락은 오류가 아니므로 TF 플래그를 남기지 않는다.
+    technical.flags = [];
   }
   const events = computeEvents(asset, input.events ?? [], now);
-  return fuse(asset, macro, technical, events, now);
+  return fuse(asset, macro, technical, events, now, { mode, levels: assetInput?.levels });
 }
 
 /** 전체 스냅샷 생성 — public/macro.json 으로 그대로 직렬화된다. */
@@ -150,6 +160,7 @@ export function runSnapshot(input: SnapshotInput, now?: Date): Snapshot {
   return {
     version: 2,
     ruleset: RULESET_VERSION,
+    mode: input.mode ?? DEFAULT_MODE,
     generatedAt: generatedAt.toISOString(),
     schedule: input.schedule || DEFAULT_SCHEDULE,
     ...(input.note ? { note: input.note } : {}),

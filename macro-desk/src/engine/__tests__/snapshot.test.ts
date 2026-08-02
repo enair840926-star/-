@@ -6,6 +6,7 @@ import { fullSeries } from "./fixtures";
 const NOW = new Date("2026-08-03T12:00:00Z");
 
 const input: SnapshotInput = {
+  mode: "fusion",
   generatedAt: NOW.toISOString(),
   events: [{ label: "FOMC 성명", time: "2026-08-03T18:00:00Z", tier: 3, assets: ["NAS100"] }],
   assets: {
@@ -82,6 +83,7 @@ describe("validateInput", () => {
 
   it("잘못된 팩터 키·이벤트 티어·빈 캔들을 잡아낸다", () => {
     const errors = validateInput({
+      mode: "fusion",
       events: [{ label: "이상한 이벤트", time: "not-a-date", tier: 9 as never }],
       assets: {
         NAS100: {

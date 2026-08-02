@@ -21,6 +21,14 @@ export const TIMEFRAMES: Timeframe[] = ["D1", "H4", "H1", "M15"];
 /** 합의 매트릭스 상태 */
 export type Regime = "ALIGNED" | "PARTIAL" | "CONFLICT" | "RANGE";
 
+/**
+ * 분석 모드.
+ *  - fusion: 매크로 + 차트 융합 (번들 필요)
+ *  - macro-only: 외부요인만으로 편향을 낸다. 차트 확인이 없으므로 확신도 상한이 걸리고
+ *    무효화 가격·타임프레임 근거는 산출하지 않는다.
+ */
+export type AnalysisMode = "fusion" | "macro-only";
+
 /** 변동성 국면 */
 export type VolRegime = "SQUEEZE" | "NORMAL" | "EXPANSION";
 
@@ -74,16 +82,32 @@ export interface MacroEventInput {
   note?: string;
 }
 
+/**
+ * 리서치로 확인한 관측 레벨. 차트에서 계산한 값이 아니라 기사·시황에서 읽은 숫자이므로
+ * 기술 레이어 점수에 들어가지 않고, 편향 확인·무효화 관찰 포인트로만 쓴다.
+ */
+export interface LevelInput {
+  /** 리서치 시점 가격 */
+  last?: number;
+  support?: number[];
+  resistance?: number[];
+  note?: string;
+  source?: string;
+}
+
 export interface AssetInput {
   factors: MacroFactorInput[];
-  candles: CandleSeries;
-  /** 차트 번들을 아직 붙이지 않은 매크로 선행 수집 모드 */
-  technicalPending?: boolean;
+  candles?: CandleSeries;
+  levels?: LevelInput;
+  /** 스냅샷 기본 모드를 자산별로 덮어쓴다 */
+  mode?: AnalysisMode;
   /** 캔들 출처 메모 (예: v4 통합 번들 2026-08-03 08:00) */
   dataSource?: string;
 }
 
 export interface SnapshotInput {
+  /** 기본 분석 모드. 생략 시 "fusion" */
+  mode?: AnalysisMode;
   /** 스냅샷 기준 시각 (ISO). 생략 시 실행 시각 */
   generatedAt?: string;
   /** 갱신 케이던스 표기 */
@@ -197,6 +221,9 @@ export interface EventLayer {
 
 export interface FusionResult {
   asset: AssetId;
+  mode: AnalysisMode;
+  /** 리서치 관측 레벨 (macro-only 모드에서 편향 확인 포인트로 쓴다) */
+  levels?: LevelInput;
   /** 최종 이산 방향 */
   direction: Direction;
   /** 0~100 */
@@ -240,6 +267,7 @@ export interface SnapshotAsset {
 export interface Snapshot {
   version: number;
   ruleset: string;
+  mode: AnalysisMode;
   generatedAt: string;
   schedule: string;
   note?: string;

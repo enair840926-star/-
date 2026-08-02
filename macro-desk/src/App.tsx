@@ -411,6 +411,7 @@ function FusionPanel({
   now: Date;
   expanded: boolean;
 }) {
+  const macroOnly = fusion.mode === "macro-only";
   const blackout = fusion.events.activeBlackout;
   const nextStart = fusion.events.nextBlackoutStart
     ? Date.parse(fusion.events.nextBlackoutStart)
@@ -443,7 +444,7 @@ function FusionPanel({
     <div className="md-fusion">
       <div className="md-fusion-top">
         <span className={`md-regime ${REGIME_CLASS[fusion.regime]}`}>
-          {regimeLabel(fusion.regime)}
+          {regimeLabel(fusion.regime, fusion.mode)}
         </span>
         <div className="md-conviction">
           <div className="md-conviction-track">
@@ -457,14 +458,16 @@ function FusionPanel({
       </div>
 
       <div className="md-layers">
+        {!macroOnly && (
+          <LayerBar
+            label="차트"
+            score={fusion.technical.score}
+            confidence={fusion.technical.confidence}
+            hint={techHint}
+          />
+        )}
         <LayerBar
-          label="차트"
-          score={fusion.technical.score}
-          confidence={fusion.technical.confidence}
-          hint={techHint}
-        />
-        <LayerBar
-          label="매크로"
+          label={macroOnly ? "외부요인 편향" : "매크로"}
           score={fusion.macro.score}
           confidence={fusion.macro.confidence}
           hint={macroHint}
@@ -476,25 +479,48 @@ function FusionPanel({
       {countdown && <div className={`md-countdown ${countdown.tone}`}>{countdown.text}</div>}
 
       <div className="md-levels">
-        {fusion.technical.lastPrice !== null && (
-          <span>
-            현재 <b>{fusion.technical.lastPrice}</b>
-          </span>
-        )}
-        {fusion.technical.invalidation.long !== null && (
-          <span>
-            롱 무효화 <b>{fusion.technical.invalidation.long}</b>
-          </span>
-        )}
-        {fusion.technical.invalidation.short !== null && (
-          <span>
-            숏 무효화 <b>{fusion.technical.invalidation.short}</b>
-          </span>
-        )}
-        {fusion.technical.rangeUsage !== null && (
-          <span>
-            레인지 소진 <b>{Math.round(fusion.technical.rangeUsage * 100)}%</b>
-          </span>
+        {macroOnly ? (
+          <>
+            {fusion.levels?.last !== undefined && (
+              <span>
+                기준가 <b>{fusion.levels.last}</b>
+              </span>
+            )}
+            {!!fusion.levels?.support?.length && (
+              <span>
+                지지 <b>{fusion.levels.support.join(" / ")}</b>
+              </span>
+            )}
+            {!!fusion.levels?.resistance?.length && (
+              <span>
+                저항 <b>{fusion.levels.resistance.join(" / ")}</b>
+              </span>
+            )}
+            {!fusion.levels && <span className="md-levels-empty">관측 레벨 미수집</span>}
+          </>
+        ) : (
+          <>
+            {fusion.technical.lastPrice !== null && (
+              <span>
+                현재 <b>{fusion.technical.lastPrice}</b>
+              </span>
+            )}
+            {fusion.technical.invalidation.long !== null && (
+              <span>
+                롱 무효화 <b>{fusion.technical.invalidation.long}</b>
+              </span>
+            )}
+            {fusion.technical.invalidation.short !== null && (
+              <span>
+                숏 무효화 <b>{fusion.technical.invalidation.short}</b>
+              </span>
+            )}
+            {fusion.technical.rangeUsage !== null && (
+              <span>
+                레인지 소진 <b>{Math.round(fusion.technical.rangeUsage * 100)}%</b>
+              </span>
+            )}
+          </>
         )}
       </div>
 
@@ -522,8 +548,8 @@ function FusionPanel({
             )}
           </div>
 
-          <div className="md-sub-title">타임프레임</div>
-          <div className="md-tf-list">
+          {!macroOnly && <div className="md-sub-title">타임프레임</div>}
+          {!macroOnly && <div className="md-tf-list">
             {fusion.technical.timeframes.map((read) => (
               <div className="md-tf" key={read.tf}>
                 <span className="md-tf-name">{read.tf}</span>
@@ -537,7 +563,7 @@ function FusionPanel({
             {!fusion.technical.timeframes.length && (
               <div className="md-empty">차트 데이터가 없습니다</div>
             )}
-          </div>
+          </div>}
 
           {fusion.reanalyzeTriggers.length > 0 && (
             <>
@@ -559,8 +585,9 @@ function FusionPanel({
           )}
 
           <div className="md-weights">
-            융합 가중 차트 {Math.round(fusion.weights.technical * 100)}% · 매크로{" "}
-            {Math.round(fusion.weights.macro * 100)}%
+            {macroOnly
+              ? "외부요인 전용 · 차트 미사용(확신도 상한 70)"
+              : `융합 가중 차트 ${Math.round(fusion.weights.technical * 100)}% · 매크로 ${Math.round(fusion.weights.macro * 100)}%`}
             {fusion.events.maxTier > 0 && ` · 이벤트 ${fusion.events.maxTier}티어 상한 ${fusion.events.convictionCap}`}
           </div>
         </div>
@@ -867,7 +894,9 @@ export default function App() {
                     {isExpanded ? "▾" : "▸"} 근거 상세
                     <span>
                       {bias.fusion && !isManual
-                        ? `팩터 ${bias.fusion.macro.factors.length} · TF ${bias.fusion.technical.timeframes.length}`
+                        ? bias.fusion.mode === "macro-only"
+                          ? `팩터 ${bias.fusion.macro.factors.length}개`
+                          : `팩터 ${bias.fusion.macro.factors.length} · TF ${bias.fusion.technical.timeframes.length}`
                         : `${bias.drivers.length}개 드라이버`}
                     </span>
                   </button>

@@ -1,14 +1,15 @@
 {
   "version": 2,
   "ruleset": "fusion-v1.0",
-  "generatedAt": "2026-08-01T23:58:29.575Z",
+  "mode": "macro-only",
+  "generatedAt": "2026-08-02T00:40:57.204Z",
   "schedule": "08:00 · 16:00 · 22:00 KST",
-  "note": "2026-08-02(일) 주간 준비 스냅샷 · 매크로 레이어는 7/31(금) 마감 기준 실데이터, 차트 레이어는 v4 통합 번들 첨부 시 채워짐",
+  "note": "2026-08-02(일) 주간 준비 스냅샷 · 7/31(금) 마감 기준 외부요인 · 번들 없이 매크로 전용 모드",
   "assets": {
     "NAS100": {
       "direction": 0,
       "confidence": "낮음",
-      "rationale": "양측 중립 · 미 국채금리 －·연준 스탠스 － / 기술 근거 부족 → 중립",
+      "rationale": "요인 상충 · 미 국채금리 －·연준 스탠스 －·위험선호 ＋ → 중립",
       "drivers": [
         {
           "name": "미 국채금리",
@@ -27,27 +28,43 @@
         }
       ],
       "event": "ISM 제조업 PMI 8. 3. 23:00 KST",
-      "asof": "8. 2. 08:58 KST",
-      "setAt": "2026-08-01T23:58:29.575Z",
+      "asof": "8. 2. 09:40 KST",
+      "setAt": "2026-08-02T00:40:57.204Z",
       "source": "scheduled",
       "fusion": {
         "asset": "NAS100",
-        "direction": 0,
-        "conviction": 3,
-        "confidence": "낮음",
-        "score": -0.278,
-        "regime": "RANGE",
-        "weights": {
-          "technical": 0.6,
-          "macro": 0.4
+        "mode": "macro-only",
+        "levels": {
+          "last": 28106.35,
+          "support": [
+            27900,
+            27157
+          ],
+          "resistance": [
+            28607
+          ],
+          "note": "7/31 종가 28,106 · 일봉 27,900 하회 시 하락 트리거 · 200일선 27,052",
+          "source": "OneUpTrader/Yahoo 2026-07-31"
         },
-        "playbook": "차트 레이어 대기 · 매크로 편향 하락 — v4 통합 번들을 붙여야 방향·무효화 레벨이 확정된다",
-        "rationale": "양측 중립 · 미 국채금리 －·연준 스탠스 － / 기술 근거 부족 → 중립",
+        "direction": 0,
+        "conviction": 20,
+        "confidence": "낮음",
+        "score": -0.476,
+        "regime": "CONFLICT",
+        "weights": {
+          "technical": 0,
+          "macro": 1
+        },
+        "playbook": "요인 상충: 위험선호(＋) vs 미 국채금리(－) — 한쪽이 꺾이기 전까지 방향 없음 · 관측 범위 27900 ~ 28607",
+        "rationale": "요인 상충 · 미 국채금리 －·연준 스탠스 －·위험선호 ＋ → 중립",
         "reanalyzeTriggers": [
-          "22:40 이벤트 블랙아웃 진입",
-          "14:58 세션 경계 — 스냅샷 만료"
+          "지지 27900 / 27157 이탈 시 재평가",
+          "저항 28607 돌파 시 재평가",
+          "ISM 제조업 PMI 23:00 발표 결과",
+          "미 국채금리 방향 전환 시 즉시 재수집",
+          "15:40 스냅샷 만료"
         ],
-        "validUntil": "2026-08-02T05:58:29.575Z",
+        "validUntil": "2026-08-02T06:40:57.204Z",
         "macro": {
           "score": -0.476,
           "confidence": 0.42,
@@ -134,10 +151,7 @@
             "short": null
           },
           "timeframes": [],
-          "flags": [
-            "TECH_PENDING",
-            "TF_COVERAGE_LOW"
-          ]
+          "flags": []
         },
         "events": {
           "windows": [
@@ -148,7 +162,7 @@
               "note": "7월치 · 10:00 ET",
               "blackoutStart": "2026-08-03T13:40:00.000Z",
               "blackoutEnd": "2026-08-03T14:30:00.000Z",
-              "minutesUntil": 2282,
+              "minutesUntil": 2239,
               "active": false
             }
           ],
@@ -159,7 +173,7 @@
             "note": "7월치 · 10:00 ET",
             "blackoutStart": "2026-08-03T13:40:00.000Z",
             "blackoutEnd": "2026-08-03T14:30:00.000Z",
-            "minutesUntil": 2282,
+            "minutesUntil": 2239,
             "active": false
           },
           "maxTier": 0,
@@ -169,16 +183,15 @@
           "flags": []
         },
         "flags": [
-          "MACRO_HIGH_DISPERSION",
-          "TECH_PENDING",
-          "TF_COVERAGE_LOW"
+          "MACRO_ONLY",
+          "MACRO_HIGH_DISPERSION"
         ]
       }
     },
     "XAUUSD": {
       "direction": 0,
       "confidence": "낮음",
-      "rationale": "양측 중립 · 실질금리 －·연준 스탠스 － / 기술 근거 부족 → 중립",
+      "rationale": "요인 상충 · 실질금리 －·연준 스탠스 －·안전자산·지정학 ＋ → 중립",
       "drivers": [
         {
           "name": "실질금리",
@@ -197,27 +210,42 @@
         }
       ],
       "event": "ISM 제조업 PMI 8. 3. 23:00 KST",
-      "asof": "8. 2. 08:58 KST",
-      "setAt": "2026-08-01T23:58:29.575Z",
+      "asof": "8. 2. 09:40 KST",
+      "setAt": "2026-08-02T00:40:57.204Z",
       "source": "scheduled",
       "fusion": {
         "asset": "XAUUSD",
-        "direction": 0,
-        "conviction": 2,
-        "confidence": "낮음",
-        "score": -0.252,
-        "regime": "RANGE",
-        "weights": {
-          "technical": 0.6,
-          "macro": 0.4
+        "mode": "macro-only",
+        "levels": {
+          "last": 4042.97,
+          "support": [
+            4000
+          ],
+          "resistance": [
+            4100
+          ],
+          "note": "금리 급등에 4,100 회복 실패",
+          "source": "FXStreet/TradingEconomics 2026-07-31"
         },
-        "playbook": "차트 레이어 대기 · 매크로 편향 하락 — v4 통합 번들을 붙여야 방향·무효화 레벨이 확정된다",
-        "rationale": "양측 중립 · 실질금리 －·연준 스탠스 － / 기술 근거 부족 → 중립",
+        "direction": 0,
+        "conviction": 19,
+        "confidence": "낮음",
+        "score": -0.455,
+        "regime": "CONFLICT",
+        "weights": {
+          "technical": 0,
+          "macro": 1
+        },
+        "playbook": "요인 상충: 안전자산·지정학(＋) vs 실질금리(－) — 한쪽이 꺾이기 전까지 방향 없음 · 관측 범위 4000 ~ 4100",
+        "rationale": "요인 상충 · 실질금리 －·연준 스탠스 －·안전자산·지정학 ＋ → 중립",
         "reanalyzeTriggers": [
-          "22:40 이벤트 블랙아웃 진입",
-          "14:58 세션 경계 — 스냅샷 만료"
+          "지지 4000 이탈 시 재평가",
+          "저항 4100 돌파 시 재평가",
+          "ISM 제조업 PMI 23:00 발표 결과",
+          "실질금리 방향 전환 시 즉시 재수집",
+          "15:40 스냅샷 만료"
         ],
-        "validUntil": "2026-08-02T05:58:29.575Z",
+        "validUntil": "2026-08-02T06:40:57.204Z",
         "macro": {
           "score": -0.455,
           "confidence": 0.374,
@@ -304,10 +332,7 @@
             "short": null
           },
           "timeframes": [],
-          "flags": [
-            "TECH_PENDING",
-            "TF_COVERAGE_LOW"
-          ]
+          "flags": []
         },
         "events": {
           "windows": [
@@ -318,7 +343,7 @@
               "note": "7월치 · 10:00 ET",
               "blackoutStart": "2026-08-03T13:40:00.000Z",
               "blackoutEnd": "2026-08-03T14:30:00.000Z",
-              "minutesUntil": 2282,
+              "minutesUntil": 2239,
               "active": false
             }
           ],
@@ -329,7 +354,7 @@
             "note": "7월치 · 10:00 ET",
             "blackoutStart": "2026-08-03T13:40:00.000Z",
             "blackoutEnd": "2026-08-03T14:30:00.000Z",
-            "minutesUntil": 2282,
+            "minutesUntil": 2239,
             "active": false
           },
           "maxTier": 0,
@@ -339,16 +364,15 @@
           "flags": []
         },
         "flags": [
-          "MACRO_HIGH_DISPERSION",
-          "TECH_PENDING",
-          "TF_COVERAGE_LOW"
+          "MACRO_ONLY",
+          "MACRO_HIGH_DISPERSION"
         ]
       }
     },
     "USOIL": {
-      "direction": 0,
+      "direction": 1,
       "confidence": "낮음",
-      "rationale": "부분 동조 · 공급 차질 ＋·지정학 ＋ / 기술 근거 부족 → 중립",
+      "rationale": "우세·일부 상충 · 공급 차질 ＋·지정학 ＋·OPEC+ － → 상승",
       "drivers": [
         {
           "name": "공급 차질",
@@ -367,27 +391,38 @@
         }
       ],
       "event": "ISM 제조업 PMI 8. 3. 23:00 KST",
-      "asof": "8. 2. 08:58 KST",
-      "setAt": "2026-08-01T23:58:29.575Z",
+      "asof": "8. 2. 09:40 KST",
+      "setAt": "2026-08-02T00:40:57.204Z",
       "source": "scheduled",
       "fusion": {
         "asset": "USOIL",
-        "direction": 0,
-        "conviction": 6,
+        "mode": "macro-only",
+        "levels": {
+          "last": 84.67,
+          "resistance": [
+            85
+          ],
+          "note": "7월 +20% · 금요일 장중 85달러 상회",
+          "source": "Bloomberg/TradingEconomics 2026-07-31"
+        },
+        "direction": 1,
+        "conviction": 34,
         "confidence": "낮음",
-        "score": 0.466,
+        "score": 0.817,
         "regime": "PARTIAL",
         "weights": {
-          "technical": 0.6,
-          "macro": 0.4
+          "technical": 0,
+          "macro": 1
         },
-        "playbook": "차트 레이어 대기 · 매크로 편향 상승 — v4 통합 번들을 붙여야 방향·무효화 레벨이 확정된다",
-        "rationale": "부분 동조 · 공급 차질 ＋·지정학 ＋ / 기술 근거 부족 → 중립",
+        "playbook": "상승 편향 · 공급 차질 주도 · 반대 요인 OPEC+ · 85 상향 돌파 시 편향 확인",
+        "rationale": "우세·일부 상충 · 공급 차질 ＋·지정학 ＋·OPEC+ － → 상승",
         "reanalyzeTriggers": [
-          "22:40 이벤트 블랙아웃 진입",
-          "14:58 세션 경계 — 스냅샷 만료"
+          "저항 85 돌파 시 재평가",
+          "ISM 제조업 PMI 23:00 발표 결과",
+          "공급 차질 방향 전환 시 즉시 재수집",
+          "15:40 스냅샷 만료"
         ],
-        "validUntil": "2026-08-02T05:58:29.575Z",
+        "validUntil": "2026-08-02T06:40:57.204Z",
         "macro": {
           "score": 0.817,
           "confidence": 0.399,
@@ -474,10 +509,7 @@
             "short": null
           },
           "timeframes": [],
-          "flags": [
-            "TECH_PENDING",
-            "TF_COVERAGE_LOW"
-          ]
+          "flags": []
         },
         "events": {
           "windows": [
@@ -488,7 +520,7 @@
               "note": "7월치 · 10:00 ET",
               "blackoutStart": "2026-08-03T13:40:00.000Z",
               "blackoutEnd": "2026-08-03T14:30:00.000Z",
-              "minutesUntil": 2282,
+              "minutesUntil": 2239,
               "active": false
             }
           ],
@@ -499,7 +531,7 @@
             "note": "7월치 · 10:00 ET",
             "blackoutStart": "2026-08-03T13:40:00.000Z",
             "blackoutEnd": "2026-08-03T14:30:00.000Z",
-            "minutesUntil": 2282,
+            "minutesUntil": 2239,
             "active": false
           },
           "maxTier": 0,
@@ -509,16 +541,15 @@
           "flags": []
         },
         "flags": [
-          "MACRO_HIGH_DISPERSION",
-          "TECH_PENDING",
-          "TF_COVERAGE_LOW"
+          "MACRO_ONLY",
+          "MACRO_HIGH_DISPERSION"
         ]
       }
     },
     "EURUSD": {
       "direction": 0,
       "confidence": "낮음",
-      "rationale": "양측 중립 · ECB 스탠스 ＋·유로존 지표 ＋ / 기술 근거 부족 → 중립",
+      "rationale": "요인 상충 · ECB 스탠스 ＋·유로존 지표 ＋·미-유로존 금리차 － → 중립",
       "drivers": [
         {
           "name": "ECB 스탠스",
@@ -537,27 +568,43 @@
         }
       ],
       "event": "ISM 제조업 PMI 8. 3. 23:00 KST",
-      "asof": "8. 2. 08:58 KST",
-      "setAt": "2026-08-01T23:58:29.575Z",
+      "asof": "8. 2. 09:40 KST",
+      "setAt": "2026-08-02T00:40:57.204Z",
       "source": "scheduled",
       "fusion": {
         "asset": "EURUSD",
-        "direction": 0,
-        "conviction": 2,
-        "confidence": "낮음",
-        "score": 0.225,
-        "regime": "RANGE",
-        "weights": {
-          "technical": 0.6,
-          "macro": 0.4
+        "mode": "macro-only",
+        "levels": {
+          "last": 1.1485,
+          "support": [
+            1.14
+          ],
+          "resistance": [
+            1.15,
+            1.185
+          ],
+          "note": "1.1400은 2022~2026 랠리의 23.6% 되돌림 · 1.15 회복 전까지 방향 불명",
+          "source": "Investing.com/FXEmpire 2026-07-31"
         },
-        "playbook": "차트 레이어 대기 · 매크로 편향 상승 — v4 통합 번들을 붙여야 방향·무효화 레벨이 확정된다",
-        "rationale": "양측 중립 · ECB 스탠스 ＋·유로존 지표 ＋ / 기술 근거 부족 → 중립",
+        "direction": 0,
+        "conviction": 16,
+        "confidence": "낮음",
+        "score": 0.382,
+        "regime": "CONFLICT",
+        "weights": {
+          "technical": 0,
+          "macro": 1
+        },
+        "playbook": "요인 상충: ECB 스탠스(＋) vs 미-유로존 금리차(－) — 한쪽이 꺾이기 전까지 방향 없음 · 관측 범위 1.14 ~ 1.15",
+        "rationale": "요인 상충 · ECB 스탠스 ＋·유로존 지표 ＋·미-유로존 금리차 － → 중립",
         "reanalyzeTriggers": [
-          "22:40 이벤트 블랙아웃 진입",
-          "14:58 세션 경계 — 스냅샷 만료"
+          "지지 1.14 이탈 시 재평가",
+          "저항 1.15 / 1.185 돌파 시 재평가",
+          "ISM 제조업 PMI 23:00 발표 결과",
+          "ECB 스탠스 방향 전환 시 즉시 재수집",
+          "15:40 스냅샷 만료"
         ],
-        "validUntil": "2026-08-02T05:58:29.575Z",
+        "validUntil": "2026-08-02T06:40:57.204Z",
         "macro": {
           "score": 0.382,
           "confidence": 0.429,
@@ -644,10 +691,7 @@
             "short": null
           },
           "timeframes": [],
-          "flags": [
-            "TECH_PENDING",
-            "TF_COVERAGE_LOW"
-          ]
+          "flags": []
         },
         "events": {
           "windows": [
@@ -658,7 +702,7 @@
               "note": "7월치 · 10:00 ET",
               "blackoutStart": "2026-08-03T13:40:00.000Z",
               "blackoutEnd": "2026-08-03T14:30:00.000Z",
-              "minutesUntil": 2282,
+              "minutesUntil": 2239,
               "active": false
             }
           ],
@@ -669,7 +713,7 @@
             "note": "7월치 · 10:00 ET",
             "blackoutStart": "2026-08-03T13:40:00.000Z",
             "blackoutEnd": "2026-08-03T14:30:00.000Z",
-            "minutesUntil": 2282,
+            "minutesUntil": 2239,
             "active": false
           },
           "maxTier": 0,
@@ -679,9 +723,8 @@
           "flags": []
         },
         "flags": [
-          "MACRO_HIGH_DISPERSION",
-          "TECH_PENDING",
-          "TF_COVERAGE_LOW"
+          "MACRO_ONLY",
+          "MACRO_HIGH_DISPERSION"
         ]
       }
     }
