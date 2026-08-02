@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FusionResult, Regime, Scoreboard } from "./engine/types";
 import { regimeLabel } from "./engine/fusion";
+import { snapshotStatus } from "./engine/schedule";
 
 const KST = "Asia/Seoul";
 const STORE_KEY = "macrodesk:v4:overrides";
@@ -723,6 +724,10 @@ export default function App() {
   );
   const activeNow = sessions.filter((s) => s.active).map((s) => s.label);
   const nowK = kstHourFloat(now);
+  const snapshot = useMemo(
+    () => snapshotStatus(payload.generatedAt, now),
+    [payload.generatedAt, Math.floor(now.getTime() / 60_000)],
+  );
 
   function mergedBias(id: AssetId): Bias {
     return { ...payload.assets[id], ...(overrides[id] || {}) };
@@ -789,6 +794,31 @@ export default function App() {
           {activeNow.length
             ? `${activeNow.join(" · ")} 세션 진행 중`
             : "메이저 세션 공백 구간"}
+        </div>
+
+        {/* 알림이 없는 환경에서는 이 줄이 "언제 것인가"를 알려주는 유일한 수단이다.
+            낡은 화면을 최신으로 착각하는 것이 가장 위험하므로 맨 앞에 크게 둔다. */}
+        <div
+          className={`md-asof ${snapshot ? (snapshot.missed ? "late" : "ok") : "unknown"}`}
+        >
+          {snapshot ? (
+            <>
+              <b>
+                {snapshot.missed && "⚠ "}
+                {fmtKST(snapshot.at)} 기준
+              </b>
+              <span>{fmtDur(snapshot.elapsedMs)} 전</span>
+              <em>
+                {snapshot.missed
+                  ? `${fmtKST(snapshot.missed)} 갱신 누락`
+                  : snapshot.next
+                    ? `다음 ${fmtKST(snapshot.next)}`
+                    : null}
+              </em>
+            </>
+          ) : (
+            <b>기준 시각 없음 — 아직 예약 분석을 받지 못했습니다</b>
+          )}
         </div>
 
         <button

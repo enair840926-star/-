@@ -155,13 +155,71 @@ button {
   font-size: 11px;
 }
 
+/* 기준 시각 배너.
+   푸시 알림이 없으면 이 줄이 "지금 보는 게 언제 것인가"를 알려주는 유일한 수단이다.
+   갱신이 밀리면 색으로 즉시 드러나야 한다. */
+.md-asof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+  margin-top: 14px;
+  padding: 10px 12px;
+  font-size: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--dim);
+  border-radius: 10px;
+}
+
+.md-asof b {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.01em;
+}
+
+.md-asof span {
+  color: var(--muted);
+}
+
+.md-asof em {
+  margin-left: auto;
+  color: var(--dim);
+  font-style: normal;
+  font-size: 11px;
+}
+
+.md-asof.ok {
+  border-left-color: var(--ok);
+}
+
+.md-asof.late {
+  background: #241a12;
+  border-color: #4a3418;
+  border-left-color: var(--warn);
+}
+
+.md-asof.late b,
+.md-asof.late em {
+  color: var(--warn);
+}
+
+.md-asof.unknown {
+  border-left-color: var(--danger);
+}
+
+.md-asof.unknown b {
+  color: var(--danger);
+}
+
 .md-refresh {
   display: flex;
   gap: 8px;
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin-top: 14px;
+  margin-top: 10px;
   padding: 12px;
   color: #dfe7ff;
   font-size: 13px;
