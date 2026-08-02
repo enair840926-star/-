@@ -1,32 +1,73 @@
 # Macro Desk
 
-NAS100, XAUUSD, USOIL, EURUSD의 당일 외부·매크로 방향을 한 화면에서 확인하는 모바일 우선 대시보드입니다.
+NAS100, XAUUSD, USOIL, EURUSD의 당일 방향성을 **매크로·외부요인 + 차트**를 함께 읽어
+한 화면에서 확인하는 모바일 우선 대시보드입니다.
 
-## 동작 구조
+## 구조
 
-- `public/macro.json`: 예약 분석이 갱신하는 단일 데이터 원본
-- `src/App.tsx`: 예약 데이터 표시, 세션 유효시간, 수동 방향·메모
-- `localStorage`: 수동 설정과 메모를 현재 기기에만 저장
-- `.github/workflows/macro-desk-pages.yml`: 변경 시 GitHub Pages 재배포
+```
+매크로 레이어 (외부요인)          차트 레이어 (v4 통합 번들)
+  가중 팩터 → 점수·커버리지          D1/H4/H1/M15 → 추세·구조·모멘텀
+        └───────────┬────────────────────────┘
+               이벤트 레이어 (블랙아웃·확신도 상한)
+                    ▼
+          융합: 방향 · 확신도 · 플레이북 · 무효화 · 재분석 트리거
+```
 
-브라우저에서 AI API를 직접 호출하지 않습니다. API 키 노출과 CORS 문제를 피하기 위해 예약 작업이 `macro.json`을 갱신하고, 화면은 해당 파일을 읽습니다.
+두 레이어는 서로를 수정하지 않습니다(레이어 잠금). 융합 결과에는 각 레이어의 원값이
+그대로 보존되어 무엇이 방향을 만들었는지 화면에서 되짚을 수 있습니다.
 
-## 로컬 실행
+- 규칙서: [`docs/fusion-ruleset-v1.md`](docs/fusion-ruleset-v1.md) — 가중치·점수식·합의 매트릭스·금지 사항
+- 운영 절차: [`docs/runbook.md`](docs/runbook.md) — 수집·번들 연결·스냅샷·배포
+
+## 파일
+
+- `src/engine/` — 결정적 융합 엔진(매크로·차트·이벤트·융합)
+- `src/engine/__tests__/` — 엔진 테스트
+- `scripts/build-snapshot.ts` — 세션 입력 → `public/macro.json`
+- `scripts/from-bundle.ts` — v4 통합 번들 ZIP → 캔들 입력
+- `data/session/latest.json` — 최신 세션 입력(감사 추적용으로 함께 커밋)
+- `public/macro.json` — 화면이 읽는 단일 데이터 원본
+- `src/App.tsx` — 이중 게이지·합의 배지·블랙아웃 카운트다운·수동 오버라이드
+- `.github/workflows/macro-desk-pages.yml` — 변경 시 GitHub Pages 재배포
+
+브라우저에서 AI API나 시세 API를 직접 호출하지 않습니다. 예약 작업이 `macro.json`을
+갱신하고, 화면은 그 파일만 읽습니다.
+
+## 사용
 
 ```bash
 npm ci
-npm run dev
+
+# 1) data/session/latest.json 의 factors·events 를 채운다 (runbook 참고)
+# 2) 차트 붙이기
+npm run bundle -- --asset XAUUSD --zip ~/bundles/xauusd.zip
+# 3) 스냅샷 생성
+npm run snapshot -- --input data/session/latest.json
 ```
 
 ## 검증
 
 ```bash
-npm run check
-npm run build
+npm run check   # 타입
+npm test        # 엔진 테스트
+npm run build   # 프로덕션 빌드
+```
+
+## 로컬 실행
+
+```bash
+npm run dev
 ```
 
 ## GitHub Pages
 
-저장소의 **Settings → Pages → Build and deployment**에서 Source를 **GitHub Actions**로 설정하면 워크플로가 `macro-desk/dist`를 배포합니다.
+저장소의 **Settings → Pages → Build and deployment**에서 Source를 **GitHub Actions**로
+설정하면 워크플로가 `macro-desk/dist`를 배포합니다.
 
 프로젝트 사이트 기준 경로는 저장소 이름에 맞춰 `/-/`로 설정되어 있습니다.
+
+## 주의
+
+방향과 확신도는 분석 좌표입니다. 체결과 시세 정본은 MT5이며, 이 화면은 주문 실행·포지션
+크기·레버리지 결정을 대신하지 않습니다.

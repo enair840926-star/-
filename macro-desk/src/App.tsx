@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { FusionResult, Regime } from "./engine/types";
+import { regimeLabel } from "./engine/fusion";
 
 const KST = "Asia/Seoul";
 const STORE_KEY = "macrodesk:v4:overrides";
@@ -99,6 +101,7 @@ interface Bias {
   setAt: string | null;
   source: "scheduled" | "manual" | null;
   note?: string;
+  fusion?: FusionResult;
 }
 
 interface MacroPayload {
@@ -333,9 +336,14 @@ function normalizePayload(value: unknown): MacroPayload {
       raw.direction === null || raw.direction === undefined
         ? Number.NaN
         : Number(raw.direction);
+    const fusion =
+      raw.fusion && typeof raw.fusion === "object" && Number.isFinite(raw.fusion.conviction)
+        ? raw.fusion
+        : undefined;
     assets[asset.id] = {
       ...EMPTY_BIAS,
       ...raw,
+      fusion,
       direction:
         Number.isInteger(direction) && direction >= -2 && direction <= 2
           ? (direction as Direction)
@@ -350,6 +358,221 @@ function normalizePayload(value: unknown): MacroPayload {
     schedule: input.schedule || EMPTY_PAYLOAD.schedule,
     assets,
   };
+}
+
+const REGIME_CLASS: Record<Regime, string> = {
+  ALIGNED: "aligned",
+  PARTIAL: "partial",
+  CONFLICT: "conflict",
+  RANGE: "range",
+};
+
+function LayerBar({
+  label,
+  score,
+  confidence,
+  hint,
+}: {
+  label: string;
+  score: number;
+  confidence: number;
+  hint: string;
+}) {
+  const half = Math.min(50, (Math.abs(score) / 2) * 50);
+  const positive = score >= 0;
+  return (
+    <div className="md-layer">
+      <div className="md-layer-head">
+        <span className="md-layer-label">{label}</span>
+        <span className={`md-layer-value ${positive ? "up" : "down"}`}>
+          {score > 0 ? "+" : ""}
+          {score.toFixed(2)}
+        </span>
+        <span className="md-layer-conf">신뢰 {Math.round(confidence * 100)}%</span>
+      </div>
+      <div className="md-layer-track">
+        <i className="md-layer-mid" />
+        <div
+          className={`md-layer-fill ${positive ? "up" : "down"}`}
+          style={{ width: `${half}%`, left: positive ? "50%" : `${50 - half}%` }}
+        />
+      </div>
+      <div className="md-layer-hint">{hint}</div>
+    </div>
+  );
+}
+
+function FusionPanel({
+  fusion,
+  now,
+  expanded,
+}: {
+  fusion: FusionResult;
+  now: Date;
+  expanded: boolean;
+}) {
+  const blackout = fusion.events.activeBlackout;
+  const nextStart = fusion.events.nextBlackoutStart
+    ? Date.parse(fusion.events.nextBlackoutStart)
+    : null;
+  const countdown = blackout
+    ? {
+        tone: "danger" as const,
+        text: `블랙아웃 진행 · ${fmtDur(Date.parse(blackout.blackoutEnd) - now.getTime())} 후 해제`,
+      }
+    : nextStart && nextStart > now.getTime()
+      ? {
+          tone: (nextStart - now.getTime() < 90 * 60_000 ? "warn" : "muted") as
+            | "warn"
+            | "muted",
+          text: `다음 블랙아웃까지 ${fmtDur(nextStart - now.getTime())}`,
+        }
+      : null;
+
+  const topMacro = fusion.macro.factors.slice(0, 3);
+  const macroHint = topMacro.length
+    ? topMacro.map((factor) => factor.label).join(" · ")
+    : "매크로 팩터 없음";
+  const techHint = fusion.technical.timeframes.length
+    ? fusion.technical.timeframes
+        .map((read) => `${read.tf} ${read.score > 0 ? "+" : ""}${read.score.toFixed(1)}`)
+        .join(" · ")
+    : "차트 데이터 없음";
+
+  return (
+    <div className="md-fusion">
+      <div className="md-fusion-top">
+        <span className={`md-regime ${REGIME_CLASS[fusion.regime]}`}>
+          {regimeLabel(fusion.regime)}
+        </span>
+        <div className="md-conviction">
+          <div className="md-conviction-track">
+            <div
+              className={`md-conviction-fill ${REGIME_CLASS[fusion.regime]}`}
+              style={{ width: `${fusion.conviction}%` }}
+            />
+          </div>
+          <span className="md-conviction-value">확신도 {fusion.conviction}</span>
+        </div>
+      </div>
+
+      <div className="md-layers">
+        <LayerBar
+          label="차트"
+          score={fusion.technical.score}
+          confidence={fusion.technical.confidence}
+          hint={techHint}
+        />
+        <LayerBar
+          label="매크로"
+          score={fusion.macro.score}
+          confidence={fusion.macro.confidence}
+          hint={macroHint}
+        />
+      </div>
+
+      <p className="md-playbook">{fusion.playbook}</p>
+
+      {countdown && <div className={`md-countdown ${countdown.tone}`}>{countdown.text}</div>}
+
+      <div className="md-levels">
+        {fusion.technical.lastPrice !== null && (
+          <span>
+            현재 <b>{fusion.technical.lastPrice}</b>
+          </span>
+        )}
+        {fusion.technical.invalidation.long !== null && (
+          <span>
+            롱 무효화 <b>{fusion.technical.invalidation.long}</b>
+          </span>
+        )}
+        {fusion.technical.invalidation.short !== null && (
+          <span>
+            숏 무효화 <b>{fusion.technical.invalidation.short}</b>
+          </span>
+        )}
+        {fusion.technical.rangeUsage !== null && (
+          <span>
+            레인지 소진 <b>{Math.round(fusion.technical.rangeUsage * 100)}%</b>
+          </span>
+        )}
+      </div>
+
+      {expanded && (
+        <div className="md-fusion-detail">
+          <div className="md-sub-title">매크로 팩터 · 기여도순</div>
+          <div className="md-factor-list">
+            {fusion.macro.factors.map((factor) => (
+              <div className="md-factor" key={factor.key}>
+                <span className={`md-factor-read ${readClass(stanceRead(factor.stance))}`}>
+                  {factor.stance > 0 ? "+" : ""}
+                  {factor.stance}
+                </span>
+                <span className="md-factor-body">
+                  <b>
+                    {factor.label}
+                    <em>가중 {Math.round(factor.weight * 100)}%</em>
+                  </b>
+                  <span>{factor.note}</span>
+                </span>
+              </div>
+            ))}
+            {!fusion.macro.factors.length && (
+              <div className="md-empty">수집된 매크로 팩터가 없습니다</div>
+            )}
+          </div>
+
+          <div className="md-sub-title">타임프레임</div>
+          <div className="md-tf-list">
+            {fusion.technical.timeframes.map((read) => (
+              <div className="md-tf" key={read.tf}>
+                <span className="md-tf-name">{read.tf}</span>
+                <span className={`md-tf-score ${read.score >= 0 ? "up" : "down"}`}>
+                  {read.score > 0 ? "+" : ""}
+                  {read.score.toFixed(2)}
+                </span>
+                <span className="md-tf-note">{read.note}</span>
+              </div>
+            ))}
+            {!fusion.technical.timeframes.length && (
+              <div className="md-empty">차트 데이터가 없습니다</div>
+            )}
+          </div>
+
+          {fusion.reanalyzeTriggers.length > 0 && (
+            <>
+              <div className="md-sub-title">재분석 트리거</div>
+              <ul className="md-triggers">
+                {fusion.reanalyzeTriggers.map((trigger) => (
+                  <li key={trigger}>{trigger}</li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {fusion.flags.length > 0 && (
+            <div className="md-flags">
+              {fusion.flags.map((flag) => (
+                <span key={flag}>{flag}</span>
+              ))}
+            </div>
+          )}
+
+          <div className="md-weights">
+            융합 가중 차트 {Math.round(fusion.weights.technical * 100)}% · 매크로{" "}
+            {Math.round(fusion.weights.macro * 100)}%
+            {fusion.events.maxTier > 0 && ` · 이벤트 ${fusion.events.maxTier}티어 상한 ${fusion.events.convictionCap}`}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function stanceRead(stance: number): Driver["read"] {
+  if (stance > 0.25) return "상승";
+  if (stance < -0.25) return "하락";
+  return "중립";
 }
 
 export default function App() {
@@ -428,6 +651,7 @@ export default function App() {
         drivers: [],
         event: "없음",
         asof: null,
+        fusion: undefined,
       },
     }));
   }
@@ -487,7 +711,7 @@ export default function App() {
           {refreshing ? "예약 분석 불러오는 중…" : "최신 예약 분석 불러오기"}
         </button>
         <div className="md-refresh-note">
-          매일 {payload.schedule} 자동 갱신 · 외부 컨텍스트 전용 · 기술 번들과 별개
+          매일 {payload.schedule} 자동 갱신 · 매크로 + 차트 융합 · 레이어별 근거 보존
         </div>
         {error && <div className="md-global-error">{error}</div>}
       </header>
@@ -625,7 +849,11 @@ export default function App() {
                 )}
               </div>
 
-              {bias.drivers.length > 0 && (
+              {bias.fusion && !isManual && (
+                <FusionPanel fusion={bias.fusion} now={now} expanded={isExpanded} />
+              )}
+
+              {(bias.drivers.length > 0 || (bias.fusion && !isManual)) && (
                 <div className="md-detail">
                   <button
                     className="md-detail-toggle"
@@ -637,9 +865,13 @@ export default function App() {
                     }
                   >
                     {isExpanded ? "▾" : "▸"} 근거 상세
-                    <span>{bias.drivers.length}개 드라이버</span>
+                    <span>
+                      {bias.fusion && !isManual
+                        ? `팩터 ${bias.fusion.macro.factors.length} · TF ${bias.fusion.technical.timeframes.length}`
+                        : `${bias.drivers.length}개 드라이버`}
+                    </span>
                   </button>
-                  {isExpanded && (
+                  {isExpanded && !(bias.fusion && !isManual) && (
                     <div className="md-driver-list">
                       {bias.drivers.map((driver, index) => (
                         <div className="md-driver" key={`${driver.name}-${index}`}>
@@ -734,8 +966,8 @@ export default function App() {
       </section>
 
       <footer className="md-footer">
-        예약 분석은 <b>웹검색 기반 외부 컨텍스트 초안</b> · 체결과 시세 정본은{" "}
-        <b>MT5</b> · 세션 경계를 넘으면 재분석 신호
+        예약 분석은 <b>매크로·차트 융합 초안</b> · 체결과 시세 정본은 <b>MT5</b> · 방향은
+        분석 좌표이며 주문·사이즈 결정을 대신하지 않음
         {payload.generatedAt && (
           <small>마지막 자동 갱신 {fmtKST(payload.generatedAt)}</small>
         )}
