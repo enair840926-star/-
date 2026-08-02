@@ -372,6 +372,8 @@ export interface PredictionRecord {
   positionRelation: PositionLayer["relation"] | null;
   /** 이벤트 상한이 적정한지 검증용 (0 = 해당 없음) */
   eventTier: number;
+  /** 블록 상한이 실제로 도움이 됐는지 검증용 */
+  blockCapped: boolean;
   /** 예측 시점 가격 */
   refPrice: number | null;
   horizonEnd: string;

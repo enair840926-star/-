@@ -105,7 +105,19 @@ git push -u origin main
 `main`에 들어가면 `.github/workflows/macro-desk-pages.yml`이 Pages를 재배포한다.
 **`predictions.jsonl`을 반드시 함께 커밋한다.** 이게 빠지면 다음 실행에서 채점할 대상이 사라진다.
 
-## 7. 검증
+## 7. 주간 보정
+
+일요일 10:00 KST에 별도 루틴이 돈다. 수동으로 돌리려면:
+
+```bash
+npm run calibrate -- --dry   # 계산만 확인
+npm run calibrate            # 중립밴드 자동 적용 + 리포트 생성
+```
+
+중립밴드만 자동으로 갱신되고, 확신도·게이트·가중치는 리포트 제안으로만 남는다.
+절차는 [`calibration.md`](calibration.md) 참고.
+
+## 8. 검증
 
 ```bash
 npm run check   # 타입

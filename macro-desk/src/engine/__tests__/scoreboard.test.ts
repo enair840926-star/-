@@ -34,6 +34,7 @@ function record(
     factors: [],
     positionRelation: null,
     eventTier: 0,
+    blockCapped: false,
     refPrice: 100,
     horizonEnd: hoursLater(8).toISOString(),
     outcome: null,

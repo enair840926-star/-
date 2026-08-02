@@ -1,3 +1,4 @@
+import params from "./params.json";
 import type { AssetId, EventTier, Stance, Timeframe } from "./types";
 
 /** 팩터가 속한 진영. 같은 블록은 "같은 이야기"로 본다. */
@@ -400,12 +401,19 @@ export const DECAY_HALF_LIFE_PERSISTENT_HOURS = 72;
 /** 이 시간을 넘긴 비지속 팩터는 계산에서 제외한다 */
 export const FACTOR_MAX_AGE_HOURS = 48;
 
-/** 8시간 구간에서 "움직이지 않았다"로 볼 변화율(%) */
-export const NEUTRAL_BAND_PCT: Record<AssetId, number> = {
-  NAS100: 0.35,
-  XAUUSD: 0.35,
-  USOIL: 0.8,
-  EURUSD: 0.2,
+/**
+ * 8시간 구간에서 "움직이지 않았다"로 볼 변화율(%).
+ *
+ * 주간 보정 루틴이 실현 변화율 분포의 p30으로 갱신하므로 코드가 아니라
+ * `params.json`에 둔다. 스크립트는 그 JSON만 건드리고 엔진 코드는 손대지 않는다.
+ */
+export const NEUTRAL_BAND_PCT: Record<AssetId, number> = params.neutralBandPct;
+
+/** 보정 파라미터 메타 (마지막 갱신 시각·출처) */
+export const PARAMS_META = {
+  version: params.version,
+  updatedAt: params.updatedAt,
+  source: params.source,
 };
 
 /** 타임프레임 가중치: 구조(상위 TF)를 모멘텀(하위 TF)보다 무겁게 둔다. */

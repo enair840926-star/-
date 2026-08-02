@@ -10,7 +10,8 @@
     "check": "tsc -b --pretty false",
     "test": "vitest run",
     "snapshot": "tsx scripts/build-snapshot.ts",
-    "bundle": "tsx scripts/from-bundle.ts"
+    "bundle": "tsx scripts/from-bundle.ts",
+    "calibrate": "tsx scripts/calibrate.ts"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.4.1",

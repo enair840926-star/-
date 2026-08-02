@@ -22,7 +22,7 @@ const HOUR = 3_600_000;
 /** 이 시간을 넘겨 채점되지 못한 기록은 실행 누락으로 보고 닫는다 */
 const STALE_AFTER_HOURS = 20;
 
-const CONVICTION_BUCKETS: Array<{ id: string; min: number; max: number }> = [
+export const CONVICTION_BUCKETS: Array<{ id: string; min: number; max: number }> = [
   { id: "25-39", min: 25, max: 39 },
   { id: "40-54", min: 40, max: 54 },
   { id: "55-69", min: 55, max: 69 },
@@ -50,6 +50,7 @@ export function openPrediction(fusion: FusionResult, generatedAt: Date): Predict
     })),
     positionRelation: fusion.position?.relation ?? null,
     eventTier: fusion.events.maxTier,
+    blockCapped: fusion.macro.flags.some((flag) => flag.startsWith("BLOCK_CAPPED")),
     refPrice,
     horizonEnd: new Date(generatedAt.getTime() + MAX_VALID_HOURS * HOUR).toISOString(),
     outcome: null,
