@@ -1152,3 +1152,86 @@ button {
   outline: 2px solid #3bb68c;
   outline-offset: 2px;
 }
+
+/* ── 적중률 스코어보드 ─────────────────────────────────────── */
+
+.md-scoreboard {
+  padding: 13px;
+  margin-top: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.md-scoreboard-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.md-scoreboard-total {
+  display: flex;
+  gap: 9px;
+  align-items: baseline;
+  margin-bottom: 11px;
+}
+
+.md-scoreboard-total b {
+  color: var(--text);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.md-scoreboard-total span {
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+.md-scoreboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 9px;
+  border-top: 1px solid #1c2432;
+}
+
+.md-score-row {
+  display: flex;
+  gap: 9px;
+  align-items: baseline;
+}
+
+.md-score-name {
+  flex: 0 0 86px;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.md-score-rate {
+  flex: 0 0 42px;
+  color: var(--ai);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.md-score-note {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--dim);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.md-scoreboard-note {
+  margin: 11px 0 0;
+  color: var(--dim);
+  font-size: 10px;
+  line-height: 1.5;
+}

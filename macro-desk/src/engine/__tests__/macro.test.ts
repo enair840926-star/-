@@ -4,7 +4,8 @@ import { BLOCK_CAP, MACRO_WEIGHTS, stanceFromValue } from "../weights";
 import { ASSET_IDS } from "../types";
 import { allFactors, factorInput } from "./fixtures";
 
-const NOW = new Date("2026-08-03T12:00:00Z");
+// 목요일 정오 — 감쇠 테스트가 주말 휴장에 걸리지 않도록 주중으로 잡는다
+const NOW = new Date("2026-08-06T12:00:00Z");
 const hoursAgo = (h: number) => new Date(NOW.getTime() - h * 3_600_000).toISOString();
 
 describe("가중치 표", () => {
@@ -134,6 +135,19 @@ describe("2단계 — 시간 감쇠", () => {
     expect(layer.factors.map((f) => f.key)).toEqual(["fedPolicy"]);
   });
 
+  it("휴장 시간은 경과로 세지 않는다", () => {
+    // 금요일 20:00Z 종가 근거를 일요일 02:00Z에 읽으면 벽시계로는 30시간이지만
+    // 그동안 시장은 멈춰 있었으므로 시장 시간은 1시간이다.
+    const sunday = new Date("2026-08-02T02:00:00Z");
+    const layer = computeMacro(
+      "NAS100",
+      [{ ...factorInput("NAS100", "usRates", -1, 0.8), asof: "2026-07-31T20:00:00Z" }],
+      sunday,
+    );
+    expect(layer.factors[0].effectiveConfidence).toBeCloseTo(0.8 * 0.5 ** (1 / 18), 3);
+    expect(layer.factors[0].flags).not.toContain("DECAYED");
+  });
+
   it("asof가 없으면 감쇠하지 않는다", () => {
     const layer = computeMacro("NAS100", [factorInput("NAS100", "usRates", -1, 0.8)], NOW);
     expect(layer.factors[0].effectiveConfidence).toBeCloseTo(0.8, 6);
@@ -179,9 +193,18 @@ describe("3단계 — 블록·중복·분산", () => {
     expect(rates.weight / total).toBeCloseTo(BLOCK_CAP, 3);
   });
 
-  it("상한에 걸려도 총 가중치(커버리지)는 보존된다", () => {
-    const layer = computeMacro("XAUUSD", allFactors("XAUUSD", 1, 1), NOW);
-    expect(layer.coverage).toBeCloseTo(1, 3);
+  it("상한에 걸리면 커버리지가 줄어 확신도가 함께 낮아진다", () => {
+    const capped = computeMacro("XAUUSD", allFactors("XAUUSD", 1, 1), NOW);
+    expect(capped.flags).toContain("BLOCK_CAPPED:rates");
+    // 금리 블록 0.66이 0.6 비중으로 눌리면서 총합이 1 아래로 내려간다
+    expect(capped.coverage).toBeLessThan(1);
+    expect(capped.confidence).toBeLessThan(1);
+  });
+
+  it("상한은 점수를 바꾸지 않고 확신도만 낮춘다", () => {
+    // 블록 간 상대 가중치는 그대로이므로 방향 점수는 유지된다
+    const layer = computeMacro("XAUUSD", allFactors("XAUUSD", 2, 1), NOW);
+    expect(layer.score).toBeCloseTo(2, 6);
   });
 
   it("금리 블록 상한이 골드의 편향을 완화한다", () => {
@@ -235,7 +258,8 @@ describe("3단계 — 블록·중복·분산", () => {
 
 describe("레이어 종합", () => {
   it("모든 팩터가 같은 방향이면 그 값에 수렴하고 분산은 0이다", () => {
-    const layer = computeMacro("XAUUSD", allFactors("XAUUSD", 2, 1), NOW);
+    // 블록 상한에 걸리지 않는 자산(USOIL 최대 블록 0.34)으로 확인한다
+    const layer = computeMacro("USOIL", allFactors("USOIL", 2, 1), NOW);
     expect(layer.score).toBeCloseTo(2, 6);
     expect(layer.coverage).toBeCloseTo(1, 6);
     expect(layer.dispersion).toBeCloseTo(0, 6);

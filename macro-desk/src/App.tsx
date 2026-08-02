@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { FusionResult, Regime } from "./engine/types";
+import type { FusionResult, Regime, Scoreboard } from "./engine/types";
 import { regimeLabel } from "./engine/fusion";
 
 const KST = "Asia/Seoul";
@@ -108,6 +108,7 @@ interface MacroPayload {
   version: number;
   generatedAt: string | null;
   schedule: string;
+  scoreboard?: Scoreboard;
   assets: Record<AssetId, Bias>;
 }
 
@@ -356,6 +357,9 @@ function normalizePayload(value: unknown): MacroPayload {
     version: Number(input.version) || 1,
     generatedAt: input.generatedAt || null,
     schedule: input.schedule || EMPTY_PAYLOAD.schedule,
+    ...(input.scoreboard && typeof input.scoreboard === "object"
+      ? { scoreboard: input.scoreboard }
+      : {}),
     assets,
   };
 }
@@ -593,6 +597,64 @@ function FusionPanel({
         </div>
       )}
     </div>
+  );
+}
+
+function pct(rate: number | null) {
+  return rate === null ? "—" : `${Math.round(rate * 100)}%`;
+}
+
+/** 예측이 실제로 맞았는지. 이 표가 없으면 가중치는 영원히 추측으로 남는다. */
+function ScoreboardPanel({ board }: { board: Scoreboard }) {
+  const assets = Object.entries(board.byAsset);
+  const buckets = Object.entries(board.byConviction).filter(([, b]) => b.n > 0);
+  return (
+    <section className="md-scoreboard">
+      <div className="md-section-title">
+        방향 적중률 <span>최근 {board.window}건 기준 · 8시간 구간</span>
+      </div>
+      {board.total.n === 0 ? (
+        <p className="md-scoreboard-empty">
+          아직 채점된 예측이 없습니다. 스냅샷이 두 번 이상 쌓이면 집계가 시작됩니다.
+        </p>
+      ) : (
+        <>
+          <div className="md-scoreboard-total">
+            <b>{pct(board.total.rate)}</b>
+            <span>
+              {board.total.hit}/{board.total.n}건 적중
+            </span>
+          </div>
+          <div className="md-scoreboard-grid">
+            {assets.map(([asset, bucket]) => (
+              <div className="md-score-row" key={asset}>
+                <span className="md-score-name">{asset}</span>
+                <span className="md-score-rate">{pct(bucket.rate)}</span>
+                <span className="md-score-note">
+                  {bucket.n}건
+                  {bucket.neutralN > 0 &&
+                    ` · 중립 ${bucket.neutralN}건 중 ${bucket.neutralMoved}건은 실제로 움직임`}
+                </span>
+              </div>
+            ))}
+          </div>
+          {buckets.length > 0 && (
+            <div className="md-scoreboard-grid">
+              {buckets.map(([id, bucket]) => (
+                <div className="md-score-row" key={id}>
+                  <span className="md-score-name">확신도 {id}</span>
+                  <span className="md-score-rate">{pct(bucket.rate)}</span>
+                  <span className="md-score-note">{bucket.n}건</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="md-scoreboard-note">
+            확신도가 높은 구간의 적중률이 더 낮다면 확신도 공식이 틀린 것입니다.
+          </p>
+        </>
+      )}
+    </section>
   );
 }
 
@@ -930,6 +992,8 @@ export default function App() {
           );
         })}
       </main>
+
+      {payload.scoreboard && <ScoreboardPanel board={payload.scoreboard} />}
 
       <section className="md-timeline">
         <div className="md-section-title">

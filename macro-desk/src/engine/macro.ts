@@ -1,3 +1,4 @@
+import { marketHoursBetween } from "./clock";
 import { clamp, round, weightedMean, weightedStdev } from "./indicators";
 import type {
   AssetId,
@@ -20,7 +21,6 @@ import {
 const DEFAULT_CONFIDENCE = 0.7;
 /** 수치형 팩터에 value 없이 stance만 준 경우의 신뢰도 상한 */
 const UNVERIFIED_CONFIDENCE_CAP = 0.5;
-const HOUR = 3_600_000;
 
 export function factorKeysFor(asset: AssetId): string[] {
   return Object.keys(MACRO_WEIGHTS[asset]);
@@ -81,10 +81,10 @@ function resolveFactors(asset: AssetId, factors: MacroFactorInput[], now: Date) 
       stance = asStance(factor.stance as number);
     }
 
-    // 2단계 — 시간 감쇠
+    // 2단계 — 시간 감쇠 (휴장 구간은 제외한 시장 시간 기준)
     const asofMs = factor.asof ? Date.parse(factor.asof) : Number.NaN;
     const ageHours = Number.isFinite(asofMs)
-      ? Math.max(0, (now.getTime() - asofMs) / HOUR)
+      ? marketHoursBetween(new Date(asofMs), now)
       : 0;
     const halfLife = spec.persistent
       ? DECAY_HALF_LIFE_PERSISTENT_HOURS
@@ -141,8 +141,11 @@ function dampenDuplicateFacts(factors: MacroFactorResult[], layerFlags: string[]
 }
 
 /**
- * 3단계-A — 한 블록이 전체 가중치의 BLOCK_CAP을 넘으면 그만큼 줄이고
- * 나머지 블록을 비례 확대한다. 총합은 보존된다(커버리지 불변).
+ * 3단계-A — 한 블록이 전체 가중치의 BLOCK_CAP을 넘으면 그 블록만 줄인다.
+ *
+ * 나머지 블록을 끌어올려 총합을 보존하지 않는다. 근거가 한쪽에 몰려 있다는 것은
+ * 실제로 커버리지가 낮다는 뜻이므로, 총합이 줄어 확신도가 함께 낮아지는 것이 맞다.
+ * (블록 간 상대 가중치는 어느 방식이든 같으므로 점수는 바뀌지 않고 확신도만 낮아진다)
  */
 function applyBlockCap(factors: MacroFactorResult[], layerFlags: string[]) {
   const total = factors.reduce((sum, factor) => sum + factor.effectiveWeight, 0);
@@ -159,10 +162,9 @@ function applyBlockCap(factors: MacroFactorResult[], layerFlags: string[]) {
   const [blockId, blockWeight] = over;
   const rest = total - blockWeight;
   if (rest <= 0) return;
-  const scaleIn = (BLOCK_CAP * total) / blockWeight;
-  const scaleOut = ((1 - BLOCK_CAP) * total) / rest;
+  const scaleIn = (BLOCK_CAP * rest) / ((1 - BLOCK_CAP) * blockWeight);
   for (const factor of factors) {
-    factor.effectiveWeight *= factor.block === blockId ? scaleIn : scaleOut;
+    if (factor.block === blockId) factor.effectiveWeight *= scaleIn;
   }
   layerFlags.push(`BLOCK_CAPPED:${blockId}`);
 }

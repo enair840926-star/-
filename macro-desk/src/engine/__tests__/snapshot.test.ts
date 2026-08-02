@@ -35,7 +35,7 @@ describe("runSnapshot", () => {
   it("입력에 있는 자산만 출력한다", () => {
     expect(Object.keys(snapshot.assets).sort()).toEqual(["NAS100", "XAUUSD"]);
     expect(snapshot.version).toBe(2);
-    expect(snapshot.ruleset).toBe("fusion-v1.0");
+    expect(snapshot.ruleset).toBe("fusion-v1.1");
   });
 
   it("v1 화면이 읽는 필드를 그대로 채운다", () => {

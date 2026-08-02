@@ -1,107 +1,138 @@
 # 운영 절차 (Runbook)
 
-하루 3회(08:00 · 16:00 · 22:00 KST) 스냅샷을 만드는 절차다.
-**기본은 번들 없이 도는 `macro-only` 모드**이며, 웹 리서치만으로 완결된다.
+하루 3회(08:00 · 16:00 · 22:00 KST) 방향성 스냅샷을 만드는 절차다.
+**기본은 번들 없이 도는 `macro-only` 모드**이며 웹 리서치만으로 완결된다.
 
 ```
-[웹 리서치] ──► data/session/latest.json (factors, events, levels)
+[웹 리서치] ──► data/session/latest.json (factors · levels · events)
                           │
                           ▼
                  npm run snapshot ──► public/macro.json ──► GitHub Pages
+                          │              └► data/history/predictions.jsonl (기록·채점)
                           ▲
 [v4 번들 ZIP] ─► npm run bundle ──┘   (선택 · fusion 모드일 때만)
 ```
 
+규칙·밴드표는 [`fusion-ruleset.md`](fusion-ruleset.md), 원본은 `src/engine/weights.ts`.
+
 ---
 
-## 1. 매크로 레이어 수집
+## 1. 매크로 팩터 수집
 
-`data/session/latest.json`의 `assets.<자산>.factors`를 채운다.
-키 목록과 부호 규칙은 `docs/fusion-ruleset-v1.md` §1.2, 원본은 `src/engine/weights.ts`.
+### 반드시 지킬 것
 
-수집 원칙:
+- **stance는 변화·서프라이즈다.** 수준(level)이 아니다.
+  "DXY 99.91, 5주 고점권" ✗ → "DXY 99.91, 일간 −0.05%" ○
+- **수치형 팩터는 `value`만 넣는다.** stance를 직접 넣지 않는다 — 엔진이 밴드에서 파생한다.
+  stance를 넣으면 `STANCE_UNVERIFIED`가 붙고 신뢰도가 0.5로 잘린다.
+- **서수형 팩터는 앵커 문구에 대응시킨다.** 애매하면 한 단계 약하게 잡는다.
+- **확인 못 한 팩터는 넣지 않는다.** 커버리지가 떨어지는 게 정상이고, 지어내면 경고가 무력해진다.
+- **같은 사건에서 나온 팩터는 같은 `fact`를 쓴다.** (호르무즈 → supplyRisk·geopolitics 모두 `"hormuz"`)
+  테마로 묶지 않는다. 서로 다른 관측치는 블록이 이미 처리한다.
+- **`asof`를 넣는다.** 근거를 확인한 시각. 이 값으로 신선도가 자동 감쇠된다(휴장 시간 제외).
+- `note`에는 반드시 숫자를 넣는다.
 
-- **stance 부호는 자산 가격 기준으로 맞춰서 넣는다.** 지표 자체의 방향이 아니다.
-  (달러 강세는 XAUUSD `dollar`에서 음수, EURUSD `rateDiff`에서 미국 우위면 음수)
-- `note`에는 반드시 **숫자**를 넣는다. "금리 상승" ✗ / "10Y 4.745%(+7.5bp)" ○
-- 확인이 안 된 팩터는 **넣지 말거나 `confidence`를 낮춘다.** 지어내면 커버리지 경고가 무력해진다.
-- 이번 세션에 새 정보가 없는 팩터는 직전 값을 유지하되 `confidence`를 0.1~0.2 낮춘다.
+### 세션마다 챙길 수치
 
-`events`에는 앞으로 48시간 내 지표만 넣는다. 티어 기준은 ruleset §3.
-시각은 ISO8601로 쓰고 오프셋을 반드시 붙인다(`2026-08-07T12:30:00Z`).
+| 지표 | 쓰이는 팩터 |
+|---|---|
+| 미 10Y 수익률 일간 변화(bp) | NAS100 `usRates`, XAUUSD `realYield`(대용 시 conf ≤ 0.6) |
+| 독 10Y와의 스프레드 변화(bp) | EURUSD `rateDiff` |
+| DXY 일간 변화(%) | 3개 자산 `dollar` |
+| VIX 일간 변화(pt) | NAS100·EURUSD `riskAppetite` |
+| 상승종목 비율(%) | NAS100 `breadth` |
+| 10Y 기대인플레(BEI) 변화(bp) | XAUUSD `inflation` |
+| EIA 재고 컨센서스 대비 서프라이즈(백만 배럴) | USOIL `inventory` |
 
-`levels`에는 리서치에서 **실제로 인용된 숫자만** 넣는다. 지지·저항을 지어내지 않는다.
-출처가 없으면 그 필드는 비워둔다 — 화면에 "관측 레벨 미수집"으로 표시된다.
+> 이 환경에서는 FMP MCP의 chart/quote/economics가 현재 플랜에서 막혀 있고 외부 시세 API도
+> 네트워크 정책상 직접 호출되지 않는다. 그래서 수치는 **웹 검색 결과**로 채운다.
+> 출처가 서로 어긋나면 `confidence`를 낮추고 note에 상충 사실을 적는다.
 
-> 이 저장소 환경에서는 FMP MCP의 chart/quote/economics 엔드포인트가 현재 플랜에서 막혀 있고,
-> 외부 시세 API(Yahoo·stooq)도 네트워크 정책상 직접 호출되지 않는다.
-> 그래서 매크로 레이어는 **웹 검색 결과**를 근거로 채운다. 시세 정본은 항상 MT5다.
+## 2. 관측 레벨
 
-## 2. (선택) 차트 레이어 붙이기
+```jsonc
+"levels": { "last": 84.67, "prevClose": 83.59, "support": [82.5], "resistance": [85],
+            "note": "전일 대비 +1.29%", "source": "..." }
+```
+
+- `last`는 **필수**다. 예측 기준가로도 쓰이므로 없으면 채점을 못 한다.
+- `prevClose`가 없으면 위치 레이어만 꺼진다(오류 아님).
+- 지지·저항은 **기사에 인용된 숫자만** 넣는다. 지어내지 않는다.
+
+## 3. 이벤트
+
+앞으로 48시간 내 지표만 넣는다. 티어 기준은 ruleset §5.
+시각은 ISO8601에 오프셋을 붙인다(`2026-08-07T12:30:00Z`).
+
+## 4. (선택) 차트 레이어
 
 번들을 붙일 수 있는 날에만 한다. 평소에는 건너뛴다.
 
 ```bash
-npm run bundle -- --asset XAUUSD --zip ~/bundles/xauusd-2026-08-03.zip
-npm run bundle -- --asset NAS100 --raw /tmp/extract/rawbundle.json
+npm run bundle -- --asset XAUUSD --zip ~/bundles/xauusd.zip
 ```
 
-- ZIP 안의 `rawbundle.json`만 읽는다. `hud_lite`/`by_tf`/`derived`는 읽지 않는다.
-- `is_complete=false` 봉은 자동으로 빠진다.
-- TF당 기본 180봉까지 가져온다(`--max-bars`로 조정).
-- 번들을 붙인 자산은 `"mode": "fusion"`으로 바꿔야 캔들이 실제로 쓰인다.
-  스냅샷 기본값(`"mode": "macro-only"`)이 자산 설정보다 우선순위가 낮다.
+붙인 자산은 `"mode": "fusion"`으로 바꿔야 캔들이 실제로 쓰인다.
 
-## 3. 스냅샷 생성
+## 5. 스냅샷 생성
 
 ```bash
-npm run snapshot -- --input data/session/latest.json     # public/macro.json 갱신
-npm run snapshot -- --input data/session/latest.json --print   # 파일 안 쓰고 확인만
+npm run snapshot -- --input data/session/latest.json          # macro.json 갱신 + 기록·채점
+npm run snapshot -- --input data/session/latest.json --print  # 파일 안 쓰고 확인만
+npm run snapshot -- --input data/session/latest.json --no-history   # 기록 건너뛰기(리허설)
 ```
 
-입력 검증에 걸리면 그대로 멈춘다(알 수 없는 팩터 키, 파싱 안 되는 이벤트 시각, 빈 캔들 등).
-출력 요약에서 확인할 것:
+검증에 걸리면 그대로 멈춘다. 출력에서 확인할 것:
 
-- **레짐**: `요인 상충`이면 그 자산은 그날 방향 없음이다.
-- **플래그**: `MACRO_COVERAGE_LOW`가 뜨면 팩터를 더 채운다. `TF_*_WARMUP`이면 번들 기간을 늘린다.
-- **확신도**: macro-only는 25 미만이면 중립으로 강등되고, 상한은 70이다.
+- **레짐** — `요인 상충`이면 그 자산은 그날 방향 없음이다
+- **플래그**
+  - `STANCE_UNVERIFIED` → 수치형에 value를 안 넣었다. 고쳐서 다시 돌린다
+  - `MACRO_COVERAGE_LOW` → 팩터를 더 채우거나, 못 채우면 그대로 두고 확신도가 낮게 나가게 둔다
+  - `BLOCK_CAPPED` → 근거가 한 진영에 몰렸다는 뜻. 정상 동작이다
+  - `DUPLICATE_FACT` → 같은 사건이 두 팩터에 들어가 자동 감쇠됐다. 의도한 것이면 그대로 둔다
+  - `POSITION_UNAVAILABLE` → prevClose가 없다
+- **확신도** — macro-only는 25 미만이면 중립으로 강등되고 상한은 70이다
+- **적중률 줄** — 채점이 시작되면 함께 출력된다
 
-## 4. 커밋과 배포
+## 6. 커밋과 배포
 
 ```bash
-git add macro-desk/public/macro.json macro-desk/data/session/latest.json
-git commit -m "chore: refresh macro desk <시간대> snapshot"
-git push -u origin <branch>
+git add macro-desk/public/macro.json macro-desk/data/session/latest.json macro-desk/data/history/predictions.jsonl
+git commit -m "chore: refresh macro desk <아침|오후|야간> snapshot"
+git push -u origin main
 ```
 
 `main`에 들어가면 `.github/workflows/macro-desk-pages.yml`이 Pages를 재배포한다.
+**`predictions.jsonl`을 반드시 함께 커밋한다.** 이게 빠지면 다음 실행에서 채점할 대상이 사라진다.
 
-## 5. 검증
+## 7. 검증
 
 ```bash
 npm run check   # 타입
-npm test        # 엔진 86개 테스트
+npm test        # 엔진 테스트 138개
 npm run build   # 프로덕션 번들
 ```
 
 ---
 
-## 부록. 예약 작업 프롬프트 템플릿
+## 부록. 예약 작업 프롬프트
 
-세션마다 아래 지시를 그대로 쓰면 된다.
+세션마다 아래 지시를 따른다.
 
 ```
-macro-desk 스냅샷을 갱신해줘.
+NAS100·XAUUSD·USOIL·EURUSD의 당일 방향성 스냅샷을 갱신한다.
 
-1. NAS100·XAUUSD·USOIL·EURUSD의 당일 매크로/외부 요인을 조사한다.
-   - docs/fusion-ruleset-v1.md §1.2의 팩터 키만 사용한다.
-   - stance는 해당 자산 가격에 대한 압력 기준으로 -2~+2, note에는 숫자를 넣는다.
-   - 확인 못 한 팩터는 넣지 말고, 오래된 값은 confidence를 낮춘다.
-2. 앞으로 48시간 내 지표를 events에 넣는다(티어는 ruleset §3).
-3. 리서치에서 인용된 지지·저항이 있으면 levels에 넣는다(없으면 생략).
-4. data/session/latest.json을 갱신한다(mode는 macro-only 유지).
-5. npm run snapshot 을 돌리고 요약과 플래그를 확인한다.
-6. macro.json과 latest.json을 커밋·푸시한 뒤, 자산별 한 줄 요약을 알려준다.
-
-레이어 잠금 규칙을 지킨다: 매크로 결론으로 차트 점수를 고쳐 쓰지 않는다.
+1. main 브랜치에서 작업한다 (Pages 배포가 main 푸시에만 동작).
+2. docs/fusion-ruleset.md §1.3 루브릭의 팩터 키만 쓴다.
+   - 수치형은 value(지표 실측치)만 넣는다. stance를 직접 넣지 않는다.
+   - 서수형은 앵커 문구에 대응시킨다.
+   - 같은 사건에서 나온 팩터끼리는 같은 fact를 쓴다.
+   - asof(근거 확인 시각)를 넣는다.
+   - 확인 못 한 팩터는 넣지 않는다.
+3. levels에 last(필수)·prevClose와, 기사에 인용된 지지·저항만 넣는다.
+4. 48시간 내 지표를 events에 넣는다.
+5. npm run snapshot 을 돌리고 플래그를 확인한다.
+   STANCE_UNVERIFIED가 뜨면 value로 고쳐 다시 돌린다.
+6. macro.json · latest.json · predictions.jsonl 세 파일을 커밋해 main에 푸시한다.
+7. 자산별 한 줄 요약과 적중률로 답변을 끝낸다.
 ```

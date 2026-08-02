@@ -124,9 +124,7 @@ export function validateInput(input: SnapshotInput): string[] {
       if (!Number.isFinite(asset.levels?.last as number)) {
         errors.push(`${assetId}: levels.last(현재가)가 필요합니다`);
       }
-      if (!Number.isFinite(asset.levels?.prevClose as number)) {
-        errors.push(`${assetId}: levels.prevClose(직전 세션 종가)가 필요합니다`);
-      }
+      // prevClose는 위치 레이어 전용이라 없으면 그 레이어만 비활성된다(오류 아님).
     }
   }
   for (const event of input.events ?? []) {

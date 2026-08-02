@@ -7,28 +7,41 @@
  *
  * 입력 스키마는 docs/fusion-ruleset-v1.md 참고.
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runSnapshot, validateInput } from "../src/engine/index";
-import type { Snapshot, SnapshotInput } from "../src/engine/types";
+import {
+  buildScoreboard,
+  openPrediction,
+  parsePredictions,
+  scoreboardLine,
+  scorePredictions,
+  serializePredictions,
+} from "../src/engine/scoreboard";
+import type { AssetId, PredictionRecord, Snapshot, SnapshotInput } from "../src/engine/types";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 interface Options {
   input: string;
   out: string;
+  history: string;
   now?: string;
   print: boolean;
   strict: boolean;
+  /** 예측 기록·채점을 건너뛴다 (리허설용) */
+  noHistory: boolean;
 }
 
 function parseArgs(argv: string[]): Options {
   const options: Options = {
     input: "data/session/latest.json",
     out: "public/macro.json",
+    history: "data/history/predictions.jsonl",
     print: false,
     strict: true,
+    noHistory: false,
   };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -36,6 +49,8 @@ function parseArgs(argv: string[]): Options {
     if (arg === "--input" || arg === "-i") options.input = next();
     else if (arg === "--out" || arg === "-o") options.out = next();
     else if (arg === "--now") options.now = next();
+    else if (arg === "--history") options.history = next();
+    else if (arg === "--no-history") options.noHistory = true;
     else if (arg === "--print") options.print = true;
     else if (arg === "--no-strict") options.strict = false;
     else if (arg === "--help" || arg === "-h") {
@@ -45,6 +60,8 @@ function parseArgs(argv: string[]): Options {
           "  --input, -i  세션 입력 JSON 경로 (기본 data/session/latest.json)",
           "  --out,   -o  출력 경로 (기본 public/macro.json)",
           "  --now        기준 시각 ISO (기본: 입력의 generatedAt 또는 현재)",
+          "  --history    예측 기록 경로 (기본 data/history/predictions.jsonl)",
+          "  --no-history 기록·채점을 건너뛴다",
           "  --print      파일에 쓰지 않고 표준출력으로만 확인",
           "  --no-strict  검증 오류가 있어도 계속 진행",
         ].join("\n"),
@@ -111,6 +128,39 @@ function main() {
   if (now) input.generatedAt = now.toISOString();
 
   const snapshot = runSnapshot(input, now);
+  const generatedAt = new Date(snapshot.generatedAt);
+
+  if (!options.noHistory) {
+    const historyPath = resolve(root, options.history);
+    const { records, broken } = existsSync(historyPath)
+      ? parsePredictions(readFileSync(historyPath, "utf8"))
+      : { records: [] as PredictionRecord[], broken: 0 };
+    if (broken) console.error(`경고: 기록 ${broken}줄을 읽지 못해 건너뜁니다`);
+
+    // 1) 이번 실행의 가격으로 열린 예측을 먼저 채점한다
+    const prices: Partial<Record<AssetId, number>> = {};
+    for (const [asset, value] of Object.entries(snapshot.assets)) {
+      const price = value!.fusion!.levels?.last ?? value!.fusion!.technical.lastPrice;
+      if (Number.isFinite(price as number)) prices[asset as AssetId] = price as number;
+    }
+    const { scored, stale } = scorePredictions(records, prices, generatedAt);
+
+    // 2) 이번 예측을 새로 연다
+    for (const value of Object.values(snapshot.assets)) {
+      records.push(openPrediction(value!.fusion!, generatedAt));
+    }
+
+    snapshot.scoreboard = buildScoreboard(records, generatedAt);
+
+    if (!options.print) {
+      mkdirSync(dirname(historyPath), { recursive: true });
+      writeFileSync(historyPath, serializePredictions(records), "utf8");
+    }
+    console.error(
+      `기록: 채점 ${scored}건${stale ? ` · 누락 마감 ${stale}건` : ""} · 누적 ${records.length}건`,
+    );
+  }
+
   const serialized = `${JSON.stringify(snapshot, null, 2)}\n`;
 
   if (options.print) {
@@ -123,6 +173,7 @@ function main() {
 
   console.error(`기준 ${snapshot.generatedAt} · ruleset ${snapshot.ruleset}`);
   console.error(summarize(snapshot));
+  if (snapshot.scoreboard) console.error(scoreboardLine(snapshot.scoreboard));
 
   const flagged = Object.entries(snapshot.assets).filter(
     ([, value]) => value!.fusion!.flags.length,

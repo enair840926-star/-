@@ -1,0 +1,4 @@
+{"ts":"2026-08-02T01:43:35.271Z","ruleset":"fusion-v1.1","asset":"NAS100","mode":"macro-only","direction":0,"conviction":4,"score":-0.096,"regime":"RANGE","refPrice":28218,"horizonEnd":"2026-08-02T09:43:35.271Z","outcome":null}
+{"ts":"2026-08-02T01:43:35.271Z","ruleset":"fusion-v1.1","asset":"XAUUSD","mode":"macro-only","direction":0,"conviction":9,"score":0.225,"regime":"CONFLICT","refPrice":4042.97,"horizonEnd":"2026-08-02T09:43:35.271Z","outcome":null}
+{"ts":"2026-08-02T01:43:35.271Z","ruleset":"fusion-v1.1","asset":"USOIL","mode":"macro-only","direction":1,"conviction":34,"score":0.773,"regime":"PARTIAL","refPrice":84.67,"horizonEnd":"2026-08-02T09:43:35.271Z","outcome":null}
+{"ts":"2026-08-02T01:43:35.271Z","ruleset":"fusion-v1.1","asset":"EURUSD","mode":"macro-only","direction":0,"conviction":10,"score":0.243,"regime":"CONFLICT","refPrice":1.1485,"horizonEnd":"2026-08-02T09:43:35.271Z","outcome":null}

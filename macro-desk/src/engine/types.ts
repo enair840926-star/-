@@ -7,7 +7,7 @@
  *  - 융합(fusion) 레이어는 두 레이어를 읽기만 하며, 각 레이어 원값을 그대로 보존해 출력한다.
  */
 
-export const RULESET_VERSION = "fusion-v1.0";
+export const RULESET_VERSION = "fusion-v1.1";
 
 export const ASSET_IDS = ["NAS100", "XAUUSD", "USOIL", "EURUSD"] as const;
 export type AssetId = (typeof ASSET_IDS)[number];
@@ -330,10 +330,57 @@ export interface SnapshotAsset {
   fusion?: FusionResult;
 }
 
+// ---------------------------------------------------------------------------
+// 검증 루프
+// ---------------------------------------------------------------------------
+
+export interface PredictionOutcome {
+  scoredAt: string;
+  endPrice: number;
+  /** 기준가 대비 실현 변화율(%) */
+  movePct: number;
+  /** 중립밴드로 이산화한 실현 방향 */
+  realized: Direction;
+  /** 중립 예측이면 null (적중률 모수에서 제외) */
+  hit: boolean | null;
+  skipped?: "stale" | "no-price" | "no-ref";
+}
+
+export interface PredictionRecord {
+  ts: string;
+  ruleset: string;
+  asset: AssetId;
+  mode: AnalysisMode;
+  direction: Direction;
+  conviction: number;
+  score: number;
+  regime: Regime;
+  /** 예측 시점 가격 */
+  refPrice: number | null;
+  horizonEnd: string;
+  outcome: PredictionOutcome | null;
+}
+
+export interface ScoreboardBucket {
+  n: number;
+  hit: number;
+  /** n이 0이면 null */
+  rate: number | null;
+}
+
+export interface Scoreboard {
+  window: number;
+  total: ScoreboardBucket;
+  byAsset: Record<string, ScoreboardBucket & { neutralN: number; neutralMoved: number }>;
+  byConviction: Record<string, ScoreboardBucket>;
+  updatedAt: string;
+}
+
 export interface Snapshot {
   version: number;
   ruleset: string;
   mode: AnalysisMode;
+  scoreboard?: Scoreboard;
   generatedAt: string;
   schedule: string;
   note?: string;
