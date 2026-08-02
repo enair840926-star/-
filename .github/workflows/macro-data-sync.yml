@@ -9,7 +9,18 @@ name: Sync Macro Data
 
 on:
   push:
-    branches: ["claude/macro-data"]
+    # 루틴 세션이 쓰는 브랜치 이름은 고정이 아니다. 웹 UI가 `claude/blissful-feynman`
+    # 같은 이름을 자동으로 붙이기도 한다. 그래서 `claude/` 전체를 받고,
+    # 데이터 파일이 실제로 바뀐 푸시에만 반응한다.
+    # (`branches`와 `branches-ignore`는 같은 이벤트에 함께 쓸 수 없어 부정 패턴을 쓴다)
+    branches:
+      - "claude/**"
+      - "!claude/day-trading-direction-prediction-*"
+    paths:
+      - "macro-desk/public/macro.json"
+      - "macro-desk/data/**"
+      - "macro-desk/src/engine/params.json"
+      - "macro-desk/docs/calibration/**"
   workflow_dispatch:
 
 permissions:
