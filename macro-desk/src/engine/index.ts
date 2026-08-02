@@ -114,10 +114,19 @@ export function validateInput(input: SnapshotInput): string[] {
       if (!factor.note) errors.push(`${assetId}.${factor.key}: note가 비어 있습니다`);
     }
     if (!asset.factors?.length) errors.push(`${assetId}: factors가 비어 있습니다`);
-    if (modeOf(input, assetId as AssetId) === "fusion" && !Object.keys(asset.candles ?? {}).length) {
-      errors.push(
-        `${assetId}: fusion 모드인데 candles가 비어 있습니다 (번들 없이 쓰려면 mode: "macro-only")`,
-      );
+    if (modeOf(input, assetId as AssetId) === "fusion") {
+      if (!Object.keys(asset.candles ?? {}).length) {
+        errors.push(
+          `${assetId}: fusion 모드인데 candles가 비어 있습니다 (번들 없이 쓰려면 mode: "macro-only")`,
+        );
+      }
+    } else {
+      if (!Number.isFinite(asset.levels?.last as number)) {
+        errors.push(`${assetId}: levels.last(현재가)가 필요합니다`);
+      }
+      if (!Number.isFinite(asset.levels?.prevClose as number)) {
+        errors.push(`${assetId}: levels.prevClose(직전 세션 종가)가 필요합니다`);
+      }
     }
   }
   for (const event of input.events ?? []) {

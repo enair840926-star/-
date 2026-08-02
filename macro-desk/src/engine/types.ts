@@ -105,10 +105,28 @@ export interface MacroEventInput {
 export interface LevelInput {
   /** 리서치 시점 가격 */
   last?: number;
+  /** 직전 세션 종가 — 위치 레이어의 기준점 */
+  prevClose?: number;
   support?: number[];
   resistance?: number[];
   note?: string;
   source?: string;
+}
+
+/** 위치 레이어 출력. 방향에는 관여하지 않고 확신도와 문장만 조정한다. */
+export interface PositionLayer {
+  /** -1 ~ +1 */
+  score: number;
+  /** 전일 종가 대비 변화율(%) */
+  movePct: number | null;
+  brokeResistance: boolean;
+  lostSupport: boolean;
+  /** 매크로 편향과의 관계 (fuse에서 채운다) */
+  relation?: "확인" | "반증" | "중립" | "미수집";
+  /** 확신도에 곱한 배수 */
+  multiplier?: number;
+  note: string;
+  flags: string[];
 }
 
 export interface AssetInput {
@@ -270,6 +288,8 @@ export interface FusionResult {
   mode: AnalysisMode;
   /** 리서치 관측 레벨 (macro-only 모드에서 편향 확인 포인트로 쓴다) */
   levels?: LevelInput;
+  /** 위치 레이어 (macro-only 모드) */
+  position?: PositionLayer;
   /** 최종 이산 방향 */
   direction: Direction;
   /** 0~100 */

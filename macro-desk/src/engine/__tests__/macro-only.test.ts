@@ -114,7 +114,7 @@ describe("스냅샷 기본 모드", () => {
     assets: {
       USOIL: {
         factors: allFactors("USOIL", 2),
-        levels: { last: 84.6, support: [82.5], resistance: [86.0] },
+        levels: { last: 84.6, prevClose: 83.9, support: [82.5], resistance: [86.0] },
       },
     },
   };

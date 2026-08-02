@@ -1,4 +1,5 @@
 import { clamp, round } from "./indicators";
+import { computePosition, positionRelation } from "./position";
 import { nextSessionBoundary } from "./sessions";
 import type {
   AnalysisMode,
@@ -10,6 +11,7 @@ import type {
   LevelInput,
   MacroFactorResult,
   MacroLayer,
+  PositionLayer,
   Regime,
   TechnicalLayer,
 } from "./types";
@@ -179,6 +181,7 @@ function buildMacroPlaybook(
   macro: MacroLayer,
   events: EventLayer,
   levels: LevelInput | undefined,
+  position: PositionLayer,
 ): string {
   if (events.activeBlackout) {
     const until = fmtKST(Date.parse(events.activeBlackout.blackoutEnd));
@@ -188,6 +191,12 @@ function buildMacroPlaybook(
   const { up, down } = dominantFactors(macro);
   const lean = directionWord(direction);
   const confirm = levelHint(direction, levels);
+  const priceNote =
+    position.relation === "확인"
+      ? ` · 가격도 확인(${position.note})`
+      : position.relation === "반증"
+        ? ` · 가격은 반대(${position.note})`
+        : "";
 
   if (regime === "CONFLICT") {
     const pair =
@@ -202,7 +211,7 @@ function buildMacroPlaybook(
   const against = direction > 0 ? down : up;
   const head = driver ? `${lean} 편향 · ${driver.label} 주도` : `${lean} 편향`;
   const counter = against ? ` · 반대 요인 ${against.label}` : "";
-  return `${head}${counter}${confirm ? ` · ${confirm}` : ""}`;
+  return `${head}${counter}${priceNote}${confirm ? ` · ${confirm}` : ""}`;
 }
 
 /** 관측 레벨을 "이 선을 넘으면 편향 확인 / 이탈하면 무효" 문장으로 만든다. */
@@ -231,8 +240,12 @@ function buildMacroTriggers(
   events: EventLayer,
   levels: LevelInput | undefined,
   validUntil: number | null,
+  position: PositionLayer,
 ): string[] {
   const triggers: string[] = [];
+  if (position.relation === "반증") {
+    triggers.push("가격이 매크로 편향과 반대 — 둘 중 하나가 꺾이는 시점");
+  }
   if (levels?.support?.length) triggers.push(`지지 ${levels.support.join(" / ")} 이탈 시 재평가`);
   if (levels?.resistance?.length) {
     triggers.push(`저항 ${levels.resistance.join(" / ")} 돌파 시 재평가`);
@@ -400,8 +413,14 @@ function fuseMacroOnly(
   levels: LevelInput | undefined,
 ): FusionResult {
   const regime = classifyMacroRegime(macro);
+  const position = computePosition(asset, levels);
+  const { relation, multiplier } = positionRelation(position, macro.score);
+  position.relation = relation;
+  position.multiplier = multiplier;
+
   const scale = Math.min(1, Math.abs(macro.score) / MACRO_ONLY.fullScale);
-  let conviction = 100 * scale * (0.5 + 0.5 * macro.confidence) * MACRO_ONLY.discount;
+  let conviction =
+    100 * scale * (0.5 + 0.5 * macro.confidence) * MACRO_ONLY.discount * multiplier;
   conviction = Math.min(conviction, MACRO_ONLY.cap, events.convictionCap);
   if (events.activeBlackout) conviction = Math.min(conviction, 30);
   conviction = Math.round(clamp(conviction, 0, 100));
@@ -410,21 +429,22 @@ function fuseMacroOnly(
     ? 0
     : discretize(macro.score, conviction, MACRO_ONLY.gate);
   const validUntil = resolveValidUntil(now, events);
-  const flags = ["MACRO_ONLY", ...macro.flags, ...events.flags];
+  const flags = ["MACRO_ONLY", ...macro.flags, ...position.flags, ...events.flags];
 
   return {
     asset,
     mode: "macro-only",
     ...(levels ? { levels } : {}),
+    position,
     direction,
     conviction,
     confidence: confidenceLabel(conviction),
     score: round(macro.score, 3),
     regime,
     weights: { technical: 0, macro: 1 },
-    playbook: buildMacroPlaybook(regime, direction, macro, events, levels),
+    playbook: buildMacroPlaybook(regime, direction, macro, events, levels, position),
     rationale: buildMacroRationale(regime, direction, macro, "macro-only"),
-    reanalyzeTriggers: buildMacroTriggers(macro, events, levels, validUntil),
+    reanalyzeTriggers: buildMacroTriggers(macro, events, levels, validUntil, position),
     validUntil: validUntil ? new Date(validUntil).toISOString() : null,
     macro,
     technical,
