@@ -276,8 +276,18 @@ score      = 매크로 점수
 
 ### 7.2 기록과 채점
 
-`data/history/predictions.jsonl`에 스냅샷마다 자산별 1줄을 남긴다
-(`ts`, `ruleset`, `asset`, `direction`, `conviction`, `score`, `regime`, `refPrice`, `horizonEnd`).
+`data/history/predictions.jsonl`에 스냅샷마다 자산별 1줄을 남긴다.
+
+| 필드 | 나중에 무엇을 보정하는가 |
+|---|---|
+| `direction`·`score`·`refPrice` | 중립밴드, 방향 게이트 |
+| `conviction` | 확신도 공식 |
+| `coverage`·`dispersion` | 확신도 공식의 커버리지·분산 계수 |
+| `factors[]` (key·stance·최종 가중치) | **팩터 가중치 표와 블록 상한** |
+| `positionRelation` | 위치 배수(×1.15 / ×0.7)가 실제로 도움이 되는지 |
+| `eventTier` | 이벤트 확신도 상한이 적정한지 |
+
+팩터 기여 내역이 없으면 가중치는 영원히 보정할 수 없다. 기록 시점에 함께 남겨야 한다.
 
 다음 실행에서 `horizonEnd`가 지난 기록을 그 시점 가격으로 채점한다.
 

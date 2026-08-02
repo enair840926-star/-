@@ -346,6 +346,14 @@ export interface PredictionOutcome {
   skipped?: "stale" | "no-price" | "no-ref";
 }
 
+/** 나중에 가중치를 보정하려면 어떤 팩터가 얼마나 기여했는지가 남아 있어야 한다. */
+export interface PredictionFactor {
+  key: string;
+  stance: Stance;
+  /** 감쇠·중복·블록 상한까지 반영된 최종 가중치 */
+  weight: number;
+}
+
 export interface PredictionRecord {
   ts: string;
   ruleset: string;
@@ -355,6 +363,15 @@ export interface PredictionRecord {
   conviction: number;
   score: number;
   regime: Regime;
+  /** 매크로 레이어 상태 — 확신도 공식 보정용 */
+  coverage: number;
+  dispersion: number;
+  /** 팩터 기여 내역 — 가중치 보정용 */
+  factors: PredictionFactor[];
+  /** 위치 배수가 실제로 도움이 됐는지 검증용 */
+  positionRelation: PositionLayer["relation"] | null;
+  /** 이벤트 상한이 적정한지 검증용 (0 = 해당 없음) */
+  eventTier: number;
   /** 예측 시점 가격 */
   refPrice: number | null;
   horizonEnd: string;

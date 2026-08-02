@@ -29,6 +29,11 @@ function record(
     conviction: 45,
     score: 0.8,
     regime: "PARTIAL",
+    coverage: 0.7,
+    dispersion: 0.3,
+    factors: [],
+    positionRelation: null,
+    eventTier: 0,
     refPrice: 100,
     horizonEnd: hoursLater(8).toISOString(),
     outcome: null,
@@ -54,6 +59,15 @@ describe("openPrediction", () => {
     expect(prediction.horizonEnd).toBe(hoursLater(8).toISOString());
     expect(prediction.outcome).toBeNull();
     expect(prediction.ruleset).toBe("fusion-v1.1");
+    // 가중치 보정에 필요한 팩터 기여 내역이 함께 남는다
+    expect(prediction.factors.map((f) => f.key).sort()).toEqual(
+      ["demand", "dollar", "geopolitics", "inventory", "opec", "supplyRisk"],
+    );
+    expect(prediction.factors.every((f) => f.weight > 0)).toBe(true);
+    expect(prediction.coverage).toBe(fusion.macro.coverage);
+    expect(prediction.dispersion).toBe(fusion.macro.dispersion);
+    expect(prediction.positionRelation).toBe(fusion.position!.relation);
+    expect(prediction.eventTier).toBe(0);
   });
 });
 
