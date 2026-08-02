@@ -1,116 +1,110 @@
 {
   "mode": "macro-only",
   "schedule": "08:00 · 16:00 · 22:00 KST",
-  "note": "2026-08-02(일) 주간 준비 · 7/31(금) 마감 기준 · ruleset v1.1 루브릭 적용",
+  "note": "2026-08-03(월) 아침 · 7/31(금) 마감 + 일요일 저녁 아시아/FX 세션 반영 · ruleset v1.1 루브릭 적용",
   "events": [
-    { "label": "ISM 제조업 PMI", "time": "2026-08-03T14:00:00Z", "tier": 2, "note": "7월치 · 10:00 ET" },
-    { "label": "ADP 민간고용", "time": "2026-08-05T12:15:00Z", "tier": 2, "note": "08:15 ET" },
-    { "label": "ISM 서비스업 PMI", "time": "2026-08-05T14:00:00Z", "tier": 2, "note": "10:00 ET" },
-    { "label": "EIA 원유재고", "time": "2026-08-05T14:30:00Z", "tier": 2, "assets": ["USOIL"], "note": "10:30 ET" },
-    { "label": "미국 7월 고용보고서", "time": "2026-08-07T12:30:00Z", "tier": 3, "note": "주간 최대 이벤트 · 08:30 ET" }
+    { "label": "ISM 제조업 PMI", "time": "2026-08-03T14:00:00Z", "tier": 2, "note": "7월치 · 10:00 ET" }
   ],
   "assets": {
     "NAS100": {
       "factors": [
-        { "key": "usRates", "value": 7.5, "confidence": 0.9, "fact": "yields",
-          "note": "미 10Y 4.745%, 전일 +7.5bp · 30Y 5.25%로 2007년 이후 최고",
+        { "key": "usRates", "value": 7.5, "confidence": 0.85, "fact": "yields",
+          "note": "미 10Y 4.745%, 금요일 마감 기준 +7.5bp · 채권시장 주말 휴장으로 변동 없음",
           "source": "FXStreet 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
         { "key": "fedPolicy", "stance": -1, "confidence": 0.8, "fact": "fomc",
-          "note": "7월 FOMC 동결이나 인상 소수의견 3명 · JPM 12월 인상 전망",
+          "note": "7월 FOMC 동결이나 인상 소수의견 3명 · 12월 인상 전망 부상(persistent)",
           "source": "Interactive/JPM 2026-08-01", "asof": "2026-08-01T12:00:00Z" },
-        { "key": "riskAppetite", "value": -1.1, "confidence": 0.9, "fact": "vix",
-          "note": "VIX 15.99, 전일 17.09 대비 -1.10pt(-6.4%)",
+        { "key": "riskAppetite", "value": -1.1, "confidence": 0.85, "fact": "vix",
+          "note": "VIX 15.99, 금요일 마감 -1.10pt(-6.4%) · 주말 휴장으로 변동 없음",
           "source": "Yahoo/Cboe 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
-        { "key": "megacapEarnings", "stance": 1, "confidence": 0.7, "fact": "amzn",
-          "note": "아마존 급등이 애플 약세를 상쇄",
-          "source": "CNBC/TheStreet 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
-        { "key": "dollar", "value": -0.05, "confidence": 0.8, "fact": "dxy",
-          "note": "DXY 99.91, 일간 -0.05%",
-          "source": "FXStreet 2026-07-31", "asof": "2026-07-31T20:00:00Z" }
+        { "key": "dollar", "value": 0.1, "confidence": 0.5, "fact": "dxy_mon",
+          "note": "DXY 100.0 부근(아시아 세션), 금요일 마감 99.91 대비 +0.1%대 추정 · 출처 간(Investing 100.02 vs FXStreet 99.91) 상충으로 신뢰도 하향",
+          "source": "Investing.com/FXStreet 2026-08-02", "asof": "2026-08-02T23:00:00Z" }
       ],
       "levels": {
-        "last": 28218,
-        "prevClose": 28106.35,
+        "last": 28404,
+        "prevClose": 28218,
         "support": [27900, 27157],
         "resistance": [28607],
-        "note": "종가는 전일 28,106.35 + 약 0.4% 상승 보도로 추정 · 일봉 27,900 하회 시 하락 트리거 · 200일선 27,052",
-        "source": "OneUpTrader/Yahoo 2026-07-31"
+        "note": "NQ 선물 28,404 부근(일요일 저녁 세션) · 금요일 종가 추정 28,218 대비 +0.7%대 · 200일선 27,052",
+        "source": "Investing.com 2026-08-02"
       }
     },
     "XAUUSD": {
       "factors": [
-        { "key": "realYield", "value": 7.5, "confidence": 0.6, "fact": "yields",
-          "note": "TIPS 실질금리 미확인 · 명목 10Y +7.5bp 대용",
+        { "key": "realYield", "value": 7.5, "confidence": 0.55, "fact": "yields",
+          "note": "TIPS 실질금리 미확인 · 명목 10Y 금요일 +7.5bp 대용, 주말 휴장으로 변동 없음",
           "source": "FXStreet 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
-        { "key": "dollar", "value": -0.05, "confidence": 0.8, "fact": "dxy",
-          "note": "DXY 99.91, 일간 -0.05%",
-          "source": "FXStreet 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
+        { "key": "dollar", "value": 0.1, "confidence": 0.5, "fact": "dxy_mon",
+          "note": "DXY 100.0 부근, 금요일 마감 대비 +0.1%대 추정 · 출처 상충으로 신뢰도 하향",
+          "source": "Investing.com/FXStreet 2026-08-02", "asof": "2026-08-02T23:00:00Z" },
         { "key": "fedPolicy", "stance": -1, "confidence": 0.8, "fact": "fomc",
-          "note": "인상 소수의견 3명 · 9월 인상 리스크 부각",
+          "note": "인상 소수의견 3명 · 9월 인상 리스크 부각(persistent)",
           "source": "Interactive/JPM 2026-08-01", "asof": "2026-08-01T12:00:00Z" },
-        { "key": "safeHaven", "stance": 2, "confidence": 0.8, "fact": "hormuz",
-          "note": "미·이란 교전 재개 · 호르무즈 유조선 회항",
-          "source": "Bloomberg 2026-07-31", "asof": "2026-07-31T20:00:00Z" }
+        { "key": "safeHaven", "stance": 2, "confidence": 0.85, "fact": "hormuz",
+          "note": "호르무즈 해협 사실상 폐쇄(8/2) · LNG선 피격(8/1), 남부 항로 유조선 2척 피격·무력화, 대기 유조선 17→19척",
+          "source": "Windward/2026 Hormuz crisis tracker 2026-08-02", "asof": "2026-08-02T00:00:00Z" }
       ],
       "levels": {
-        "last": 4042.97,
+        "last": 4045.17,
         "prevClose": 4103.3,
         "support": [4000],
         "resistance": [4100],
-        "note": "전일 대비 -1.47% · 금리 급등에 4,100 회복 실패",
-        "source": "TradingEconomics/FXStreet 2026-07-31"
+        "note": "일요일 저녁 4,045 부근 · 금요일 종가(4,103.3) 대비 -1.4%대, 금리 급등 여파 지속",
+        "source": "USAGold/TradingEconomics 2026-08-02"
       }
     },
     "USOIL": {
       "factors": [
         { "key": "supplyRisk", "stance": 2, "confidence": 0.85, "fact": "hormuz",
-          "note": "호르무즈 해협 유조선 회항 · 7월 +20% 급등",
-          "source": "Bloomberg 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
+          "note": "호르무즈 해협 사실상 폐쇄(8/2) · LNG선 피격(8/1), 남부 항로 유조선 2척 피격·무력화",
+          "source": "Windward/2026 Hormuz crisis tracker 2026-08-02", "asof": "2026-08-02T00:00:00Z" },
         { "key": "geopolitics", "stance": 2, "confidence": 0.85, "fact": "hormuz",
-          "note": "미·이란 적대 재개(공급 차질과 동일 사건)",
-          "source": "Bloomberg 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
-        { "key": "opec", "stance": -1, "confidence": 0.7, "fact": "opec",
-          "note": "자발적 감산 되돌림 예상 · 해상 수출량 증가 정황",
-          "source": "TradingKey 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
-        { "key": "dollar", "value": -0.05, "confidence": 0.8, "fact": "dxy",
-          "note": "DXY 99.91, 일간 -0.05%",
-          "source": "FXStreet 2026-07-31", "asof": "2026-07-31T20:00:00Z" }
+          "note": "공급 차질과 동일 사건 · 대기 유조선 17→19척으로 증가",
+          "source": "Windward/2026 Hormuz crisis tracker 2026-08-02", "asof": "2026-08-02T00:00:00Z" },
+        { "key": "opec", "stance": -1, "confidence": 0.85, "fact": "opec_sep_hike",
+          "note": "OPEC+ 7개국, 9월 산유량 +18.8만b/d 증산 합의(8/2) · 2023년 자발적 감산분 롤백 완료, 이후 연내 동결 시사로 완화",
+          "source": "CNBC/Bloomberg/Al Arabiya 2026-08-02", "asof": "2026-08-02T00:00:00Z" },
+        { "key": "dollar", "value": 0.1, "confidence": 0.5, "fact": "dxy_mon",
+          "note": "DXY 100.0 부근, 금요일 마감 대비 +0.1%대 추정 · 출처 상충으로 신뢰도 하향",
+          "source": "Investing.com/FXStreet 2026-08-02", "asof": "2026-08-02T23:00:00Z" }
       ],
       "levels": {
         "last": 84.67,
         "prevClose": 83.59,
         "resistance": [85],
-        "note": "전일 대비 +1.29% · 금요일 장중 85달러 상회",
-        "source": "TradingEconomics/Bloomberg 2026-07-31"
+        "note": "금요일 종가 84.67(+1.29%) · 일요일 저녁 아시아 세션 확인 수치 없음, 종가 유지",
+        "source": "CNBC/Bloomberg 2026-07-31"
       }
     },
     "EURUSD": {
       "factors": [
-        { "key": "rateDiff", "value": 10.5, "confidence": 0.6, "fact": "yields",
-          "note": "미 10Y +7.5bp vs 독 10Y 3.15%로 소폭 하락 → 스프레드 약 +10bp 확대(출처 간 상충으로 신뢰도 하향)",
+        { "key": "rateDiff", "value": 10.5, "confidence": 0.5, "fact": "yields",
+          "note": "미 10Y +7.5bp vs 독 10Y 소폭 하락 → 스프레드 약 +10bp 확대(금요일 기준, 주말 휴장으로 변동 없음, 출처 상충)",
           "source": "FXStreet/TradingEconomics 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
         { "key": "fedPolicy", "stance": -1, "confidence": 0.8, "fact": "fomc",
-          "note": "인상 소수의견 3명 · 12월 인상 전망 부상",
+          "note": "인상 소수의견 3명 · 12월 인상 전망 부상(persistent)",
           "source": "JPM 2026-08-01", "asof": "2026-08-01T12:00:00Z" },
         { "key": "ecbPolicy", "stance": 2, "confidence": 0.85, "fact": "ecb",
-          "note": "9/10 인상 확률 70~79% · 2027년 초 예치금리 2.75% 반영",
-          "source": "Investing.com 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
-        { "key": "ezData", "stance": 2, "confidence": 0.85, "fact": "ezdata",
-          "note": "2Q GDP +0.4%(예상 0.2%) · 7월 물가 2.9% 가속",
-          "source": "Investing.com 2026-07-31", "asof": "2026-07-31T20:00:00Z" },
+          "note": "9월 인상 기대 지속(persistent) · 주말 코멘터리도 9월 인상 전망 재확인",
+          "source": "Investing.com/Currency Thoughts 2026-08-02", "asof": "2026-08-02T00:00:00Z" },
+        { "key": "ezData", "stance": 0, "confidence": 0.6, "fact": "eu_hicp_jul",
+          "note": "7월 HICP 확정치 2.9% 컨센서스 부합 · 근원 지표는 혼조(에너지·식품 제외분 예상보다 낮았으나 전월 대비 상승, 주류·담배 제외분은 예상외 상승)",
+          "source": "Currency Thoughts 2026-08-01", "asof": "2026-08-01T00:00:00Z" },
         { "key": "usData", "stance": 0, "confidence": 0.5, "fact": "usdata",
-          "note": "주말 신규 발표 없음 · 8/7 고용 대기",
-          "source": "복합", "asof": "2026-08-01T12:00:00Z" },
-        { "key": "riskAppetite", "value": -1.1, "confidence": 0.9, "fact": "vix",
-          "note": "VIX 15.99, 전일 -1.10pt",
+          "note": "주말 신규 발표 없음 · 8/7 고용보고서 대기",
+          "source": "복합", "asof": "2026-08-02T00:00:00Z" },
+        { "key": "riskAppetite", "value": -1.1, "confidence": 0.85, "fact": "vix",
+          "note": "VIX 15.99, 금요일 마감 -1.10pt · 주말 휴장으로 변동 없음",
           "source": "Yahoo/Cboe 2026-07-31", "asof": "2026-07-31T20:00:00Z" }
       ],
       "levels": {
-        "last": 1.1485,
+        "last": 1.1465,
+        "prevClose": 1.1485,
         "support": [1.14],
         "resistance": [1.15, 1.185],
-        "note": "일간 방향은 출처 간 상충(+0.08% vs -0.58%)이라 전일 종가 미기입 → 위치 레이어 비활성 · 1.1400은 2022~2026 랠리의 23.6% 되돌림",
-        "source": "Investing.com/FXEmpire/TradingKey 2026-07-31"
+        "note": "일요일 저녁 1.1465, 금요일 종가 1.1485 대비 -0.17%대 · 1.1400은 2022~2026 랠리의 23.6% 되돌림",
+        "source": "Exchange-Rates.org 2026-08-02"
       }
     }
   }
