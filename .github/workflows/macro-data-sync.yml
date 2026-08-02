@@ -1,11 +1,15 @@
 name: Sync Macro Data
 
-# 예약 루틴 세션은 저장소를 클론만 할 수 있고 main으로 직접 푸시하지 못하는 경우가 있다
-# (`claude/` 접두 브랜치만 항상 허용된다). 그래서 루틴은 데이터 전용 브랜치에 푸시하고,
-# 이 워크플로가 **데이터 파일만** main으로 옮긴 뒤 Pages를 배포한다.
+# 예약 루틴 세션은 main으로 직접 푸시하지 못한다 — `claude/` 접두 브랜치만 허용된다.
+# 그래서 루틴은 데이터 전용 브랜치에 푸시하고, 이 워크플로가 **데이터 파일만** main으로 옮긴다.
 #
 # 루틴 세션은 항상 기본 브랜치를 클론하므로, 예측 기록이 main에 쌓여야
 # 다음 실행이 이전 예측을 채점할 수 있다. 그래서 브랜치에 남겨두지 않고 main으로 되돌린다.
+#
+# **배포는 여기서 하지 않는다.** `github-pages` 환경은 배포 가능한 브랜치를 main으로
+# 제한하기 때문에, claude/ 브랜치에서 트리거된 job은 스텝을 실행하기도 전에 거부된다.
+# 대신 이 워크플로가 끝나면 `Deploy Macro Desk`가 workflow_run으로 이어받는다.
+# (GITHUB_TOKEN으로 한 푸시는 다른 워크플로의 push 트리거를 발동시키지 않는다.)
 
 on:
   push:
@@ -25,11 +29,9 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: macro-data-sync
   cancel-in-progress: false
 
 jobs:
@@ -77,45 +79,3 @@ jobs:
               commit -m "$(git log -1 --format=%s "origin/$SOURCE_REF")"
           git push origin HEAD:main
           echo "changed=true" >> "$GITHUB_OUTPUT"
-
-  deploy:
-    needs: sync
-    if: needs.sync.outputs.changed == 'true'
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Checkout main
-        uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: macro-desk/package-lock.json
-
-      - name: Install
-        working-directory: macro-desk
-        run: npm ci
-
-      - name: Build
-        working-directory: macro-desk
-        run: npm run build
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: macro-desk/dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

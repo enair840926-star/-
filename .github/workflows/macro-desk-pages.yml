@@ -6,6 +6,12 @@ on:
     paths:
       - "macro-desk/**"
       - ".github/workflows/macro-desk-pages.yml"
+  # 예약 루틴의 데이터는 `Sync Macro Data`가 main에 옮긴다. 그 푸시는 GITHUB_TOKEN으로
+  # 이뤄져 위 push 트리거를 발동시키지 않으므로, 완료 신호를 직접 이어받는다.
+  # workflow_run은 기본 브랜치 컨텍스트에서 도니 github-pages 환경 정책도 통과한다.
+  workflow_run:
+    workflows: ["Sync Macro Data"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -19,10 +25,18 @@ concurrency:
 
 jobs:
   build:
+    # sync가 실패했으면 배포하지 않는다. push·수동 실행에는 이 조건이 걸리지 않는다.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # workflow_run 컨텍스트의 기본 ref는 트리거한 쪽 커밋이라 claude/ 브랜치를
+          # 가리킬 수 있다. 배포 대상은 언제나 main이다.
+          ref: main
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
