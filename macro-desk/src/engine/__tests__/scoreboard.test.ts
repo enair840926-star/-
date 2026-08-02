@@ -35,6 +35,7 @@ function record(
     positionRelation: null,
     eventTier: 0,
     blockCapped: false,
+    priorMovePct: null,
     refPrice: 100,
     horizonEnd: hoursLater(8).toISOString(),
     outcome: null,

@@ -374,6 +374,12 @@ export interface PredictionRecord {
   eventTier: number;
   /** 블록 상한이 실제로 도움이 됐는지 검증용 */
   blockCapped: boolean;
+  /**
+   * 예측 시점의 직전 세션 대비 변화율(%).
+   * "전일 방향 지속" 나이브 벤치마크를 만들려면 이 값이 필요하다.
+   * 소급이 불가능하므로 기록 시점에 남긴다.
+   */
+  priorMovePct: number | null;
   /** 예측 시점 가격 */
   refPrice: number | null;
   horizonEnd: string;

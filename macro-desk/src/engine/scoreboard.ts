@@ -51,6 +51,7 @@ export function openPrediction(fusion: FusionResult, generatedAt: Date): Predict
     positionRelation: fusion.position?.relation ?? null,
     eventTier: fusion.events.maxTier,
     blockCapped: fusion.macro.flags.some((flag) => flag.startsWith("BLOCK_CAPPED")),
+    priorMovePct: fusion.position?.movePct ?? null,
     refPrice,
     horizonEnd: new Date(generatedAt.getTime() + MAX_VALID_HOURS * HOUR).toISOString(),
     outcome: null,

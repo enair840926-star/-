@@ -31,6 +31,7 @@ function scored(
     hit?: boolean | null;
     positionRelation?: PredictionRecord["positionRelation"];
     blockCapped?: boolean;
+    priorMovePct?: number | null;
     factors?: PredictionRecord["factors"];
     ruleset?: string;
   },
@@ -52,6 +53,7 @@ function scored(
     positionRelation: opts.positionRelation ?? null,
     eventTier: 0,
     blockCapped: opts.blockCapped ?? false,
+    priorMovePct: opts.priorMovePct ?? null,
     refPrice: 100,
     horizonEnd: NOW.toISOString(),
     outcome: {
