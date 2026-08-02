@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { runSnapshot, validateInput } from "../index";
 import type { SnapshotInput } from "../types";
-import { fullSeries } from "./fixtures";
+import { allFactors, factorInput, fullSeries } from "./fixtures";
 
 const NOW = new Date("2026-08-03T12:00:00Z");
 
@@ -12,18 +12,18 @@ const input: SnapshotInput = {
   assets: {
     NAS100: {
       factors: [
-        { key: "usRates", stance: 1, confidence: 0.9, note: "10Y 4.10%로 6bp 하락" },
+        { key: "usRates", value: -6, confidence: 0.9, note: "10Y 4.10%로 6bp 하락" },
         { key: "fedPolicy", stance: 1, confidence: 0.8, note: "9월 인하 확률 72%" },
-        { key: "riskAppetite", stance: 1, confidence: 0.8, note: "VIX 14.2" },
+        { key: "riskAppetite", value: -0.8, confidence: 0.8, note: "VIX 14.2(-0.8pt)" },
         { key: "megacapEarnings", stance: 2, confidence: 0.9, note: "빅테크 가이던스 상향" },
-        { key: "breadth", stance: 1, confidence: 0.7, note: "상승종목 62%" },
-        { key: "dollar", stance: 0, confidence: 0.7, note: "DXY 보합" },
+        { key: "breadth", value: 62, confidence: 0.7, note: "상승종목 62%" },
+        { key: "dollar", value: 0, confidence: 0.7, note: "DXY 보합" },
       ],
       candles: fullSeries("up"),
       dataSource: "테스트 합성 시계열",
     },
     XAUUSD: {
-      factors: [{ key: "dollar", stance: -1, confidence: 0.8, note: "DXY 강세" }],
+      factors: [{ key: "dollar", value: 0.3, confidence: 0.8, note: "DXY +0.3%" }],
       candles: fullSeries("down"),
     },
   },
@@ -87,7 +87,7 @@ describe("validateInput", () => {
       events: [{ label: "이상한 이벤트", time: "not-a-date", tier: 9 as never }],
       assets: {
         NAS100: {
-          factors: [{ key: "oilInventory", stance: 1, note: "잘못된 키" }],
+          factors: [{ key: "oilInventory", value: 1, note: "잘못된 키" }],
           candles: {},
         },
       },
@@ -103,12 +103,12 @@ describe("validateInput", () => {
       events: [],
       assets: {
         USOIL: {
-          factors: [{ key: "inventory", stance: "많음" as never, note: "" }],
+          factors: [{ key: "inventory", value: "많음" as never, note: "" }],
           candles: fullSeries("up"),
         },
       },
     });
-    expect(errors.some((error) => error.includes("stance가 숫자가 아닙니다"))).toBe(true);
+    expect(errors.some((error) => error.includes("value가 필요합니다"))).toBe(true);
     expect(errors.some((error) => error.includes("note가 비어"))).toBe(true);
   });
 });

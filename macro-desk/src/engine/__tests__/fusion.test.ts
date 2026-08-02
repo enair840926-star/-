@@ -3,28 +3,19 @@ import { computeEvents } from "../events";
 import { fuse } from "../fusion";
 import { computeMacro } from "../macro";
 import { computeTechnical } from "../technical";
-import { MACRO_WEIGHTS } from "../weights";
-import type { AssetId, MacroEventInput } from "../types";
-import { fullSeries } from "./fixtures";
+import type { AssetId, MacroEventInput, Stance } from "../types";
+import { allFactors, fullSeries } from "./fixtures";
 
 const NOW = new Date("2026-08-03T12:00:00Z");
 const at = (minutes: number) => new Date(NOW.getTime() + minutes * 60_000).toISOString();
 
-function macroOf(asset: AssetId, stance: number) {
-  return computeMacro(
-    asset,
-    Object.keys(MACRO_WEIGHTS[asset]).map((key) => ({
-      key,
-      stance,
-      confidence: 1,
-      note: "테스트",
-    })),
-  );
+function macroOf(asset: AssetId, stance: Stance) {
+  return computeMacro(asset, allFactors(asset, stance, 1), NOW);
 }
 
 function run(
   kind: "up" | "down" | "range",
-  macroStance: number,
+  macroStance: Stance,
   events: MacroEventInput[] = [],
   asset: AssetId = "NAS100",
 ) {
@@ -119,7 +110,7 @@ describe("출력 계약", () => {
 
   it("점수는 항상 -2~+2 안에 있다", () => {
     for (const kind of ["up", "down", "range"] as const) {
-      for (const stance of [-2, -1, 0, 1, 2]) {
+      for (const stance of [-2, -1, 0, 1, 2] as Stance[]) {
         const result = run(kind, stance);
         expect(result.score).toBeGreaterThanOrEqual(-2);
         expect(result.score).toBeLessThanOrEqual(2);

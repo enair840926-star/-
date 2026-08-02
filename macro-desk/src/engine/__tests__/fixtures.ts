@@ -58,3 +58,42 @@ export function fullSeries(kind: "up" | "down" | "range") {
   const make = kind === "up" ? trendingUp : kind === "down" ? trendingDown : ranging;
   return { D1: make(), H4: make(), H1: make(), M15: make() };
 }
+
+import { MACRO_WEIGHTS } from "../weights";
+import type { AssetId, MacroFactorInput, Stance } from "../types";
+
+/**
+ * 루브릭에 맞는 팩터 입력을 만든다.
+ * 수치형은 원하는 stance가 나오는 밴드의 대표값을 역산해 `value`로 넣는다.
+ */
+export function factorInput(
+  asset: AssetId,
+  key: string,
+  stance: Stance,
+  confidence = 0.9,
+): MacroFactorInput {
+  const spec = MACRO_WEIGHTS[asset][key];
+  if (!spec) throw new Error(`알 수 없는 팩터: ${asset}.${key}`);
+  const base = { key, confidence, note: `테스트 ${key} ${stance}` };
+  if (spec.kind === "ordinal") return { ...base, stance };
+
+  const bands = spec.bands!;
+  const index = bands.findIndex((band) => band.stance === stance);
+  if (index < 0) throw new Error(`${asset}.${key} 밴드에 stance ${stance}가 없습니다`);
+  const upper = bands[index].max;
+  const lower = index === 0 ? -Infinity : bands[index - 1].max;
+  const value =
+    Number.isFinite(upper) && Number.isFinite(lower)
+      ? (upper + lower) / 2
+      : Number.isFinite(upper)
+        ? upper - 1
+        : lower + 1;
+  return { ...base, value };
+}
+
+/** 자산의 모든 팩터를 같은 stance로 채운다 */
+export function allFactors(asset: AssetId, stance: Stance, confidence = 0.9): MacroFactorInput[] {
+  return Object.keys(MACRO_WEIGHTS[asset]).map((key) =>
+    factorInput(asset, key, stance, confidence),
+  );
+}

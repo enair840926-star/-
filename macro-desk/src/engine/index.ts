@@ -84,13 +84,32 @@ export function validateInput(input: SnapshotInput): string[] {
       continue;
     }
     if (!asset) continue;
-    const valid = Object.keys(MACRO_WEIGHTS[assetId as AssetId]);
+    const table = MACRO_WEIGHTS[assetId as AssetId];
     for (const factor of asset.factors ?? []) {
-      if (!valid.includes(factor.key)) {
-        errors.push(`${assetId}: 알 수 없는 팩터 키 "${factor.key}" (가능: ${valid.join(", ")})`);
+      const spec = table[factor.key];
+      if (!spec) {
+        errors.push(
+          `${assetId}: 알 수 없는 팩터 키 "${factor.key}" (가능: ${Object.keys(table).join(", ")})`,
+        );
+        continue;
       }
-      if (!Number.isFinite(factor.stance)) {
-        errors.push(`${assetId}.${factor.key}: stance가 숫자가 아닙니다`);
+      if (spec.kind === "numeric") {
+        if (!Number.isFinite(factor.value as number)) {
+          if (Number.isFinite(factor.stance as number)) {
+            errors.push(
+              `${assetId}.${factor.key}: 수치형 팩터입니다. stance 대신 value를 넣으세요 (${spec.metric})`,
+            );
+          } else {
+            errors.push(`${assetId}.${factor.key}: value가 필요합니다 (${spec.metric})`);
+          }
+        }
+      } else if (!Number.isFinite(factor.stance as number)) {
+        errors.push(`${assetId}.${factor.key}: 서수형 팩터입니다. stance(-2~2)가 필요합니다`);
+      } else if (Math.abs(factor.stance as number) > 2) {
+        errors.push(`${assetId}.${factor.key}: stance는 -2~2 범위여야 합니다`);
+      }
+      if (factor.asof && !Number.isFinite(Date.parse(factor.asof))) {
+        errors.push(`${assetId}.${factor.key}: asof 파싱 불가 (${factor.asof})`);
       }
       if (!factor.note) errors.push(`${assetId}.${factor.key}: note가 비어 있습니다`);
     }
@@ -125,7 +144,7 @@ export function analyzeAsset(
 ): FusionResult {
   const assetInput = input.assets[asset];
   const mode = modeOf(input, asset);
-  const macro = computeMacro(asset, assetInput?.factors ?? []);
+  const macro = computeMacro(asset, assetInput?.factors ?? [], now);
   const technical = computeTechnical(mode === "macro-only" ? {} : (assetInput?.candles ?? {}));
   if (mode === "macro-only") {
     // 차트를 아예 쓰지 않는 모드다. 누락은 오류가 아니므로 TF 플래그를 남기지 않는다.

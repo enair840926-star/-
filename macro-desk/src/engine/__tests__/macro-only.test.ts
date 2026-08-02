@@ -4,9 +4,8 @@ import { fuse } from "../fusion";
 import { computeMacro } from "../macro";
 import { computeTechnical } from "../technical";
 import { runSnapshot, validateInput } from "../index";
-import { MACRO_WEIGHTS } from "../weights";
 import type { AssetId, MacroEventInput, MacroFactorInput, SnapshotInput } from "../types";
-import { fullSeries } from "./fixtures";
+import { allFactors, factorInput, fullSeries } from "./fixtures";
 
 const NOW = new Date("2026-08-03T12:00:00Z");
 const at = (minutes: number) => new Date(NOW.getTime() + minutes * 60_000).toISOString();
@@ -19,16 +18,13 @@ function run(
 ) {
   return fuse(
     asset,
-    computeMacro(asset, factors),
+    computeMacro(asset, factors, NOW),
     computeTechnical({}),
     computeEvents(asset, events, NOW),
     NOW,
     { mode: "macro-only", levels },
   );
 }
-
-const allFactors = (asset: AssetId, stance: number, confidence = 0.9): MacroFactorInput[] =>
-  Object.keys(MACRO_WEIGHTS[asset]).map((key) => ({ key, stance, confidence, note: "테스트" }));
 
 describe("매크로 전용 모드", () => {
   it("차트 없이도 편향이 서면 방향을 낸다", () => {
@@ -47,21 +43,22 @@ describe("매크로 전용 모드", () => {
   });
 
   it("점수는 매크로 점수를 그대로 쓴다", () => {
-    const macro = computeMacro("NAS100", allFactors("NAS100", -2));
+    const macro = computeMacro("NAS100", allFactors("NAS100", -2), NOW);
     const result = run("NAS100", allFactors("NAS100", -2));
     expect(result.score).toBe(macro.score);
     expect(result.direction).toBe(-2);
   });
 
   it("팩터가 반반으로 갈리면 요인 상충으로 잡고 방향을 비운다", () => {
-    const keys = Object.keys(MACRO_WEIGHTS.NAS100);
-    const factors = keys.map((key, index) => ({
-      key,
-      stance: index % 2 === 0 ? 2 : -2,
-      confidence: 0.9,
-      note: "테스트",
-    }));
-    const result = run("NAS100", factors);
+    // 금리 진영은 하락 압력, 주식 진영은 상승 압력 — 블록끼리 정면으로 갈린다
+    const result = run("NAS100", [
+      factorInput("NAS100", "usRates", -2),
+      factorInput("NAS100", "fedPolicy", -2),
+      factorInput("NAS100", "dollar", -2),
+      factorInput("NAS100", "riskAppetite", 2),
+      factorInput("NAS100", "megacapEarnings", 2),
+      factorInput("NAS100", "breadth", 2),
+    ]);
     expect(result.regime).toBe("CONFLICT");
     expect(result.direction).toBe(0);
     expect(result.playbook).toContain("요인 상충");
@@ -70,9 +67,9 @@ describe("매크로 전용 모드", () => {
 
   it("편향이 서면 주도 요인과 반대 요인을 이름으로 짚어준다", () => {
     const result = run("EURUSD", [
-      { key: "ecbPolicy", stance: 2, confidence: 0.9, note: "9월 인상 확률 79%" },
-      { key: "ezData", stance: 2, confidence: 0.9, note: "2Q GDP +0.4%" },
-      { key: "rateDiff", stance: -1, confidence: 0.8, note: "미 장기금리 우위" },
+      factorInput("EURUSD", "ecbPolicy", 2),
+      factorInput("EURUSD", "ezData", 2),
+      factorInput("EURUSD", "rateDiff", -1, 0.8),
     ]);
     expect(result.direction).toBeGreaterThan(0);
     expect(result.playbook).toContain("ECB 스탠스");
