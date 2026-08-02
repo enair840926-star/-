@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runSnapshot, validateInput } from "../src/engine/index";
+import { renderNotification } from "../src/engine/notify";
 import {
   buildScoreboard,
   openPrediction,
@@ -176,6 +177,9 @@ function main() {
 
   console.error(`기준 ${snapshot.generatedAt} · ruleset ${snapshot.ruleset}`);
   console.error(summarize(snapshot));
+  console.error("\n── 알림 문구 (그대로 마지막 답변에 쓴다) ──");
+  console.error(renderNotification(snapshot));
+  console.error("── 알림 문구 끝 ──");
   if (snapshot.scoreboard) console.error(scoreboardLine(snapshot.scoreboard));
 
   const flagged = Object.entries(snapshot.assets).filter(
