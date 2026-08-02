@@ -13,6 +13,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildCalibrationReport, renderCalibrationMarkdown } from "../src/engine/calibrate";
+import { evaluate, renderEvaluationMarkdown } from "../src/engine/evaluate";
 import { parsePredictions } from "../src/engine/scoreboard";
 import type { AssetId, PredictionRecord } from "../src/engine/types";
 import { RULESET_VERSION } from "../src/engine/types";
@@ -112,7 +113,15 @@ function main() {
     writeFileSync(paramsPath, `${JSON.stringify(params, null, 2)}\n`, "utf8");
   }
 
-  const markdown = renderCalibrationMarkdown(report);
+  // 성과 평가는 보정보다 먼저 온다 — 애초에 작동하는지가 먼저다
+  const evaluation = evaluate(records, params.neutralBandPct, now);
+  const markdown = [
+    renderCalibrationMarkdown(report).split("## A. 중립밴드")[0],
+    renderEvaluationMarkdown(evaluation),
+    "---",
+    "",
+    `## A. 중립밴드${renderCalibrationMarkdown(report).split("## A. 중립밴드")[1]}`,
+  ].join("\n");
   const reportPath = resolve(root, options.outDir, `${now.toISOString().slice(0, 10)}.md`);
   if (options.dry) {
     process.stdout.write(markdown);
@@ -132,6 +141,20 @@ function main() {
     }
   } else {
     console.error("  중립밴드: 변경 없음");
+  }
+  console.error(`  판정: ${evaluation.verdict}`);
+  const primary = evaluation.horizons[0];
+  if (primary) {
+    console.error(
+      `  IC(8h): ${primary.ic.ic ?? "—"} (t ${primary.ic.t ?? "—"}, 표본 ${primary.ic.n}) — ${primary.ic.note}`,
+    );
+    const system = primary.benchmarks.find((b) => b.id === "system");
+    const momentum = primary.benchmarks.find((b) => b.id === "momentum");
+    if (system && momentum) {
+      console.error(
+        `  누적(비용 후): 시스템 ${system.netPct}% vs 전일방향지속 ${momentum.netPct}%`,
+      );
+    }
   }
   console.error(`  확신도 단조성: ${report.conviction.note}`);
   console.error(`  방향 게이트: ${report.gate.suggestion}`);

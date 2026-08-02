@@ -37,7 +37,8 @@ NAS100, XAUUSD, USOIL, EURUSD의 **당일 방향성**을 외부요인 기반으�
 - `src/engine/__tests__/` — 엔진 테스트
 - `scripts/build-snapshot.ts` — 세션 입력 → `public/macro.json`
 - `scripts/from-bundle.ts` — v4 통합 번들 ZIP → 캔들 입력
-- `scripts/calibrate.ts` — 예측 기록 → 파라미터 보정 + 주간 리포트
+- `scripts/calibrate.ts` — 예측 기록 → 성과 평가 + 파라미터 보정 + 주간 리포트
+- `src/engine/evaluate.ts` — IC·나이브 벤치마크·정책 시뮬레이션·손익 비대칭
 - `src/engine/params.json` — 보정으로 갱신되는 파라미터 (중립밴드)
 - `data/session/latest.json` — 최신 세션 입력(감사 추적용으로 함께 커밋)
 - `public/macro.json` — 화면이 읽는 단일 데이터 원본
