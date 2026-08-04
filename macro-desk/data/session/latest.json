@@ -1,7 +1,7 @@
 {
   "mode": "macro-only",
   "schedule": "08:00 · 16:00 · 22:00 KST",
-  "note": "2026-08-04(화) 아침 · 이란-오만 호르무즈 협상 진전(트럼프 공습 철회) 테마로 유가 월요일 종가 기준 -5.97% 급락 · 미 10Y -5bp·독 10Y -6bp 동반 하락, 스프레드는 거의 보합(+1bp) · DXY 월요일 -0.19% 약세 지속 · ISM 제조업 PMI 55.6%(2년래 최고 vs 컨센서스 하회 보도 상충) · ruleset v1.1 루브릭 적용",
+  "note": "2026-08-04(화) 오후 · DXY 99.97, 월요일 종가(99.72) 대비 +0.25% 반등 · 미 10Y 4.676%, 월요일 종가(4.70%) 대비 약 -2bp · VIX 15.99, -1.10pt(위험선호 개선) · 금 4,077.64(Investing, 전일종가 4,042.67 대비 +0.86%) vs TE 계열 4,057~4,062권 상충 · WTI 81.03(Investing, 전일종가 80.34 대비 +0.86% 반등) vs Forbes 월요일 종가 79.62 표기 상충 · 호르무즈: 이란-오만 협상 '최종 단계' 보도(알자지라 8/2) 지속되나 오만 인근 유조선 피습·불명 선박 피격 보도와 상충 · 독 10Y 스프레드는 소스 간 상충(3.15% vs 3.21%)으로 미확인, rateDiff 보류 · ruleset v1.1 적용",
   "events": [
     { "label": "EIA 주간 원유재고", "time": "2026-08-05T14:30:00Z", "tier": 2, "note": "정례 수요일 발표 추정치(요일 기준, 공식 일정 미확인) · 컨센서스 서프라이즈 미확인" }
   ],
@@ -11,67 +11,67 @@
         { "key": "fedPolicy", "stance": -1, "confidence": 0.75, "fact": "fomc",
           "note": "7월 FOMC 동결이나 인상 소수의견 3명 · 매파 기류 지속(persistent)",
           "source": "Interactive/JPM 2026-08-01", "asof": "2026-08-01T12:00:00Z" },
-        { "key": "usRates", "value": -5, "confidence": 0.75, "fact": "ust10y_close_aug3",
-          "note": "미 10Y 4.70%, 월요일 종가 기준 전일 대비 -5bp(-0.05%p)",
-          "source": "TradingEconomics 2026-08-03", "asof": "2026-08-03T22:30:00Z" },
-        { "key": "dollar", "value": -0.19, "confidence": 0.65, "fact": "dxy_close_aug3",
-          "note": "DXY 99.72, 월요일 종가 기준 전일 대비 -0.19%",
-          "source": "TradingEconomics 2026-08-03", "asof": "2026-08-03T22:30:00Z" }
+        { "key": "usRates", "value": -2, "confidence": 0.6, "fact": "ust10y_aug4",
+          "note": "미 10Y 4.676%, 월요일 종가 4.70% 대비 약 -2.4bp(반올림 -2bp)",
+          "source": "TradingEconomics/MacroMicro 2026-08-04", "asof": "2026-08-04T07:10:00Z" },
+        { "key": "riskAppetite", "value": -1.1, "confidence": 0.7, "fact": "vix_aug4",
+          "note": "VIX 15.99, 전일 대비 -1.10pt(-6.44%) 하락 · 위험선호 개선",
+          "source": "Investing.com/CNBC 2026-08-04", "asof": "2026-08-04T07:10:00Z" },
+        { "key": "dollar", "value": 0.25, "confidence": 0.55, "fact": "dxy_aug4",
+          "note": "DXY 99.97, 월요일 종가 99.72 대비 +0.25% · 일부 소스는 +0.01%로 상충 보도(기준 세션 불명)",
+          "source": "TradingEconomics 2026-08-04", "asof": "2026-08-04T07:10:00Z" }
       ],
       "levels": {
-        "last": 28604.93,
-        "prevClose": 28274.19,
-        "note": "NDX 현물 월요일 종가 28,604.93 (+330.74, +1.17%) · NQ 선물은 28,600~28,900대 레인지로 상충 보도",
-        "source": "Yahoo Finance/Investrade 2026-08-03"
+        "last": 29011.0,
+        "prevClose": 28604.93,
+        "note": "NQ(E-mini 선물) 29,011.00 vs NDX 현물 월요일 종가 28,604.93(현물 미개장, 선물-현물 괴리 유의) · 선물 24시간 변화 +0.24% 별도 보도",
+        "source": "Investing.com/Barchart 2026-08-04"
       }
     },
     "XAUUSD": {
       "factors": [
-        { "key": "dollar", "value": -0.19, "confidence": 0.65, "fact": "dxy_close_aug3",
-          "note": "DXY 99.72, 월요일 종가 기준 전일 대비 -0.19%",
-          "source": "TradingEconomics 2026-08-03", "asof": "2026-08-03T22:30:00Z" },
+        { "key": "dollar", "value": 0.25, "confidence": 0.55, "fact": "dxy_aug4",
+          "note": "DXY 99.97, 월요일 종가 99.72 대비 +0.25%",
+          "source": "TradingEconomics 2026-08-04", "asof": "2026-08-04T07:10:00Z" },
         { "key": "fedPolicy", "stance": -1, "confidence": 0.75, "fact": "fomc",
           "note": "인상 소수의견 3명 · 매파 기류 지속(persistent)",
           "source": "Interactive/JPM 2026-08-01", "asof": "2026-08-01T12:00:00Z" },
-        { "key": "safeHaven", "stance": -1, "confidence": 0.6, "fact": "hormuz",
-          "note": "트럼프 대이란 공습 철회 · 호르무즈 통항 관련 이란-오만 협상 진전 보도(완화 방향)",
-          "source": "Bloomberg 2026-08-03", "asof": "2026-08-03T22:30:00Z" },
-        { "key": "realYield", "value": -5, "confidence": 0.5, "fact": "ust10y_close_aug3",
-          "note": "TIPS 미확인, 명목 10Y로 대용 · 미 10Y 월요일 종가 기준 전일 대비 -5bp",
-          "source": "TradingEconomics 2026-08-03", "asof": "2026-08-03T22:30:00Z" }
+        { "key": "safeHaven", "stance": -1, "confidence": 0.5, "fact": "hormuz",
+          "note": "이란-오만 호르무즈 협상 '최종 단계' 보도(완화) 지속되나, 오만 인근 유조선 피습·불명 선박 피격 보도와 상충 · 방향 유지하되 확신도 하향",
+          "source": "Al Jazeera 2026-08-02/CNN 2026-08-03", "asof": "2026-08-04T07:10:00Z" },
+        { "key": "realYield", "value": -2, "confidence": 0.5, "fact": "ust10y_aug4",
+          "note": "TIPS 미확인, 명목 10Y로 대용 · 미 10Y 4.676%, 월요일 종가 대비 약 -2.4bp",
+          "source": "TradingEconomics/MacroMicro 2026-08-04", "asof": "2026-08-04T07:10:00Z" }
       ],
       "levels": {
-        "last": 4038.16,
-        "prevClose": 4103.3,
+        "last": 4077.64,
+        "prevClose": 4042.67,
         "resistance": [4100],
-        "note": "스팟 4,038.16(TradingEconomics, 전일 대비 -0.12% 표기) vs 4,050~4,067권 유지 보도(FXLeaders) 상충 · 금요일 종가 4,103.3 대비 확인",
-        "source": "TradingEconomics/FXLeaders 2026-08-03"
+        "note": "Investing.com 4,077.64(전일종가 4,042.67 대비 +0.86%) vs TradingEconomics 계열 4,057~4,062권 상충 보도",
+        "source": "Investing.com 2026-08-04 (vs TradingEconomics 2026-08-04)"
       }
     },
     "USOIL": {
       "factors": [
-        { "key": "supplyRisk", "stance": -1, "confidence": 0.7, "fact": "hormuz",
-          "note": "트럼프 대이란 공습 철회, 이란-오만 호르무즈 협상 최종 단계(타결 임박 보도) · 완화 진전",
-          "source": "Bloomberg 2026-08-03", "asof": "2026-08-03T22:30:00Z" },
-        { "key": "geopolitics", "stance": -1, "confidence": 0.7, "fact": "hormuz",
-          "note": "공급위험과 동일 사건 · 공습 철회·협상 진전으로 지정학 프리미엄 축소",
-          "source": "Bloomberg 2026-08-03", "asof": "2026-08-03T22:30:00Z" },
+        { "key": "supplyRisk", "stance": -1, "confidence": 0.55, "fact": "hormuz",
+          "note": "이란-오만 협상 '최종 단계' 보도 지속되나 오만 인근 유조선 피습 보도와 상충 · 완화 방향 유지, 확신도 하향",
+          "source": "Al Jazeera 2026-08-02/CNN 2026-08-03", "asof": "2026-08-04T07:10:00Z" },
+        { "key": "geopolitics", "stance": -1, "confidence": 0.55, "fact": "hormuz",
+          "note": "공급위험과 동일 사건(fact 공유)",
+          "source": "Al Jazeera 2026-08-02/CNN 2026-08-03", "asof": "2026-08-04T07:10:00Z" },
         { "key": "opec", "stance": -1, "confidence": 0.8, "fact": "opec_sep_hike",
           "note": "OPEC+ 7개국 9월 +18.8만b/d 증산 합의(8/2) 이후 연내 동결 시사(persistent)",
           "source": "CNBC/Bloomberg 2026-08-02", "asof": "2026-08-02T00:00:00Z" },
-        { "key": "demand", "stance": -1, "confidence": 0.45, "fact": "china_demand_aug3",
-          "note": "아시아 세션 중 중국 산업 수요 둔화 보도(단일 소스, 수치 미확인)",
-          "source": "TradingKey 2026-08-03", "asof": "2026-08-03T22:30:00Z" },
-        { "key": "dollar", "value": -0.19, "confidence": 0.65, "fact": "dxy_close_aug3",
-          "note": "DXY 99.72, 월요일 종가 기준 전일 대비 -0.19%",
-          "source": "TradingEconomics 2026-08-03", "asof": "2026-08-03T22:30:00Z" }
+        { "key": "dollar", "value": 0.25, "confidence": 0.55, "fact": "dxy_aug4",
+          "note": "DXY 99.97, 월요일 종가 99.72 대비 +0.25%",
+          "source": "TradingEconomics 2026-08-04", "asof": "2026-08-04T07:10:00Z" }
       ],
       "levels": {
-        "last": 79.62,
-        "prevClose": 84.67,
+        "last": 81.03,
+        "prevClose": 80.34,
         "resistance": [85],
-        "note": "WTI 79.62, 금요일 종가 84.67 대비 -5.97% · 월요일 한때 78.83~86.21 레인지",
-        "source": "Forbes Advisor/TradingKey 2026-08-03"
+        "note": "Investing.com WTI 선물 81.03(전일종가 80.34 대비 +0.86% 반등) · 단 Forbes 등은 월요일 공식 종가 79.62(-5.97%)로 표기, 종가 기준 소스 상충",
+        "source": "Investing.com 2026-08-04 (vs Forbes Advisor 2026-08-03)"
       }
     },
     "EURUSD": {
@@ -83,19 +83,19 @@
           "note": "9월 인상 기대 지속(persistent)",
           "source": "Investing.com/Currency Thoughts 2026-08-02", "asof": "2026-08-02T00:00:00Z" },
         { "key": "usData", "stance": -1, "confidence": 0.5, "fact": "ism_pmi_jul",
-          "note": "7월 ISM 제조업 PMI 55.6%(2년 3개월래 최고, 전월 대비 +2.3pp) · 단 일부 보도는 컨센서스 하회로 상충",
+          "note": "7월 ISM 제조업 PMI 55.6%(2년 3개월래 최고) · 일부 보도는 컨센서스 하회로 상충",
           "source": "ISM/PRNewswire 2026-08-03 vs TipRanks 2026-08-03", "asof": "2026-08-03T22:30:00Z" },
-        { "key": "rateDiff", "value": 1, "confidence": 0.6, "fact": "rate_spread_aug3",
-          "note": "미 10Y -5bp, 독 10Y -6bp(양쪽 다 월요일 종가) → 스프레드 변화 약 +1bp(거의 보합)",
-          "source": "TradingEconomics 2026-08-03", "asof": "2026-08-03T22:30:00Z" }
+        { "key": "riskAppetite", "value": -1.1, "confidence": 0.7, "fact": "vix_aug4",
+          "note": "VIX 15.99, 전일 대비 -1.10pt(-6.44%) 하락",
+          "source": "Investing.com/CNBC 2026-08-04", "asof": "2026-08-04T07:10:00Z" }
       ],
       "levels": {
-        "last": 1.1522,
-        "prevClose": 1.1485,
+        "last": 1.1515,
+        "prevClose": 1.1522,
         "support": [1.14],
         "resistance": [1.15, 1.185],
-        "note": "1.1522 부근 유지(일부 소식통 1.145로 상충) · 금요일 종가 1.1485 대비 +0.32%",
-        "source": "TradingEconomics 2026-08-03"
+        "note": "1.1509~1.1528권 상충 보도(Investing 1.1509 vs XE/Bloomberg 1.1527~1.1528), 중간값 1.1515 채택 · 월요일 종가 1.1522 대비 약보합(-0.06%)",
+        "source": "Investing.com/XE/Bloomberg 2026-08-04"
       }
     }
   }
