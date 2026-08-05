@@ -1,0 +1,80 @@
+name: Sync Insight Feed
+
+# 자산 인사이트가 굽는 숫자 피드를 저장소로 끌어온다.
+#
+# 루틴 세션은 프록시 정책 때문에 외부 호스트를 직접 못 읽는다 —
+# feed.json을 시도했다가 403을 받고 전량 웹 검색으로 되돌아간 회차가 있다.
+# 러너는 프록시 밖이라 받을 수 있으므로, 여기서 받아 저장소에 커밋해 두면
+# 루틴은 클론된 로컬 파일만 읽으면 된다.
+#
+# 세션 시각(08:00 · 16:00 · 22:00 KST)보다 조금 앞서 받는다.
+# cron은 UTC. 한국시간 = UTC + 9.
+
+on:
+  schedule:
+    - cron: '40 22 * * *'   # 07:40 KST — 아침 세션 전
+    - cron: '40 6 * * *'    # 15:40 KST — 오후 세션 전
+    - cron: '40 12 * * *'   # 21:40 KST — 야간 세션 전
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: insight-feed-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: 피드 받기
+        id: fetch
+        run: |
+          set -euo pipefail
+          mkdir -p macro-desk/data
+          url="https://enair840926-star.github.io/insight/feed.json"
+
+          # 실패하면 기존 파일을 그대로 둔다. 반쯤 받은 파일로 덮어쓰면
+          # 루틴이 깨진 JSON을 읽게 된다.
+          if ! curl -fsS --max-time 30 "$url" -o /tmp/feed.json; then
+            echo "받기 실패 — 기존 파일 유지"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! python3 -c "import json,sys; json.load(open('/tmp/feed.json'))"; then
+            echo "JSON 아님 — 기존 파일 유지"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          python3 - <<'PY'
+          import json
+          d = json.load(open('/tmp/feed.json'))
+          f = d.get('factors') or {}
+          print(f"팩터 {len(f)}개: {', '.join(f)}")
+          print(f"수집 {d.get('collectedAt')}")
+          print(f"없는 것: {[m['key'] for m in (d.get('missing') or [])]}")
+          PY
+
+          cp /tmp/feed.json macro-desk/data/feed.json
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      - name: 커밋
+        if: steps.fetch.outputs.ok == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add macro-desk/data/feed.json
+          if git diff --staged --quiet; then
+            echo "변경 없음"
+          else
+            git commit -m "chore: sync insight feed"
+            git pull --rebase origin main || true
+            git push
+          fi
