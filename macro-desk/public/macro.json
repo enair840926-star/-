@@ -2,19 +2,19 @@
   "version": 2,
   "ruleset": "fusion-v1.1",
   "mode": "macro-only",
-  "generatedAt": "2026-08-05T13:13:22.312Z",
+  "generatedAt": "2026-08-05T15:03:31.952Z",
   "schedule": "08:00 · 16:00 · 22:00 KST",
-  "note": "2026-08-05(수) 야간(22시 KST) · 미 10Y 4.619%, Aug4 종가 기준 전일 대비 -6bp(CNBC, 유가 급락·호르무즈 완화 기대 연동) · 독 10Y 3.09%(Aug5, 7/15 이후 최저, 정확한 일간bp 미확인으로 rateDiff는 이번 회차 보류) · DXY 99.84, Aug4 종가(99.97) 대비 -0.13%(TE 자체 표기 -0.02%와 상충) · VIX Aug4 종가 16.54, 전일 대비 +0.68pt(+4.29%) · 호르무즈: 美-이란-오만 잠정합의 임박, 수요(8/5) 발표 목표 보도(Fortune/Axios) — 아직 최종타결 전, 완화 서사 지속 · S&P500 상승종목비율 약 68%(Aug4 정오 기준) · NDX Aug4 종가 29,733.16(전일 대비 +3.94%, Aug3 종가 28,604.93 확정) · NQ 선물 Aug5 시가 29,837.75로 추가 +0.35% · 금 4,136.78(prevClose 4,077.48 대비 +1.45%, 타 소스 4,065~4,246권으로 상충 큼) · WTI 76.01(전일 대비 +0.32%, 최근 급락 이후 반등) · EURUSD 1.1532(prevClose 1.1508 대비 +0.21%, 소스간 소폭 상충) · breadth 정오 스냅샷·BEI·EIA 서프라이즈 미확인 · ruleset v1.1 적용",
+  "note": "2026-08-05(수) 야간(약 24시 KST) · 피드(enair840926-star.github.io/insight/feed.json) 프록시 정책상 접속 차단(403)으로 이번 회차는 전량 웹 검색으로 대체 · EIA 재고 발표(현지 14:30 UTC 공개): +2.5백만배럴(컨센서스 -1.5백만배럴 예상 대비 서프라이즈 +4.0백만배럴, 가솔린·디스틸레이트도 예상 상회) · VIX 장중 16.94, Aug4 종가 16.50 대비 +0.44pt · DXY 99.84, TE 자체 일간표기 -0.02% 채택(전 회차 -0.13% 추정과 상충 해소 안됨) · 호르무즈: 美-이란-오만 잠정합의 임박 지속, Trump '내일이나 모레 가능' 발언 · 걸프 소식통은 금요일까지 타결 50:50 평가로 여전히 미타결 · 미 10Y·독 10Y·breadth·BEI·rateDiff·demand는 신규 확인 실패로 보류 · NDX/NQ·XAUUSD 가격은 소스간 상충 지속(NQ 28,891~29,877권, 금 4,065~4,246권) — 기존 최근 확정치 유지 · ruleset v1.1 적용",
   "assets": {
     "NAS100": {
       "direction": 0,
       "confidence": "낮음",
-      "rationale": "요인 중립 · 미 국채금리 ＋·연준 스탠스 －·위험선호 － → 중립",
+      "rationale": "요인 중립 · 미 국채금리 ＋·연준 스탠스 －·빅테크·실적 ＋ → 중립",
       "drivers": [
         {
           "name": "미 국채금리",
           "read": "상승",
-          "note": "미 10Y 4.619%, 전일 대비 -6bp(6bp 이상 하락, 유가 급락·Bessent 호르무즈 발언 연동)"
+          "note": "미 10Y 4.619%, 전일 대비 -6bp · Aug5 재검색해도 4.61~4.63%권으로 신규 변동 확인 안 됨"
         },
         {
           "name": "연준 스탠스",
@@ -22,14 +22,14 @@
           "note": "7월 FOMC 동결이나 인상 소수의견 3명 · 매파 기류(persistent, 신규 확인 없음)"
         },
         {
-          "name": "위험선호",
-          "read": "하락",
-          "note": "VIX 종가 16.54, 전일 대비 +0.68pt(+4.29%)"
+          "name": "빅테크·실적",
+          "read": "상승",
+          "note": "팔란티어 실적서프라이즈 +29% 급등 vs AMD -8%(가이던스 소폭 상회 그침) · 혼조이나 지수는 사상최고, Aug5 신규 확인 없음(persistent)"
         }
       ],
-      "event": "ISM 서비스업 PMI(7월) 8. 5. 23:00 KST",
-      "asof": "8. 5. 22:13 KST",
-      "setAt": "2026-08-05T13:13:22.312Z",
+      "event": "美 신규 실업수당청구(주간) 8. 6. 21:30 KST",
+      "asof": "8. 6. 00:03 KST",
+      "setAt": "2026-08-05T15:03:31.952Z",
       "source": "scheduled",
       "fusion": {
         "asset": "NAS100",
@@ -37,7 +37,7 @@
         "levels": {
           "last": 29837.75,
           "prevClose": 29733.16,
-          "note": "NQ(Sep'26) 선물 Aug5 시가 29,837.75(레인지 29,805~29,877) · NDX 현물 Aug4 종가 29,733.16 대비 +0.35% · 현물 종가는 Aug3 28,604.93 대비 +3.94%",
+          "note": "NQ(Sep'26) 선물 Aug5 시가 29,837.75(레인지 29,805~29,877) · NDX 현물 Aug4 종가 29,733.16 대비 +0.35% · 현물 종가는 Aug3 28,604.93 대비 +3.94% · Aug5 장중 재검색시 28,891.75~29,794 등 상충 소스 존재(자체 모순 기사 포함)해 신뢰도 낮춰 기존 확정치 유지",
           "source": "Investing.com futures/Nasdaq 현물 2026-08-05"
         },
         "position": {
@@ -51,27 +51,27 @@
           "multiplier": 1
         },
         "direction": 0,
-        "conviction": 3,
+        "conviction": 5,
         "confidence": "낮음",
-        "score": 0.085,
+        "score": 0.121,
         "regime": "RANGE",
         "weights": {
           "technical": 0,
           "macro": 1
         },
         "playbook": "뚜렷한 주도 요인 없음 — 다음 지표까지 방향 대기",
-        "rationale": "요인 중립 · 미 국채금리 ＋·연준 스탠스 －·위험선호 － → 중립",
+        "rationale": "요인 중립 · 미 국채금리 ＋·연준 스탠스 －·빅테크·실적 ＋ → 중립",
         "reanalyzeTriggers": [
-          "ISM 서비스업 PMI(7월) 23:00 발표 결과",
+          "美 신규 실업수당청구(주간) 21:30 발표 결과",
           "미 국채금리 방향 전환 시 즉시 재수집",
-          "22:40 스냅샷 만료"
+          "01:00 스냅샷 만료"
         ],
-        "validUntil": "2026-08-05T13:40:00.000Z",
+        "validUntil": "2026-08-05T16:00:00.000Z",
         "macro": {
-          "score": 0.085,
-          "confidence": 0.319,
-          "coverage": 0.321,
-          "dispersion": 0.008,
+          "score": 0.121,
+          "confidence": 0.293,
+          "coverage": 0.305,
+          "dispersion": 0.066,
           "factors": [
             {
               "key": "usRates",
@@ -81,15 +81,17 @@
               "stance": 1,
               "value": -6,
               "fact": "ust10y_aug4c",
-              "note": "미 10Y 4.619%, 전일 대비 -6bp(6bp 이상 하락, 유가 급락·Bessent 호르무즈 발언 연동)",
+              "note": "미 10Y 4.619%, 전일 대비 -6bp · Aug5 재검색해도 4.61~4.63%권으로 신규 변동 확인 안 됨",
               "source": "CNBC 2026-08-04",
               "asof": "2026-08-04T21:00:00Z",
               "weight": 0.24,
-              "confidence": 0.65,
-              "effectiveConfidence": 0.348,
-              "effectiveWeight": 0.0835,
-              "contribution": 0.0835,
-              "flags": []
+              "confidence": 0.55,
+              "effectiveConfidence": 0.2744,
+              "effectiveWeight": 0.0659,
+              "contribution": 0.0659,
+              "flags": [
+                "DECAYED"
+              ]
             },
             {
               "key": "fedPolicy",
@@ -103,27 +105,9 @@
               "asof": "2026-08-01T12:00:00Z",
               "weight": 0.2,
               "confidence": 0.6,
-              "effectiveConfidence": 0.3233,
-              "effectiveWeight": 0.0647,
-              "contribution": -0.0647,
-              "flags": []
-            },
-            {
-              "key": "riskAppetite",
-              "label": "위험선호",
-              "block": "tape",
-              "kind": "numeric",
-              "stance": -1,
-              "value": 0.68,
-              "fact": "vix_aug4_close",
-              "note": "VIX 종가 16.54, 전일 대비 +0.68pt(+4.29%)",
-              "source": "CNBC/Investing.com 2026-08-04",
-              "asof": "2026-08-04T20:00:00Z",
-              "weight": 0.18,
-              "confidence": 0.65,
-              "effectiveConfidence": 0.3349,
-              "effectiveWeight": 0.0603,
-              "contribution": -0.0603,
+              "effectiveConfidence": 0.3177,
+              "effectiveWeight": 0.0635,
+              "contribution": -0.0635,
               "flags": []
             },
             {
@@ -133,35 +117,35 @@
               "kind": "ordinal",
               "stance": 1,
               "fact": "megacap_q2_earnings",
-              "note": "팔란티어 실적서프라이즈 +29% 급등 vs AMD -8%(가이던스 소폭 상회 그침) · 혼조이나 지수는 사상최고, Aug5 신규 확인 없음",
+              "note": "팔란티어 실적서프라이즈 +29% 급등 vs AMD -8%(가이던스 소폭 상회 그침) · 혼조이나 지수는 사상최고, Aug5 신규 확인 없음(persistent)",
               "source": "CNBC 2026-08-04",
               "asof": "2026-08-04T20:00:00Z",
               "weight": 0.16,
-              "confidence": 0.5,
-              "effectiveConfidence": 0.2576,
-              "effectiveWeight": 0.0412,
-              "contribution": 0.0412,
-              "flags": []
-            },
-            {
-              "key": "breadth",
-              "label": "시장 폭",
-              "block": "tape",
-              "kind": "numeric",
-              "stance": 1,
-              "value": 68,
-              "fact": "spx_breadth_aug4",
-              "note": "S&P500 상승종목 비율 약 68%(Aug4 정오 기준), 상승:하락 2:1 이상 · 종가 기준 미확인",
-              "source": "CappNotes/시장보도 2026-08-04",
-              "asof": "2026-08-04T17:00:00Z",
-              "weight": 0.12,
-              "confidence": 0.5,
-              "effectiveConfidence": 0.2295,
-              "effectiveWeight": 0.0275,
-              "contribution": 0.0275,
+              "confidence": 0.45,
+              "effectiveConfidence": 0.216,
+              "effectiveWeight": 0.0346,
+              "contribution": 0.0346,
               "flags": [
                 "DECAYED"
               ]
+            },
+            {
+              "key": "riskAppetite",
+              "label": "위험선호",
+              "block": "tape",
+              "kind": "numeric",
+              "stance": 0,
+              "value": 0.44,
+              "fact": "vix_aug5c",
+              "note": "VIX 장중 16.94, Aug4 종가 16.50 대비 +0.44pt · 장 마감 전 수치라 변동 가능",
+              "source": "CBOE/Investing.com 2026-08-05",
+              "asof": "2026-08-05T14:30:00Z",
+              "weight": 0.18,
+              "confidence": 0.5,
+              "effectiveConfidence": 0.4894,
+              "effectiveWeight": 0.0881,
+              "contribution": 0,
+              "flags": []
             },
             {
               "key": "dollar",
@@ -169,15 +153,15 @@
               "block": "rates",
               "kind": "numeric",
               "stance": 0,
-              "value": -0.13,
-              "fact": "dxy_aug5",
-              "note": "DXY 99.84, Aug4 종가 99.97 대비 -0.13%(TE 자체 일간표기는 -0.02%로 소폭 상충)",
+              "value": -0.02,
+              "fact": "dxy_aug5c",
+              "note": "DXY 99.84, TE 자체 일간표기 -0.02% 채택(전 회차 -0.13% 추정과 상충 해소 안 됨)",
               "source": "TradingEconomics 2026-08-05",
-              "asof": "2026-08-05T12:30:00Z",
+              "asof": "2026-08-05T14:00:00Z",
               "weight": 0.1,
-              "confidence": 0.45,
-              "effectiveConfidence": 0.4376,
-              "effectiveWeight": 0.0438,
+              "confidence": 0.55,
+              "effectiveConfidence": 0.528,
+              "effectiveWeight": 0.0528,
               "contribution": 0,
               "flags": []
             }
@@ -185,8 +169,8 @@
           "blocks": [
             {
               "id": "rates",
-              "score": 0.098,
-              "weight": 0.192,
+              "score": 0.013,
+              "weight": 0.1822,
               "factors": [
                 "fedPolicy",
                 "usRates",
@@ -195,16 +179,16 @@
             },
             {
               "id": "tape",
-              "score": 0.065,
-              "weight": 0.129,
+              "score": 0.282,
+              "weight": 0.1227,
               "factors": [
                 "riskAppetite",
-                "breadth",
                 "megacapEarnings"
               ]
             }
           ],
           "flags": [
+            "MISSING_FACTORS:breadth",
             "MACRO_COVERAGE_LOW"
           ]
         },
@@ -228,54 +212,35 @@
         "events": {
           "windows": [
             {
-              "label": "ISM 서비스업 PMI(7월)",
-              "time": "2026-08-05T14:00:00.000Z",
-              "tier": 2,
-              "note": "컨센서스 대비 서프라이즈 미확인",
-              "blackoutStart": "2026-08-05T13:40:00.000Z",
-              "blackoutEnd": "2026-08-05T14:30:00.000Z",
-              "minutesUntil": 47,
-              "active": false
-            },
-            {
-              "label": "EIA 주간 원유재고",
-              "time": "2026-08-05T14:30:00.000Z",
-              "tier": 2,
-              "note": "정례 수요일 발표 · 컨센서스 서프라이즈 미확인",
-              "blackoutStart": "2026-08-05T14:10:00.000Z",
-              "blackoutEnd": "2026-08-05T15:00:00.000Z",
-              "minutesUntil": 77,
-              "active": false
-            },
-            {
               "label": "美 신규 실업수당청구(주간)",
               "time": "2026-08-06T12:30:00.000Z",
               "tier": 2,
               "note": "컨센서스 약 202k, 전주 197k",
               "blackoutStart": "2026-08-06T12:10:00.000Z",
               "blackoutEnd": "2026-08-06T13:00:00.000Z",
-              "minutesUntil": 1397,
+              "minutesUntil": 1286,
               "active": false
             }
           ],
           "headline": {
-            "label": "ISM 서비스업 PMI(7월)",
-            "time": "2026-08-05T14:00:00.000Z",
+            "label": "美 신규 실업수당청구(주간)",
+            "time": "2026-08-06T12:30:00.000Z",
             "tier": 2,
-            "note": "컨센서스 대비 서프라이즈 미확인",
-            "blackoutStart": "2026-08-05T13:40:00.000Z",
-            "blackoutEnd": "2026-08-05T14:30:00.000Z",
-            "minutesUntil": 47,
+            "note": "컨센서스 약 202k, 전주 197k",
+            "blackoutStart": "2026-08-06T12:10:00.000Z",
+            "blackoutEnd": "2026-08-06T13:00:00.000Z",
+            "minutesUntil": 1286,
             "active": false
           },
-          "maxTier": 2,
+          "maxTier": 0,
           "activeBlackout": null,
-          "nextBlackoutStart": "2026-08-05T13:40:00.000Z",
-          "convictionCap": 65,
+          "nextBlackoutStart": "2026-08-06T12:10:00.000Z",
+          "convictionCap": 100,
           "flags": []
         },
         "flags": [
           "MACRO_ONLY",
+          "MISSING_FACTORS:breadth",
           "MACRO_COVERAGE_LOW"
         ]
       }
@@ -288,12 +253,12 @@
         {
           "name": "안전자산·지정학",
           "read": "하락",
-          "note": "美-이란-오만 잠정합의 임박, 수요(8/5) 발표 목표 보도 · 아직 최종타결 전, 완화 흐름 지속"
+          "note": "美-이란-오만 잠정합의 임박 지속, Trump '내일이나 모레 가능' 발언 · 걸프 소식통은 금요일까지 타결 50:50 평가로 아직 미타결"
         },
         {
           "name": "실질금리",
           "read": "상승",
-          "note": "TIPS 미확인, 명목 10Y로 대용(conf≤0.6) · 미 10Y 4.619%, 전일 대비 -6bp"
+          "note": "TIPS 미확인 지속, 명목 10Y로 대용(conf≤0.6) · 미 10Y 4.619%, 전일 대비 -6bp, Aug5 신규 변동 확인 안 됨"
         },
         {
           "name": "연준 스탠스",
@@ -301,9 +266,9 @@
           "note": "인상 소수의견 3명 · 매파 기류(persistent, 신규 확인 없음)"
         }
       ],
-      "event": "ISM 서비스업 PMI(7월) 8. 5. 23:00 KST",
-      "asof": "8. 5. 22:13 KST",
-      "setAt": "2026-08-05T13:13:22.312Z",
+      "event": "美 신규 실업수당청구(주간) 8. 6. 21:30 KST",
+      "asof": "8. 6. 00:03 KST",
+      "setAt": "2026-08-05T15:03:31.952Z",
       "source": "scheduled",
       "fusion": {
         "asset": "XAUUSD",
@@ -314,7 +279,7 @@
           "resistance": [
             4141
           ],
-          "note": "XAU/USD 4,136.78(prevClose 4,077.48 대비 +1.45%) · 타 소스 TradingView 4,170.75, Vantage 레인지 4,065.54~4,141.51, 12월 선물 시가 4,133.80(-0.5%)로 상충 커서 확신도 낮춤",
+          "note": "XAU/USD 4,136.78(prevClose 4,077.48 대비 +1.45%) · 타 소스 TradingView 4,170.75, Vantage 레인지 4,065.54~4,141.51, 12월 선물 시가 4,133.80(-0.5%) · Aug5 재검색시 4,095.77(+0.44%)도 등장해 상충 지속 · 신뢰도 낮춰 기존 확정치 유지",
           "source": "Investing.com 2026-08-05"
         },
         "position": {
@@ -328,9 +293,9 @@
           "multiplier": 1
         },
         "direction": 0,
-        "conviction": 6,
+        "conviction": 8,
         "confidence": "낮음",
-        "score": -0.183,
+        "score": -0.245,
         "regime": "RANGE",
         "weights": {
           "technical": 0,
@@ -340,16 +305,16 @@
         "rationale": "요인 중립 · 안전자산·지정학 －·실질금리 ＋·연준 스탠스 － → 중립",
         "reanalyzeTriggers": [
           "저항 4141 돌파 시 재평가",
-          "ISM 서비스업 PMI(7월) 23:00 발표 결과",
+          "美 신규 실업수당청구(주간) 21:30 발표 결과",
           "안전자산·지정학 방향 전환 시 즉시 재수집",
-          "22:40 스냅샷 만료"
+          "01:00 스냅샷 만료"
         ],
-        "validUntil": "2026-08-05T13:40:00.000Z",
+        "validUntil": "2026-08-05T16:00:00.000Z",
         "macro": {
-          "score": -0.183,
-          "confidence": 0.144,
-          "coverage": 0.18,
-          "dispersion": 0.333,
+          "score": -0.245,
+          "confidence": 0.145,
+          "coverage": 0.178,
+          "dispersion": 0.308,
           "factors": [
             {
               "key": "safeHaven",
@@ -357,15 +322,15 @@
               "block": "geo",
               "kind": "ordinal",
               "stance": -1,
-              "fact": "hormuz_aug5b",
-              "note": "美-이란-오만 잠정합의 임박, 수요(8/5) 발표 목표 보도 · 아직 최종타결 전, 완화 흐름 지속",
-              "source": "Fortune/Axios 2026-08-05",
-              "asof": "2026-08-05T08:00:00Z",
+              "fact": "hormuz_aug5c",
+              "note": "美-이란-오만 잠정합의 임박 지속, Trump '내일이나 모레 가능' 발언 · 걸프 소식통은 금요일까지 타결 50:50 평가로 아직 미타결",
+              "source": "Al Jazeera/CNN/Fortune 2026-08-05",
+              "asof": "2026-08-05T12:00:00Z",
               "weight": 0.16,
-              "confidence": 0.55,
-              "effectiveConfidence": 0.4498,
-              "effectiveWeight": 0.072,
-              "contribution": -0.072,
+              "confidence": 0.5,
+              "effectiveConfidence": 0.4444,
+              "effectiveWeight": 0.0711,
+              "contribution": -0.0711,
               "flags": []
             },
             {
@@ -376,15 +341,17 @@
               "stance": 2,
               "value": -6,
               "fact": "ust10y_aug4c",
-              "note": "TIPS 미확인, 명목 10Y로 대용(conf≤0.6) · 미 10Y 4.619%, 전일 대비 -6bp",
+              "note": "TIPS 미확인 지속, 명목 10Y로 대용(conf≤0.6) · 미 10Y 4.619%, 전일 대비 -6bp, Aug5 신규 변동 확인 안 됨",
               "source": "CNBC 2026-08-04",
               "asof": "2026-08-04T21:00:00Z",
               "weight": 0.26,
-              "confidence": 0.5,
-              "effectiveConfidence": 0.2677,
-              "effectiveWeight": 0.0335,
-              "contribution": 0.067,
-              "flags": []
+              "confidence": 0.45,
+              "effectiveConfidence": 0.2245,
+              "effectiveWeight": 0.0269,
+              "contribution": 0.0538,
+              "flags": [
+                "DECAYED"
+              ]
             },
             {
               "key": "fedPolicy",
@@ -398,9 +365,9 @@
               "asof": "2026-08-01T12:00:00Z",
               "weight": 0.18,
               "confidence": 0.6,
-              "effectiveConfidence": 0.3233,
-              "effectiveWeight": 0.028,
-              "contribution": -0.028,
+              "effectiveConfidence": 0.3177,
+              "effectiveWeight": 0.0263,
+              "contribution": -0.0263,
               "flags": []
             },
             {
@@ -409,15 +376,15 @@
               "block": "rates",
               "kind": "numeric",
               "stance": 0,
-              "value": -0.13,
-              "fact": "dxy_aug5",
-              "note": "DXY 99.84, Aug4 종가 99.97 대비 -0.13%(TE 자체표기 -0.02%와 상충)",
+              "value": -0.02,
+              "fact": "dxy_aug5c",
+              "note": "DXY 99.84, TE 자체 일간표기 -0.02% 채택",
               "source": "TradingEconomics 2026-08-05",
-              "asof": "2026-08-05T12:30:00Z",
+              "asof": "2026-08-05T14:00:00Z",
               "weight": 0.22,
-              "confidence": 0.45,
-              "effectiveConfidence": 0.4376,
-              "effectiveWeight": 0.0464,
+              "confidence": 0.55,
+              "effectiveConfidence": 0.528,
+              "effectiveWeight": 0.0535,
               "contribution": 0,
               "flags": []
             }
@@ -425,8 +392,8 @@
           "blocks": [
             {
               "id": "rates",
-              "score": 0.361,
-              "weight": 0.1079,
+              "score": 0.258,
+              "weight": 0.1067,
               "factors": [
                 "dollar",
                 "fedPolicy",
@@ -436,7 +403,7 @@
             {
               "id": "geo",
               "score": -1,
-              "weight": 0.072,
+              "weight": 0.0711,
               "factors": [
                 "safeHaven"
               ]
@@ -468,50 +435,30 @@
         "events": {
           "windows": [
             {
-              "label": "ISM 서비스업 PMI(7월)",
-              "time": "2026-08-05T14:00:00.000Z",
-              "tier": 2,
-              "note": "컨센서스 대비 서프라이즈 미확인",
-              "blackoutStart": "2026-08-05T13:40:00.000Z",
-              "blackoutEnd": "2026-08-05T14:30:00.000Z",
-              "minutesUntil": 47,
-              "active": false
-            },
-            {
-              "label": "EIA 주간 원유재고",
-              "time": "2026-08-05T14:30:00.000Z",
-              "tier": 2,
-              "note": "정례 수요일 발표 · 컨센서스 서프라이즈 미확인",
-              "blackoutStart": "2026-08-05T14:10:00.000Z",
-              "blackoutEnd": "2026-08-05T15:00:00.000Z",
-              "minutesUntil": 77,
-              "active": false
-            },
-            {
               "label": "美 신규 실업수당청구(주간)",
               "time": "2026-08-06T12:30:00.000Z",
               "tier": 2,
               "note": "컨센서스 약 202k, 전주 197k",
               "blackoutStart": "2026-08-06T12:10:00.000Z",
               "blackoutEnd": "2026-08-06T13:00:00.000Z",
-              "minutesUntil": 1397,
+              "minutesUntil": 1286,
               "active": false
             }
           ],
           "headline": {
-            "label": "ISM 서비스업 PMI(7월)",
-            "time": "2026-08-05T14:00:00.000Z",
+            "label": "美 신규 실업수당청구(주간)",
+            "time": "2026-08-06T12:30:00.000Z",
             "tier": 2,
-            "note": "컨센서스 대비 서프라이즈 미확인",
-            "blackoutStart": "2026-08-05T13:40:00.000Z",
-            "blackoutEnd": "2026-08-05T14:30:00.000Z",
-            "minutesUntil": 47,
+            "note": "컨센서스 약 202k, 전주 197k",
+            "blackoutStart": "2026-08-06T12:10:00.000Z",
+            "blackoutEnd": "2026-08-06T13:00:00.000Z",
+            "minutesUntil": 1286,
             "active": false
           },
-          "maxTier": 2,
+          "maxTier": 0,
           "activeBlackout": null,
-          "nextBlackoutStart": "2026-08-05T13:40:00.000Z",
-          "convictionCap": 65,
+          "nextBlackoutStart": "2026-08-06T12:10:00.000Z",
+          "convictionCap": 100,
           "flags": []
         },
         "flags": [
@@ -523,29 +470,29 @@
       }
     },
     "USOIL": {
-      "direction": 0,
+      "direction": -2,
       "confidence": "낮음",
-      "rationale": "요인 일치 · 공급 차질 －·OPEC+ －·지정학 － → 중립",
+      "rationale": "요인 일치 · 재고 －·공급 차질 －·OPEC+ － → 강한 하락",
       "drivers": [
+        {
+          "name": "재고",
+          "read": "하락",
+          "note": "EIA 원유재고 +2.5백만배럴(컨센서스 -1.5백만배럴 예상 대비 서프라이즈 +4.0백만배럴) · 가솔린 +0.765백만배럴, 디스틸레이트 +1.4백만배럴도 예상 상회"
+        },
         {
           "name": "공급 차질",
           "read": "하락",
-          "note": "美-이란-오만 잠정합의 임박, 수요(8/5) 발표 목표 보도 · 아직 최종타결 전"
+          "note": "美-이란-오만 잠정합의 임박 지속, Trump '내일이나 모레 가능' 발언 · 걸프 소식통은 금요일까지 타결 50:50 평가로 아직 미타결"
         },
         {
           "name": "OPEC+",
           "read": "하락",
           "note": "OPEC+ 7개국 9월 +18.8만b/d 증산 합의(8/2) 이후 연내 동결 시사(persistent, 신규 확인 없음)"
-        },
-        {
-          "name": "지정학",
-          "read": "하락",
-          "note": "공급위험과 동일 사건(fact 공유)"
         }
       ],
-      "event": "ISM 서비스업 PMI(7월) 8. 5. 23:00 KST",
-      "asof": "8. 5. 22:13 KST",
-      "setAt": "2026-08-05T13:13:22.312Z",
+      "event": "美 신규 실업수당청구(주간) 8. 6. 21:30 KST",
+      "asof": "8. 6. 00:03 KST",
+      "setAt": "2026-08-05T15:03:31.952Z",
       "source": "scheduled",
       "fusion": {
         "asset": "USOIL",
@@ -553,7 +500,7 @@
         "levels": {
           "last": 76.01,
           "prevClose": 75.77,
-          "note": "WTI 76.01(전일 대비 +0.32%) · 호르무즈 완화 서사로 최근 2거래일 -10%대 급락 이후 소폭 반등",
+          "note": "WTI 76.01(전일 대비 +0.32%) · 호르무즈 완화 서사로 최근 2거래일 -10%대 급락 이후 소폭 반등 · EIA 서프라이즈 빌드는 발표 이후(14:30 UTC) 반영 여지",
           "source": "fxdailyreport/TradingEconomics 2026-08-05"
         },
         "position": {
@@ -566,45 +513,63 @@
           "relation": "반증",
           "multiplier": 0.7
         },
-        "direction": 0,
-        "conviction": 21,
+        "direction": -2,
+        "conviction": 35,
         "confidence": "낮음",
-        "score": -0.816,
+        "score": -1.271,
         "regime": "ALIGNED",
         "weights": {
           "technical": 0,
           "macro": 1
         },
-        "playbook": "뚜렷한 주도 요인 없음 — 다음 지표까지 방향 대기",
-        "rationale": "요인 일치 · 공급 차질 －·OPEC+ －·지정학 － → 중립",
+        "playbook": "강한 하락 편향 · 재고 주도 · 가격은 반대(전일 종가 +0.32%)",
+        "rationale": "요인 일치 · 재고 －·공급 차질 －·OPEC+ － → 강한 하락",
         "reanalyzeTriggers": [
           "가격이 매크로 편향과 반대 — 둘 중 하나가 꺾이는 시점",
-          "ISM 서비스업 PMI(7월) 23:00 발표 결과",
-          "공급 차질 방향 전환 시 즉시 재수집",
-          "22:40 스냅샷 만료"
+          "美 신규 실업수당청구(주간) 21:30 발표 결과",
+          "재고 방향 전환 시 즉시 재수집",
+          "01:00 스냅샷 만료"
         ],
-        "validUntil": "2026-08-05T13:40:00.000Z",
+        "validUntil": "2026-08-05T16:00:00.000Z",
         "macro": {
-          "score": -0.816,
-          "confidence": 0.21,
-          "coverage": 0.238,
-          "dispersion": 0.194,
+          "score": -1.271,
+          "confidence": 0.319,
+          "coverage": 0.401,
+          "dispersion": 0.34,
           "factors": [
+            {
+              "key": "inventory",
+              "label": "재고",
+              "block": "inv",
+              "kind": "numeric",
+              "stance": -2,
+              "value": 4,
+              "fact": "eia_aug5_build",
+              "note": "EIA 원유재고 +2.5백만배럴(컨센서스 -1.5백만배럴 예상 대비 서프라이즈 +4.0백만배럴) · 가솔린 +0.765백만배럴, 디스틸레이트 +1.4백만배럴도 예상 상회",
+              "source": "RTTNews/Brisk Markets 2026-08-05",
+              "asof": "2026-08-05T14:30:00Z",
+              "weight": 0.22,
+              "confidence": 0.75,
+              "effectiveConfidence": 0.734,
+              "effectiveWeight": 0.1615,
+              "contribution": -0.323,
+              "flags": []
+            },
             {
               "key": "supplyRisk",
               "label": "공급 차질",
               "block": "supply",
               "kind": "ordinal",
               "stance": -1,
-              "fact": "hormuz_aug5b",
-              "note": "美-이란-오만 잠정합의 임박, 수요(8/5) 발표 목표 보도 · 아직 최종타결 전",
-              "source": "Fortune/Axios 2026-08-05",
-              "asof": "2026-08-05T08:00:00Z",
+              "fact": "hormuz_aug5c",
+              "note": "美-이란-오만 잠정합의 임박 지속, Trump '내일이나 모레 가능' 발언 · 걸프 소식통은 금요일까지 타결 50:50 평가로 아직 미타결",
+              "source": "Al Jazeera/CNN/Fortune 2026-08-05",
+              "asof": "2026-08-05T12:00:00Z",
               "weight": 0.24,
-              "confidence": 0.55,
-              "effectiveConfidence": 0.4498,
-              "effectiveWeight": 0.108,
-              "contribution": -0.108,
+              "confidence": 0.5,
+              "effectiveConfidence": 0.4444,
+              "effectiveWeight": 0.1067,
+              "contribution": -0.1067,
               "flags": []
             },
             {
@@ -618,10 +583,10 @@
               "source": "CNBC/Bloomberg 2026-08-02",
               "asof": "2026-08-02T00:00:00Z",
               "weight": 0.18,
-              "confidence": 0.7,
-              "effectiveConfidence": 0.3772,
-              "effectiveWeight": 0.0679,
-              "contribution": -0.0679,
+              "confidence": 0.65,
+              "effectiveConfidence": 0.3441,
+              "effectiveWeight": 0.0619,
+              "contribution": -0.0619,
               "flags": []
             },
             {
@@ -630,17 +595,17 @@
               "block": "supply",
               "kind": "ordinal",
               "stance": -1,
-              "fact": "hormuz_aug5b",
+              "fact": "hormuz_aug5c",
               "note": "공급위험과 동일 사건(fact 공유)",
-              "source": "Fortune/Axios 2026-08-05",
-              "asof": "2026-08-05T08:00:00Z",
+              "source": "Al Jazeera/CNN/Fortune 2026-08-05",
+              "asof": "2026-08-05T12:00:00Z",
               "weight": 0.1,
-              "confidence": 0.55,
-              "effectiveConfidence": 0.4498,
-              "effectiveWeight": 0.018,
-              "contribution": -0.018,
+              "confidence": 0.5,
+              "effectiveConfidence": 0.4444,
+              "effectiveWeight": 0.0178,
+              "contribution": -0.0178,
               "flags": [
-                "DUPLICATE_FACT:hormuz_aug5b"
+                "DUPLICATE_FACT:hormuz_aug5c"
               ]
             },
             {
@@ -649,24 +614,32 @@
               "block": "fx",
               "kind": "numeric",
               "stance": 0,
-              "value": -0.13,
-              "fact": "dxy_aug5",
-              "note": "DXY 99.84, Aug4 종가 99.97 대비 -0.13%",
+              "value": -0.02,
+              "fact": "dxy_aug5c",
+              "note": "DXY 99.84, TE 자체 일간표기 -0.02% 채택",
               "source": "TradingEconomics 2026-08-05",
-              "asof": "2026-08-05T12:30:00Z",
+              "asof": "2026-08-05T14:00:00Z",
               "weight": 0.1,
-              "confidence": 0.45,
-              "effectiveConfidence": 0.4376,
-              "effectiveWeight": 0.0438,
+              "confidence": 0.55,
+              "effectiveConfidence": 0.528,
+              "effectiveWeight": 0.0528,
               "contribution": 0,
               "flags": []
             }
           ],
           "blocks": [
             {
+              "id": "inv",
+              "score": -2,
+              "weight": 0.1615,
+              "factors": [
+                "inventory"
+              ]
+            },
+            {
               "id": "supply",
               "score": -1,
-              "weight": 0.126,
+              "weight": 0.1245,
               "factors": [
                 "supplyRisk",
                 "geopolitics"
@@ -675,7 +648,7 @@
             {
               "id": "policy",
               "score": -1,
-              "weight": 0.0679,
+              "weight": 0.0619,
               "factors": [
                 "opec"
               ]
@@ -683,14 +656,14 @@
             {
               "id": "fx",
               "score": 0,
-              "weight": 0.0438,
+              "weight": 0.0528,
               "factors": [
                 "dollar"
               ]
             }
           ],
           "flags": [
-            "MISSING_FACTORS:inventory,demand",
+            "MISSING_FACTORS:demand",
             "DUPLICATE_FACT:geopolitics<-supplyRisk",
             "MACRO_COVERAGE_LOW"
           ]
@@ -715,55 +688,35 @@
         "events": {
           "windows": [
             {
-              "label": "ISM 서비스업 PMI(7월)",
-              "time": "2026-08-05T14:00:00.000Z",
-              "tier": 2,
-              "note": "컨센서스 대비 서프라이즈 미확인",
-              "blackoutStart": "2026-08-05T13:40:00.000Z",
-              "blackoutEnd": "2026-08-05T14:30:00.000Z",
-              "minutesUntil": 47,
-              "active": false
-            },
-            {
-              "label": "EIA 주간 원유재고",
-              "time": "2026-08-05T14:30:00.000Z",
-              "tier": 2,
-              "note": "정례 수요일 발표 · 컨센서스 서프라이즈 미확인",
-              "blackoutStart": "2026-08-05T14:10:00.000Z",
-              "blackoutEnd": "2026-08-05T15:00:00.000Z",
-              "minutesUntil": 77,
-              "active": false
-            },
-            {
               "label": "美 신규 실업수당청구(주간)",
               "time": "2026-08-06T12:30:00.000Z",
               "tier": 2,
               "note": "컨센서스 약 202k, 전주 197k",
               "blackoutStart": "2026-08-06T12:10:00.000Z",
               "blackoutEnd": "2026-08-06T13:00:00.000Z",
-              "minutesUntil": 1397,
+              "minutesUntil": 1286,
               "active": false
             }
           ],
           "headline": {
-            "label": "ISM 서비스업 PMI(7월)",
-            "time": "2026-08-05T14:00:00.000Z",
+            "label": "美 신규 실업수당청구(주간)",
+            "time": "2026-08-06T12:30:00.000Z",
             "tier": 2,
-            "note": "컨센서스 대비 서프라이즈 미확인",
-            "blackoutStart": "2026-08-05T13:40:00.000Z",
-            "blackoutEnd": "2026-08-05T14:30:00.000Z",
-            "minutesUntil": 47,
+            "note": "컨센서스 약 202k, 전주 197k",
+            "blackoutStart": "2026-08-06T12:10:00.000Z",
+            "blackoutEnd": "2026-08-06T13:00:00.000Z",
+            "minutesUntil": 1286,
             "active": false
           },
-          "maxTier": 2,
+          "maxTier": 0,
           "activeBlackout": null,
-          "nextBlackoutStart": "2026-08-05T13:40:00.000Z",
-          "convictionCap": 65,
+          "nextBlackoutStart": "2026-08-06T12:10:00.000Z",
+          "convictionCap": 100,
           "flags": []
         },
         "flags": [
           "MACRO_ONLY",
-          "MISSING_FACTORS:inventory,demand",
+          "MISSING_FACTORS:demand",
           "DUPLICATE_FACT:geopolitics<-supplyRisk",
           "MACRO_COVERAGE_LOW"
         ]
@@ -772,7 +725,7 @@
     "EURUSD": {
       "direction": 0,
       "confidence": "낮음",
-      "rationale": "요인 상충 · ECB 스탠스 ＋·연준 스탠스 －·위험선호 － → 중립",
+      "rationale": "요인 상충 · ECB 스탠스 ＋·연준 스탠스 －·위험선호 0 → 중립",
       "drivers": [
         {
           "name": "ECB 스탠스",
@@ -786,55 +739,55 @@
         },
         {
           "name": "위험선호",
-          "read": "하락",
-          "note": "VIX 종가 16.54, 전일 대비 +0.68pt(+4.29%)"
+          "read": "중립",
+          "note": "VIX 장중 16.94, Aug4 종가 16.50 대비 +0.44pt · 장 마감 전 수치라 변동 가능"
         }
       ],
-      "event": "ISM 서비스업 PMI(7월) 8. 5. 23:00 KST",
-      "asof": "8. 5. 22:13 KST",
-      "setAt": "2026-08-05T13:13:22.312Z",
+      "event": "美 신규 실업수당청구(주간) 8. 6. 21:30 KST",
+      "asof": "8. 6. 00:03 KST",
+      "setAt": "2026-08-05T15:03:31.952Z",
       "source": "scheduled",
       "fusion": {
         "asset": "EURUSD",
         "mode": "macro-only",
         "levels": {
-          "last": 1.1532,
+          "last": 1.1535,
           "prevClose": 1.1508,
-          "note": "1.1532(prevClose 1.1508 대비 +0.21%) · 타 소스는 1.1542(09:06 UTC) 언급 · 6/16 이후 최고권 부근, 소스간 소폭 상충",
+          "note": "1.1535(prevClose 1.1508 대비 +0.23%) · 당일 레인지 1.1527~1.1541, 타 소스는 1.1542(09:06 UTC) 언급 · 6/16 이후 최고권 부근, 소스간 소폭 상충",
           "source": "TradingEconomics/Investing.com 2026-08-05"
         },
         "position": {
-          "score": 0.779,
-          "movePct": 0.209,
+          "score": 0.825,
+          "movePct": 0.235,
           "brokeResistance": false,
           "lostSupport": false,
-          "note": "전일 종가 +0.21%",
+          "note": "전일 종가 +0.23%",
           "flags": [],
-          "relation": "중립",
-          "multiplier": 1
+          "relation": "확인",
+          "multiplier": 1.15
         },
         "direction": 0,
-        "conviction": 6,
+        "conviction": 13,
         "confidence": "낮음",
-        "score": 0.185,
+        "score": 0.35,
         "regime": "CONFLICT",
         "weights": {
           "technical": 0,
           "macro": 1
         },
         "playbook": "요인 상충: ECB 스탠스(＋) vs 연준 스탠스(－) — 한쪽이 꺾이기 전까지 방향 없음",
-        "rationale": "요인 상충 · ECB 스탠스 ＋·연준 스탠스 －·위험선호 － → 중립",
+        "rationale": "요인 상충 · ECB 스탠스 ＋·연준 스탠스 －·위험선호 0 → 중립",
         "reanalyzeTriggers": [
-          "ISM 서비스업 PMI(7월) 23:00 발표 결과",
+          "美 신규 실업수당청구(주간) 21:30 발표 결과",
           "ECB 스탠스 방향 전환 시 즉시 재수집",
-          "22:40 스냅샷 만료"
+          "01:00 스냅샷 만료"
         ],
-        "validUntil": "2026-08-05T13:40:00.000Z",
+        "validUntil": "2026-08-05T16:00:00.000Z",
         "macro": {
-          "score": 0.185,
-          "confidence": 0.082,
-          "coverage": 0.147,
-          "dispersion": 0.733,
+          "score": 0.35,
+          "confidence": 0.101,
+          "coverage": 0.163,
+          "dispersion": 0.638,
           "factors": [
             {
               "key": "ecbPolicy",
@@ -848,9 +801,9 @@
               "asof": "2026-08-02T00:00:00Z",
               "weight": 0.18,
               "confidence": 0.6,
-              "effectiveConfidence": 0.3233,
-              "effectiveWeight": 0.0582,
-              "contribution": 0.1164,
+              "effectiveConfidence": 0.3177,
+              "effectiveWeight": 0.0572,
+              "contribution": 0.1144,
               "flags": []
             },
             {
@@ -865,9 +818,9 @@
               "asof": "2026-08-01T12:00:00Z",
               "weight": 0.18,
               "confidence": 0.6,
-              "effectiveConfidence": 0.3233,
-              "effectiveWeight": 0.0582,
-              "contribution": -0.0582,
+              "effectiveConfidence": 0.3177,
+              "effectiveWeight": 0.0572,
+              "contribution": -0.0572,
               "flags": []
             },
             {
@@ -875,17 +828,17 @@
               "label": "위험선호",
               "block": "tape",
               "kind": "numeric",
-              "stance": -1,
-              "value": 0.68,
-              "fact": "vix_aug4_close",
-              "note": "VIX 종가 16.54, 전일 대비 +0.68pt(+4.29%)",
-              "source": "CNBC/Investing.com 2026-08-04",
-              "asof": "2026-08-04T20:00:00Z",
+              "stance": 0,
+              "value": 0.44,
+              "fact": "vix_aug5c",
+              "note": "VIX 장중 16.94, Aug4 종가 16.50 대비 +0.44pt · 장 마감 전 수치라 변동 가능",
+              "source": "CBOE/Investing.com 2026-08-05",
+              "asof": "2026-08-05T14:30:00Z",
               "weight": 0.1,
-              "confidence": 0.6,
-              "effectiveConfidence": 0.3091,
-              "effectiveWeight": 0.0309,
-              "contribution": -0.0309,
+              "confidence": 0.5,
+              "effectiveConfidence": 0.4894,
+              "effectiveWeight": 0.0489,
+              "contribution": 0,
               "flags": []
             }
           ],
@@ -893,7 +846,7 @@
             {
               "id": "rates",
               "score": -1,
-              "weight": 0.0582,
+              "weight": 0.0572,
               "factors": [
                 "fedPolicy"
               ]
@@ -901,15 +854,15 @@
             {
               "id": "ecb",
               "score": 2,
-              "weight": 0.0582,
+              "weight": 0.0572,
               "factors": [
                 "ecbPolicy"
               ]
             },
             {
               "id": "tape",
-              "score": -1,
-              "weight": 0.0309,
+              "score": 0,
+              "weight": 0.0489,
               "factors": [
                 "riskAppetite"
               ]
@@ -941,50 +894,30 @@
         "events": {
           "windows": [
             {
-              "label": "ISM 서비스업 PMI(7월)",
-              "time": "2026-08-05T14:00:00.000Z",
-              "tier": 2,
-              "note": "컨센서스 대비 서프라이즈 미확인",
-              "blackoutStart": "2026-08-05T13:40:00.000Z",
-              "blackoutEnd": "2026-08-05T14:30:00.000Z",
-              "minutesUntil": 47,
-              "active": false
-            },
-            {
-              "label": "EIA 주간 원유재고",
-              "time": "2026-08-05T14:30:00.000Z",
-              "tier": 2,
-              "note": "정례 수요일 발표 · 컨센서스 서프라이즈 미확인",
-              "blackoutStart": "2026-08-05T14:10:00.000Z",
-              "blackoutEnd": "2026-08-05T15:00:00.000Z",
-              "minutesUntil": 77,
-              "active": false
-            },
-            {
               "label": "美 신규 실업수당청구(주간)",
               "time": "2026-08-06T12:30:00.000Z",
               "tier": 2,
               "note": "컨센서스 약 202k, 전주 197k",
               "blackoutStart": "2026-08-06T12:10:00.000Z",
               "blackoutEnd": "2026-08-06T13:00:00.000Z",
-              "minutesUntil": 1397,
+              "minutesUntil": 1286,
               "active": false
             }
           ],
           "headline": {
-            "label": "ISM 서비스업 PMI(7월)",
-            "time": "2026-08-05T14:00:00.000Z",
+            "label": "美 신규 실업수당청구(주간)",
+            "time": "2026-08-06T12:30:00.000Z",
             "tier": 2,
-            "note": "컨센서스 대비 서프라이즈 미확인",
-            "blackoutStart": "2026-08-05T13:40:00.000Z",
-            "blackoutEnd": "2026-08-05T14:30:00.000Z",
-            "minutesUntil": 47,
+            "note": "컨센서스 약 202k, 전주 197k",
+            "blackoutStart": "2026-08-06T12:10:00.000Z",
+            "blackoutEnd": "2026-08-06T13:00:00.000Z",
+            "minutesUntil": 1286,
             "active": false
           },
-          "maxTier": 2,
+          "maxTier": 0,
           "activeBlackout": null,
-          "nextBlackoutStart": "2026-08-05T13:40:00.000Z",
-          "convictionCap": 65,
+          "nextBlackoutStart": "2026-08-06T12:10:00.000Z",
+          "convictionCap": 100,
           "flags": []
         },
         "flags": [
@@ -1055,6 +988,6 @@
         "rate": null
       }
     },
-    "updatedAt": "2026-08-05T13:13:22.312Z"
+    "updatedAt": "2026-08-05T15:03:31.952Z"
   }
 }
