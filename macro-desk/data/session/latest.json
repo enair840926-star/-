@@ -1,10 +1,11 @@
 {
   "mode": "macro-only",
   "schedule": "08:00 · 16:00 · 22:00 KST",
-  "note": "2026-08-05(수) 오후 · 미 10Y 4.64%, 전일 대비 -4bp(TradingEconomics) · 독 10Y 3.11%, 전일 대비 -4bp → 스프레드 변화 약 0bp · DXY 99.97, 전일 대비 +0.01%(Aug4 종가, Aug5 장중 99.93~100.06 레인지로 큰 변화 없음) · VIX 종가 16.5, 전일 대비 +0.68pt · 호르무즈: 美중부사령부 '남부항로 자유·개방' 확인 + 베센트 '이번주 내 타결 가능' 재확인(전일 대비 완화 서사 지속, 아직 최종타결 전) · NDX Aug4 종가 29,733.16(전일比 +3.32%로 보도되나 별도 소스 prevClose 28,604.93과는 +3.94%로 소폭 상충) · S&P500 7,737 사상최고·다우 54,086 사상최초 돌파(리스크온 강세, 팔란티어+29% vs AMD-8%) · 금 4,095.77(전일比 +0.44%, prevClose 4,077.75 역산, 타 소스 4,075~4,086권 레인지와 소폭 상충) · WTI 75.40(전일比 -0.49%, prevClose 75.77 역산, 호르무즈 완화로 이틀간 -10%대 급락 이후) · EURUSD 1.1535(prevClose 1.1532, +0.03%, 타 소스 1.1540/1.1512권 상충) · breadth·BEI·EIA 서프라이즈 미확인 · ruleset v1.1 적용",
+  "note": "2026-08-05(수) 야간(22시 KST) · 미 10Y 4.619%, Aug4 종가 기준 전일 대비 -6bp(CNBC, 유가 급락·호르무즈 완화 기대 연동) · 독 10Y 3.09%(Aug5, 7/15 이후 최저, 정확한 일간bp 미확인으로 rateDiff는 이번 회차 보류) · DXY 99.84, Aug4 종가(99.97) 대비 -0.13%(TE 자체 표기 -0.02%와 상충) · VIX Aug4 종가 16.54, 전일 대비 +0.68pt(+4.29%) · 호르무즈: 美-이란-오만 잠정합의 임박, 수요(8/5) 발표 목표 보도(Fortune/Axios) — 아직 최종타결 전, 완화 서사 지속 · S&P500 상승종목비율 약 68%(Aug4 정오 기준) · NDX Aug4 종가 29,733.16(전일 대비 +3.94%, Aug3 종가 28,604.93 확정) · NQ 선물 Aug5 시가 29,837.75로 추가 +0.35% · 금 4,136.78(prevClose 4,077.48 대비 +1.45%, 타 소스 4,065~4,246권으로 상충 큼) · WTI 76.01(전일 대비 +0.32%, 최근 급락 이후 반등) · EURUSD 1.1532(prevClose 1.1508 대비 +0.21%, 소스간 소폭 상충) · breadth 정오 스냅샷·BEI·EIA 서프라이즈 미확인 · ruleset v1.1 적용",
   "events": [
     { "label": "ISM 서비스업 PMI(7월)", "time": "2026-08-05T14:00:00Z", "tier": 2, "note": "컨센서스 대비 서프라이즈 미확인" },
-    { "label": "EIA 주간 원유재고", "time": "2026-08-05T14:30:00Z", "tier": 2, "note": "정례 수요일 발표 · 컨센서스 서프라이즈 미확인" }
+    { "label": "EIA 주간 원유재고", "time": "2026-08-05T14:30:00Z", "tier": 2, "note": "정례 수요일 발표 · 컨센서스 서프라이즈 미확인" },
+    { "label": "美 신규 실업수당청구(주간)", "time": "2026-08-06T12:30:00Z", "tier": 2, "note": "컨센서스 약 202k, 전주 197k" }
   ],
   "assets": {
     "NAS100": {
@@ -12,69 +13,72 @@
         { "key": "fedPolicy", "stance": -1, "confidence": 0.6, "fact": "fomc",
           "note": "7월 FOMC 동결이나 인상 소수의견 3명 · 매파 기류(persistent, 신규 확인 없음)",
           "source": "Interactive/JPM 2026-08-01", "asof": "2026-08-01T12:00:00Z" },
-        { "key": "usRates", "value": -4, "confidence": 0.65, "fact": "ust10y_aug4b",
-          "note": "미 10Y 4.64%, 전일 대비 -4bp",
-          "source": "TradingEconomics 2026-08-04", "asof": "2026-08-04T21:00:00Z" },
-        { "key": "riskAppetite", "value": 0.68, "confidence": 0.7, "fact": "vix_aug4_close",
-          "note": "VIX 종가 16.5, 전일 대비 +0.68pt",
-          "source": "CNBC/CNN 2026-08-04", "asof": "2026-08-04T20:00:00Z" },
-        { "key": "dollar", "value": 0.01, "confidence": 0.4, "fact": "dxy_aug4",
-          "note": "DXY 99.97, 전일 대비 +0.01% · Aug5 장중 99.93~100.06권으로 큰 변화 없음",
-          "source": "TradingEconomics 2026-08-04", "asof": "2026-08-04T21:00:00Z" },
-        { "key": "megacapEarnings", "stance": 1, "confidence": 0.55, "fact": "megacap_q2_earnings",
-          "note": "팔란티어 실적서프라이즈 +29% 급등 vs AMD -8%(가이던스 소폭 상회 그침) · 혼조이나 지수는 사상최고",
+        { "key": "usRates", "value": -6, "confidence": 0.65, "fact": "ust10y_aug4c",
+          "note": "미 10Y 4.619%, 전일 대비 -6bp(6bp 이상 하락, 유가 급락·Bessent 호르무즈 발언 연동)",
+          "source": "CNBC 2026-08-04", "asof": "2026-08-04T21:00:00Z" },
+        { "key": "riskAppetite", "value": 0.68, "confidence": 0.65, "fact": "vix_aug4_close",
+          "note": "VIX 종가 16.54, 전일 대비 +0.68pt(+4.29%)",
+          "source": "CNBC/Investing.com 2026-08-04", "asof": "2026-08-04T20:00:00Z" },
+        { "key": "dollar", "value": -0.13, "confidence": 0.45, "fact": "dxy_aug5",
+          "note": "DXY 99.84, Aug4 종가 99.97 대비 -0.13%(TE 자체 일간표기는 -0.02%로 소폭 상충)",
+          "source": "TradingEconomics 2026-08-05", "asof": "2026-08-05T12:30:00Z" },
+        { "key": "breadth", "value": 68, "confidence": 0.5, "fact": "spx_breadth_aug4",
+          "note": "S&P500 상승종목 비율 약 68%(Aug4 정오 기준), 상승:하락 2:1 이상 · 종가 기준 미확인",
+          "source": "CappNotes/시장보도 2026-08-04", "asof": "2026-08-04T17:00:00Z" },
+        { "key": "megacapEarnings", "stance": 1, "confidence": 0.5, "fact": "megacap_q2_earnings",
+          "note": "팔란티어 실적서프라이즈 +29% 급등 vs AMD -8%(가이던스 소폭 상회 그침) · 혼조이나 지수는 사상최고, Aug5 신규 확인 없음",
           "source": "CNBC 2026-08-04", "asof": "2026-08-04T20:00:00Z" }
       ],
       "levels": {
-        "last": 29733.16,
-        "prevClose": 28604.93,
-        "note": "NDX Aug4 종가 29,733.16 · 전일비 보도는 +3.32%(prevClose 28,776.8 역산)와 +3.94%(별도 소스 Aug3 종가 28,604.93) 두 갈래로 상충 · Aug5 선물은 +0.13% 소폭 상승",
-        "source": "Nasdaq/CNBC 2026-08-04"
+        "last": 29837.75,
+        "prevClose": 29733.16,
+        "note": "NQ(Sep'26) 선물 Aug5 시가 29,837.75(레인지 29,805~29,877) · NDX 현물 Aug4 종가 29,733.16 대비 +0.35% · 현물 종가는 Aug3 28,604.93 대비 +3.94%",
+        "source": "Investing.com futures/Nasdaq 현물 2026-08-05"
       }
     },
     "XAUUSD": {
       "factors": [
-        { "key": "dollar", "value": 0.01, "confidence": 0.4, "fact": "dxy_aug4",
-          "note": "DXY 99.97, 전일 대비 +0.01% · Aug5 장중 큰 변화 없음",
-          "source": "TradingEconomics 2026-08-04", "asof": "2026-08-04T21:00:00Z" },
+        { "key": "dollar", "value": -0.13, "confidence": 0.45, "fact": "dxy_aug5",
+          "note": "DXY 99.84, Aug4 종가 99.97 대비 -0.13%(TE 자체표기 -0.02%와 상충)",
+          "source": "TradingEconomics 2026-08-05", "asof": "2026-08-05T12:30:00Z" },
         { "key": "fedPolicy", "stance": -1, "confidence": 0.6, "fact": "fomc",
           "note": "인상 소수의견 3명 · 매파 기류(persistent, 신규 확인 없음)",
           "source": "Interactive/JPM 2026-08-01", "asof": "2026-08-01T12:00:00Z" },
-        { "key": "safeHaven", "stance": -1, "confidence": 0.6, "fact": "hormuz_aug5",
-          "note": "美중부사령부 '호르무즈 남부항로 자유·개방' 확인 + 베센트 '이번주 내 타결 가능' 재확인 · 아직 최종타결 전, 완화 흐름 지속",
-          "source": "CNBC 2026-08-05", "asof": "2026-08-05T04:00:00Z" },
-        { "key": "realYield", "value": -4, "confidence": 0.55, "fact": "ust10y_aug4b",
-          "note": "TIPS 미확인, 명목 10Y로 대용 · 미 10Y 4.64%, 전일 대비 -4bp",
-          "source": "TradingEconomics 2026-08-04", "asof": "2026-08-04T21:00:00Z" }
+        { "key": "safeHaven", "stance": -1, "confidence": 0.55, "fact": "hormuz_aug5b",
+          "note": "美-이란-오만 잠정합의 임박, 수요(8/5) 발표 목표 보도 · 아직 최종타결 전, 완화 흐름 지속",
+          "source": "Fortune/Axios 2026-08-05", "asof": "2026-08-05T08:00:00Z" },
+        { "key": "realYield", "value": -6, "confidence": 0.5, "fact": "ust10y_aug4c",
+          "note": "TIPS 미확인, 명목 10Y로 대용(conf≤0.6) · 미 10Y 4.619%, 전일 대비 -6bp",
+          "source": "CNBC 2026-08-04", "asof": "2026-08-04T21:00:00Z" }
       ],
       "levels": {
-        "last": 4095.77,
-        "prevClose": 4077.75,
-        "resistance": [4100],
-        "note": "4,095.77(전일 대비 +0.44%, prevClose 역산) · '4,100 부근에서 안정' 보도 · 타 소스는 4,075.90~4,085.92 레인지로 소폭 상충",
-        "source": "TradingEconomics/시장보도 2026-08-05"
+        "last": 4136.78,
+        "prevClose": 4077.48,
+        "resistance": [4141],
+        "note": "XAU/USD 4,136.78(prevClose 4,077.48 대비 +1.45%) · 타 소스 TradingView 4,170.75, Vantage 레인지 4,065.54~4,141.51, 12월 선물 시가 4,133.80(-0.5%)로 상충 커서 확신도 낮춤",
+        "source": "Investing.com 2026-08-05"
       }
     },
     "USOIL": {
       "factors": [
-        { "key": "supplyRisk", "stance": -1, "confidence": 0.6, "fact": "hormuz_aug5",
-          "note": "美중부사령부 '남부항로 자유·개방' 확인 + 베센트 '이번주 내 타결 가능' 재확인 · 아직 최종타결 전",
-          "source": "CNBC 2026-08-05", "asof": "2026-08-05T04:00:00Z" },
-        { "key": "geopolitics", "stance": -1, "confidence": 0.6, "fact": "hormuz_aug5",
+        { "key": "supplyRisk", "stance": -1, "confidence": 0.55, "fact": "hormuz_aug5b",
+          "note": "美-이란-오만 잠정합의 임박, 수요(8/5) 발표 목표 보도 · 아직 최종타결 전",
+          "source": "Fortune/Axios 2026-08-05", "asof": "2026-08-05T08:00:00Z" },
+        { "key": "geopolitics", "stance": -1, "confidence": 0.55, "fact": "hormuz_aug5b",
           "note": "공급위험과 동일 사건(fact 공유)",
-          "source": "CNBC 2026-08-05", "asof": "2026-08-05T04:00:00Z" },
+          "source": "Fortune/Axios 2026-08-05", "asof": "2026-08-05T08:00:00Z" },
         { "key": "opec", "stance": -1, "confidence": 0.7, "fact": "opec_sep_hike",
           "note": "OPEC+ 7개국 9월 +18.8만b/d 증산 합의(8/2) 이후 연내 동결 시사(persistent, 신규 확인 없음)",
           "source": "CNBC/Bloomberg 2026-08-02", "asof": "2026-08-02T00:00:00Z" },
-        { "key": "dollar", "value": 0.01, "confidence": 0.4, "fact": "dxy_aug4",
-          "note": "DXY 99.97, 전일 대비 +0.01%",
-          "source": "TradingEconomics 2026-08-04", "asof": "2026-08-04T21:00:00Z" }
+        { "key": "dollar", "value": -0.13, "confidence": 0.45, "fact": "dxy_aug5",
+          "note": "DXY 99.84, Aug4 종가 99.97 대비 -0.13%",
+          "source": "TradingEconomics 2026-08-05", "asof": "2026-08-05T12:30:00Z" }
       ],
       "levels": {
-        "last": 75.40,
+        "last": 76.01,
         "prevClose": 75.77,
-        "note": "75.40(전일 대비 -0.49%, prevClose 역산) · 호르무즈 완화 서사로 최근 2거래일 -10%대 급락 이후 · 별도 소스는 현재가 75.79 언급",
-        "source": "TradingEconomics 2026-08-05"
+        "note": "WTI 76.01(전일 대비 +0.32%) · 호르무즈 완화 서사로 최근 2거래일 -10%대 급락 이후 소폭 반등",
+        "source": "fxdailyreport/TradingEconomics 2026-08-05"
       }
     },
     "EURUSD": {
@@ -82,21 +86,18 @@
         { "key": "fedPolicy", "stance": -1, "confidence": 0.6, "fact": "fomc",
           "note": "인상 소수의견 3명 · 매파 기류(persistent, 신규 확인 없음)",
           "source": "JPM 2026-08-01", "asof": "2026-08-01T12:00:00Z" },
-        { "key": "ecbPolicy", "stance": 2, "confidence": 0.65, "fact": "ecb",
+        { "key": "ecbPolicy", "stance": 2, "confidence": 0.6, "fact": "ecb",
           "note": "9월 인상 기대 지속(persistent, 신규 확인 없음)",
-          "source": "Investing.com/Currency Thoughts 2026-08-02", "asof": "2026-08-02T00:00:00Z" },
-        { "key": "rateDiff", "value": 0, "confidence": 0.55, "fact": "yield_spread_aug4",
-          "note": "미 10Y -4bp(4.64%) vs 독 10Y -4bp(3.11%) · 스프레드 변화 약 0bp",
-          "source": "TradingEconomics 2026-08-04", "asof": "2026-08-04T21:00:00Z" },
-        { "key": "riskAppetite", "value": 0.68, "confidence": 0.7, "fact": "vix_aug4_close",
-          "note": "VIX 종가 16.5, 전일 대비 +0.68pt",
-          "source": "CNBC/CNN 2026-08-04", "asof": "2026-08-04T20:00:00Z" }
+          "source": "Investing.com 2026-08-02", "asof": "2026-08-02T00:00:00Z" },
+        { "key": "riskAppetite", "value": 0.68, "confidence": 0.6, "fact": "vix_aug4_close",
+          "note": "VIX 종가 16.54, 전일 대비 +0.68pt(+4.29%)",
+          "source": "CNBC/Investing.com 2026-08-04", "asof": "2026-08-04T20:00:00Z" }
       ],
       "levels": {
-        "last": 1.1535,
-        "prevClose": 1.1532,
-        "note": "1.1535(prevClose 1.1532 대비 +0.03%) · 타 소스는 1.1540/1.1512권으로 소폭 상충",
-        "source": "Investing.com 2026-08-05"
+        "last": 1.1532,
+        "prevClose": 1.1508,
+        "note": "1.1532(prevClose 1.1508 대비 +0.21%) · 타 소스는 1.1542(09:06 UTC) 언급 · 6/16 이후 최고권 부근, 소스간 소폭 상충",
+        "source": "TradingEconomics/Investing.com 2026-08-05"
       }
     }
   }
