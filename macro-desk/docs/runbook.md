@@ -34,18 +34,48 @@
 
 ### 세션마다 챙길 수치
 
-| 지표 | 쓰이는 팩터 |
-|---|---|
-| 미 10Y 수익률 일간 변화(bp) | NAS100 `usRates`, XAUUSD `realYield`(대용 시 conf ≤ 0.6) |
-| 독 10Y와의 스프레드 변화(bp) | EURUSD `rateDiff` |
-| DXY 일간 변화(%) | 3개 자산 `dollar` |
-| VIX 일간 변화(pt) | NAS100·EURUSD `riskAppetite` |
-| 상승종목 비율(%) | NAS100 `breadth` |
-| 10Y 기대인플레(BEI) 변화(bp) | XAUUSD `inflation` |
-| EIA 재고 컨센서스 대비 서프라이즈(백만 배럴) | USOIL `inventory` |
+| 지표 | 쓰이는 팩터 | 출처 |
+|---|---|---|
+| 미 10Y 수익률 일간 변화(bp) | NAS100 `usRates`, XAUUSD `realYield`(대용 시 conf ≤ 0.6) | 피드 |
+| 독 10Y와의 스프레드 변화(bp) | EURUSD `rateDiff` | 피드 (ECB 유로존 AAA 10Y) |
+| DXY 일간 변화(%) | 3개 자산 `dollar` | 피드 |
+| VIX 일간 변화(pt) | NAS100·EURUSD `riskAppetite` | 피드 |
+| 상승종목 비율(%) | NAS100 `breadth` | 피드 (전종목 집계) |
+| 원유 재고 컨센서스 대비 서프라이즈(백만 배럴) | USOIL `inventory` | 피드 (EIA 우선, 없으면 API) |
+| 10Y 기대인플레(BEI) 변화(bp) | XAUUSD `inflation` | **웹** — FRED 접속 불가 |
+| 10Y 실질금리 변화(bp) | XAUUSD `realYield` | **웹** — FRED 접속 불가 |
 
-> 이 환경에서는 FMP MCP의 chart/quote/economics가 현재 플랜에서 막혀 있고 외부 시세 API도
-> 네트워크 정책상 직접 호출되지 않는다. 그래서 수치는 **웹 검색 결과**로 채운다.
+서수형 팩터(`fedPolicy`·`safeHaven`·`opec`·`geopolitics`·`ecbPolicy` 등)는
+그대로 웹 리서치로 판단한다. 피드는 숫자만 주므로 이쪽은 바뀌지 않는다.
+
+### 수치 출처 — 피드를 먼저 읽는다
+
+**https://enair840926-star.github.io/insight/feed.json**
+
+자산 인사이트가 장 시간에 맞춰 수집한 숫자다(평일 07:20~08:20 · 20:50~22:50 KST).
+정적 JSON이라 이 환경에서도 읽힌다 — 막히는 건 시세 API 엔드포인트지 웹 문서가 아니다.
+
+```jsonc
+"factors": {
+  "usRates":  { "value": 0.8, "unit": "bp", "fact": "미 10년물 4.635% (전일 4.627%)",
+                "source": "Yahoo ^TNX", "asof": "2026-08-05T22:26:55" }
+}
+"missing": [ { "key": "realYield", "reason": "FRED 접속 불가 — 직접 확인 필요" } ]
+```
+
+- `factors`의 `value`를 **그대로** 쓴다. 단위가 이미 이 표와 맞춰져 있다.
+- **`stance`는 오지 않는다.** 의도한 것이다 — 피드는 숫자만 주고 판정은 엔진이 한다.
+  판정까지 받아 오면 스코어보드가 채점하는 대상이 우리 룰셋이 아니게 된다.
+- `fact`·`source`·`asof`를 그대로 옮긴다. 출처를 다시 쓰지 않는다.
+- **`missing`에 있는 것만 웹으로 찾는다.** 피드에 있는 값을 웹에서 다시 찾아
+  다른 숫자를 쓰면 재현이 안 된다.
+- 피드가 12시간 넘게 낡았으면(`collectedAt` 확인) 그 사실을 `note`에 적고
+  해당 팩터의 `confidence`를 낮춘다.
+- `context`는 팩터가 아니다. 재고 수준·공포탐욕·금리커브가 들어 있고,
+  서수형 팩터(안전자산·지정학·OPEC+ 등)를 판단할 때 참고만 한다.
+
+> 피드에 없는 수치는 여전히 **웹 검색 결과**로 채운다. FMP MCP의
+> chart/quote/economics는 현재 플랜에서 막혀 있고 시세 API도 직접 호출되지 않는다.
 > 출처가 서로 어긋나면 `confidence`를 낮추고 note에 상충 사실을 적는다.
 
 ## 2. 관측 레벨
