@@ -2,77 +2,95 @@
   "version": 2,
   "ruleset": "fusion-v1.1",
   "mode": "macro-only",
-  "generatedAt": "2026-08-05T23:11:19.329Z",
+  "generatedAt": "2026-08-06T07:11:45.074Z",
   "schedule": "08:00 · 16:00 · 22:00 KST",
-  "note": "2026-08-06(목) 아침(08:00 KST) · 피드(data/feed.json) 정상 수신, collectedAt macro 2026-08-06T00:24:28 KST(약 40분 전, 신선) · 수치형 6종(usRates·riskAppetite·dollar·breadth·inventory·rateDiff)·levels 4종 전부 피드에서 확보 · realYield는 명목 10Y(0bp 변화)로 대용(conf≤0.6), inflation(BEI)은 확인 실패로 제외 · 이란-오만 호르무즈 항로 공동성명 최종 검토 단계(美 봉쇄 해제 전제, 미확정) · OPEC+ 8월 18.8만b/d 증산 시행 중·9월 이후 동결 시사 지속 · FOMC 9-3 매파 소수의견·Warsh 발언도 매파적, 신규 변경 없음(persistent) · 미 데이터(ISM 제조업 55.6 상회, NFP 187k 상회, 실업률은 3.8%로 상승)는 대체로 상회 · 유로존 PMI 51.9(예상 소폭 하회, 산출은 4년래 최대) · demand(USOIL)는 뚜렷한 서프라이즈 수치 확인 실패로 제외 · ecbPolicy는 이번 회차 미검색, 8/2 확인치 이월(persistent)",
+  "note": "2026-08-06(목) 오후(16:00 KST) · 피드(data/feed.json) 아침 대비 재동기화 확인(collectedAt macro 2026-08-06T08:30:55, 약 7.6시간 전 · us 08-05T22:26:36 이월) · 수치형 6종(usRates·riskAppetite·dollar·breadth·inventory·rateDiff)·levels 4종 전부 피드에서 갱신 확보(NAS100 last 29628.0로 하락 반영, VIX -0.69pt로 낙폭 확대) · 서수형 팩터(fedPolicy·safeHaven·megacapEarnings·opec·geopolitics·flows·ecbPolicy·usData·ezData)는 이번 회차 웹 재검색 범위 밖 — 아침 회차 확인치 이월(persistent 항목 포함) · 호르무즈 상황만 스팟체크: Iran-Oman 초안 완료·Khamenei 최종승인 대기 지속, 변화 없음(Bloomberg/CNN/Al Jazeera 2026-08-06 재확인) · realYield·inflation(BEI)은 이번 회차도 웹 검색 실패(FRED/TIPS 접근 불가) — missing 유지, 지어내지 않음",
   "assets": {
     "NAS100": {
       "direction": 0,
       "confidence": "낮음",
-      "rationale": "요인 중립 · 연준 스탠스 －·시장 폭 ＋·달러 ＋ → 중립",
+      "rationale": "요인 중립 · 위험선호 ＋·연준 스탠스 －·달러 ＋ → 중립",
       "drivers": [
+        {
+          "name": "위험선호",
+          "read": "상승",
+          "note": "VIX 15.81, 전일 16.50 대비 -0.69pt"
+        },
         {
           "name": "연준 스탠스",
           "read": "하락",
-          "note": "FOMC 9-3 동결, 매파 소수의견 3명 지속 · Warsh 발언도 인플레 2% 타겟 강조하며 매파적 · Aug5 신규 변경 없음(persistent)"
-        },
-        {
-          "name": "시장 폭",
-          "read": "상승",
-          "note": "상승 3,478 / 하락 1,409 (69.6%)"
+          "note": "FOMC 9-3 동결, 매파 소수의견 3명 지속 · Warsh 발언도 인플레 2% 타겟 강조하며 매파적 · 신규 변경 없음(persistent, 아침 회차 이월)"
         },
         {
           "name": "달러",
           "read": "상승",
-          "note": "DXY 99.684, 전일 대비 -0.21%"
+          "note": "DXY 99.69, 전일 대비 -0.20%"
         }
       ],
       "event": "美 신규 실업수당청구(주간) 8. 6. 21:30 KST",
-      "asof": "8. 6. 08:11 KST",
-      "setAt": "2026-08-05T23:11:19.329Z",
+      "asof": "8. 6. 16:11 KST",
+      "setAt": "2026-08-06T07:11:45.074Z",
       "source": "scheduled",
       "fusion": {
         "asset": "NAS100",
         "mode": "macro-only",
         "levels": {
-          "last": 29840.25,
+          "last": 29628,
           "prevClose": 29863.5,
-          "note": "나스닥선물(NQ) · 당일 -0.08%",
+          "note": "나스닥선물(NQ) · 당일 -0.79%",
           "source": "Yahoo NQ=F (feed)"
         },
         "position": {
-          "score": -0.219,
-          "movePct": -0.078,
+          "score": -0.978,
+          "movePct": -0.789,
           "brokeResistance": false,
           "lostSupport": false,
-          "note": "전일 종가 -0.08%",
+          "note": "전일 종가 -0.79%",
           "flags": [],
           "relation": "중립",
           "multiplier": 1
         },
         "direction": 0,
-        "conviction": 3,
+        "conviction": 13,
         "confidence": "낮음",
-        "score": 0.069,
+        "score": 0.277,
         "regime": "RANGE",
         "weights": {
           "technical": 0,
           "macro": 1
         },
         "playbook": "뚜렷한 주도 요인 없음 — 다음 지표까지 방향 대기",
-        "rationale": "요인 중립 · 연준 스탠스 －·시장 폭 ＋·달러 ＋ → 중립",
+        "rationale": "요인 중립 · 위험선호 ＋·연준 스탠스 －·달러 ＋ → 중립",
         "reanalyzeTriggers": [
           "美 신규 실업수당청구(주간) 21:30 발표 결과",
-          "연준 스탠스 방향 전환 시 즉시 재수집",
-          "16:00 스냅샷 만료"
+          "위험선호 방향 전환 시 즉시 재수집",
+          "17:00 스냅샷 만료"
         ],
-        "validUntil": "2026-08-06T07:00:00.000Z",
+        "validUntil": "2026-08-06T08:00:00.000Z",
         "macro": {
-          "score": 0.069,
-          "confidence": 0.647,
-          "coverage": 0.688,
-          "dispersion": 0.099,
+          "score": 0.277,
+          "confidence": 0.555,
+          "coverage": 0.639,
+          "dispersion": 0.219,
           "factors": [
+            {
+              "key": "riskAppetite",
+              "label": "위험선호",
+              "block": "tape",
+              "kind": "numeric",
+              "stance": 1,
+              "value": -0.69,
+              "fact": "VIX 15.81 (전일 16.50)",
+              "note": "VIX 15.81, 전일 16.50 대비 -0.69pt",
+              "source": "Yahoo ^VIX (feed)",
+              "asof": "2026-08-06T08:30:55",
+              "weight": 0.18,
+              "confidence": 0.8,
+              "effectiveConfidence": 0.8,
+              "effectiveWeight": 0.144,
+              "contribution": 0.144,
+              "flags": []
+            },
             {
               "key": "fedPolicy",
               "label": "연준 스탠스",
@@ -80,14 +98,32 @@
               "kind": "ordinal",
               "stance": -1,
               "fact": "fomc",
-              "note": "FOMC 9-3 동결, 매파 소수의견 3명 지속 · Warsh 발언도 인플레 2% 타겟 강조하며 매파적 · Aug5 신규 변경 없음(persistent)",
+              "note": "FOMC 9-3 동결, 매파 소수의견 3명 지속 · Warsh 발언도 인플레 2% 타겟 강조하며 매파적 · 신규 변경 없음(persistent, 아침 회차 이월)",
               "source": "CNBC/Investing.com 검색 2026-08-05",
               "asof": "2026-08-05T23:30:00Z",
               "weight": 0.2,
               "confidence": 0.6,
-              "effectiveConfidence": 0.6,
-              "effectiveWeight": 0.12,
-              "contribution": -0.12,
+              "effectiveConfidence": 0.5572,
+              "effectiveWeight": 0.1114,
+              "contribution": -0.1114,
+              "flags": []
+            },
+            {
+              "key": "dollar",
+              "label": "달러",
+              "block": "rates",
+              "kind": "numeric",
+              "stance": 1,
+              "value": -0.2,
+              "fact": "달러인덱스 99.69 (전일 대비 -0.20%)",
+              "note": "DXY 99.69, 전일 대비 -0.20%",
+              "source": "Yahoo DX-Y.NYB (feed)",
+              "asof": "2026-08-06T08:30:55",
+              "weight": 0.1,
+              "confidence": 0.8,
+              "effectiveConfidence": 0.8,
+              "effectiveWeight": 0.08,
+              "contribution": 0.08,
               "flags": []
             },
             {
@@ -103,27 +139,9 @@
               "asof": "2026-08-05T22:26:36",
               "weight": 0.12,
               "confidence": 0.75,
-              "effectiveConfidence": 0.7288,
-              "effectiveWeight": 0.0875,
-              "contribution": 0.0875,
-              "flags": []
-            },
-            {
-              "key": "dollar",
-              "label": "달러",
-              "block": "rates",
-              "kind": "numeric",
-              "stance": 1,
-              "value": -0.21,
-              "fact": "달러인덱스 99.684 (전일 대비 -0.21%)",
-              "note": "DXY 99.684, 전일 대비 -0.21%",
-              "source": "Yahoo DX-Y.NYB (feed)",
-              "asof": "2026-08-06T00:24:28",
-              "weight": 0.1,
-              "confidence": 0.8,
-              "effectiveConfidence": 0.8,
-              "effectiveWeight": 0.08,
-              "contribution": 0.08,
+              "effectiveConfidence": 0.5354,
+              "effectiveWeight": 0.0642,
+              "contribution": 0.0642,
               "flags": []
             },
             {
@@ -132,33 +150,15 @@
               "block": "rates",
               "kind": "numeric",
               "stance": 0,
-              "value": 0,
-              "fact": "미 10년물 4.627% (전일 4.627%)",
-              "note": "미 10년물 4.627%, 전일 대비 0bp",
+              "value": -1,
+              "fact": "미 10년물 4.617% (전일 4.627%)",
+              "note": "미 10년물 4.617%, 전일 대비 -1.0bp",
               "source": "Yahoo ^TNX (feed)",
-              "asof": "2026-08-06T00:24:28",
+              "asof": "2026-08-06T08:30:55",
               "weight": 0.24,
               "confidence": 0.8,
               "effectiveConfidence": 0.8,
               "effectiveWeight": 0.192,
-              "contribution": 0,
-              "flags": []
-            },
-            {
-              "key": "riskAppetite",
-              "label": "위험선호",
-              "block": "tape",
-              "kind": "numeric",
-              "stance": 0,
-              "value": -0.21,
-              "fact": "VIX 16.29 (전일 16.50)",
-              "note": "VIX 16.29, 전일 16.50 대비 -0.21pt",
-              "source": "Yahoo ^VIX (feed)",
-              "asof": "2026-08-06T00:24:28",
-              "weight": 0.18,
-              "confidence": 0.8,
-              "effectiveConfidence": 0.8,
-              "effectiveWeight": 0.144,
               "contribution": 0,
               "flags": []
             },
@@ -169,13 +169,13 @@
               "kind": "ordinal",
               "stance": 0,
               "fact": "megacap_earnings_aug5",
-              "note": "애플 가이던스 약세 지속(최근 5거래일 -7%대, 이날도 -0.8%) vs 팔란티어 강세·골드만 빅테크 26년 EPS 성장 46% 기여 전망 유지 · 혼조",
+              "note": "애플 가이던스 약세 지속 vs 팔란티어 강세·골드만 빅테크 26년 EPS 성장 46% 기여 전망 유지 · 혼조(아침 회차 이월)",
               "source": "CNBC 2026-08-03",
               "asof": "2026-08-05T23:30:00Z",
               "weight": 0.16,
               "confidence": 0.4,
-              "effectiveConfidence": 0.4,
-              "effectiveWeight": 0.064,
+              "effectiveConfidence": 0.2974,
+              "effectiveWeight": 0.0476,
               "contribution": 0,
               "flags": []
             }
@@ -183,8 +183,8 @@
           "blocks": [
             {
               "id": "rates",
-              "score": -0.102,
-              "weight": 0.392,
+              "score": -0.082,
+              "weight": 0.3834,
               "factors": [
                 "usRates",
                 "fedPolicy",
@@ -193,8 +193,8 @@
             },
             {
               "id": "tape",
-              "score": 0.296,
-              "weight": 0.2955,
+              "score": 0.814,
+              "weight": 0.2558,
               "factors": [
                 "riskAppetite",
                 "megacapEarnings",
@@ -230,7 +230,7 @@
               "note": "컨센서스 약 202k, 전주 197k",
               "blackoutStart": "2026-08-06T12:10:00.000Z",
               "blackoutEnd": "2026-08-06T13:00:00.000Z",
-              "minutesUntil": 799,
+              "minutesUntil": 318,
               "active": false
             }
           ],
@@ -241,13 +241,13 @@
             "note": "컨센서스 약 202k, 전주 197k",
             "blackoutStart": "2026-08-06T12:10:00.000Z",
             "blackoutEnd": "2026-08-06T13:00:00.000Z",
-            "minutesUntil": 799,
+            "minutesUntil": 318,
             "active": false
           },
-          "maxTier": 0,
+          "maxTier": 2,
           "activeBlackout": null,
           "nextBlackoutStart": "2026-08-06T12:10:00.000Z",
-          "convictionCap": 100,
+          "convictionCap": 65,
           "flags": []
         },
         "flags": [
@@ -263,46 +263,46 @@
         {
           "name": "안전자산·지정학",
           "read": "하락",
-          "note": "이란-오만 호르무즈 항로 공동성명 최종 검토 단계, 美 대이란 봉쇄 해제가 전제(미확정) · Bloomberg 'agreement reached' vs AlJazeera/CNN 'close to deal' 표현 상충"
+          "note": "이란-오만 호르무즈 항로 초안 완료, 하메네이 최종승인 대기 지속(미확정) · 오후 회차 스팟체크로 변화 없음 재확인"
         },
         {
           "name": "달러",
           "read": "상승",
-          "note": "DXY 99.684, 전일 대비 -0.21%"
+          "note": "DXY 99.69, 전일 대비 -0.20%"
         },
         {
           "name": "연준 스탠스",
           "read": "하락",
-          "note": "FOMC 9-3 동결, 매파 소수의견 지속 · Aug5 신규 변경 없음(persistent)"
+          "note": "FOMC 9-3 동결, 매파 소수의견 지속 · 신규 변경 없음(persistent, 아침 회차 이월)"
         }
       ],
       "event": "美 신규 실업수당청구(주간) 8. 6. 21:30 KST",
-      "asof": "8. 6. 08:11 KST",
-      "setAt": "2026-08-05T23:11:19.329Z",
+      "asof": "8. 6. 16:11 KST",
+      "setAt": "2026-08-06T07:11:45.074Z",
       "source": "scheduled",
       "fusion": {
         "asset": "XAUUSD",
         "mode": "macro-only",
         "levels": {
-          "last": 4318.4,
+          "last": 4317.4,
           "prevClose": 4095.4,
-          "note": "금(GC) · 당일 +5.45%",
+          "note": "금(GC) · 당일 +5.42%",
           "source": "Yahoo GC=F (feed)"
         },
         "position": {
           "score": 1,
-          "movePct": 5.445,
+          "movePct": 5.421,
           "brokeResistance": false,
           "lostSupport": false,
-          "note": "전일 종가 +5.45%",
+          "note": "전일 종가 +5.42%",
           "flags": [],
           "relation": "중립",
           "multiplier": 1
         },
         "direction": 0,
-        "conviction": 3,
+        "conviction": 4,
         "confidence": "낮음",
-        "score": -0.088,
+        "score": -0.117,
         "regime": "RANGE",
         "weights": {
           "technical": 0,
@@ -313,14 +313,14 @@
         "reanalyzeTriggers": [
           "美 신규 실업수당청구(주간) 21:30 발표 결과",
           "안전자산·지정학 방향 전환 시 즉시 재수집",
-          "16:00 스냅샷 만료"
+          "17:00 스냅샷 만료"
         ],
-        "validUntil": "2026-08-06T07:00:00.000Z",
+        "validUntil": "2026-08-06T08:00:00.000Z",
         "macro": {
-          "score": -0.088,
-          "confidence": 0.242,
-          "coverage": 0.3,
-          "dispersion": 0.32,
+          "score": -0.117,
+          "confidence": 0.225,
+          "coverage": 0.278,
+          "dispersion": 0.319,
           "factors": [
             {
               "key": "safeHaven",
@@ -329,14 +329,14 @@
               "kind": "ordinal",
               "stance": -1,
               "fact": "hormuz_aug5",
-              "note": "이란-오만 호르무즈 항로 공동성명 최종 검토 단계, 美 대이란 봉쇄 해제가 전제(미확정) · Bloomberg 'agreement reached' vs AlJazeera/CNN 'close to deal' 표현 상충",
-              "source": "Bloomberg/Al Jazeera/CNN 2026-08-05",
-              "asof": "2026-08-05T23:30:00Z",
+              "note": "이란-오만 호르무즈 항로 초안 완료, 하메네이 최종승인 대기 지속(미확정) · 오후 회차 스팟체크로 변화 없음 재확인",
+              "source": "Bloomberg/Al Jazeera/CNN 2026-08-06 재확인",
+              "asof": "2026-08-06T07:00:00Z",
               "weight": 0.16,
               "confidence": 0.55,
-              "effectiveConfidence": 0.55,
-              "effectiveWeight": 0.088,
-              "contribution": -0.088,
+              "effectiveConfidence": 0.5459,
+              "effectiveWeight": 0.0873,
+              "contribution": -0.0873,
               "flags": []
             },
             {
@@ -345,16 +345,16 @@
               "block": "rates",
               "kind": "numeric",
               "stance": 1,
-              "value": -0.21,
-              "fact": "달러인덱스 99.684 (전일 대비 -0.21%)",
-              "note": "DXY 99.684, 전일 대비 -0.21%",
+              "value": -0.2,
+              "fact": "달러인덱스 99.69 (전일 대비 -0.20%)",
+              "note": "DXY 99.69, 전일 대비 -0.20%",
               "source": "Yahoo DX-Y.NYB (feed)",
-              "asof": "2026-08-06T00:24:28",
+              "asof": "2026-08-06T08:30:55",
               "weight": 0.22,
               "confidence": 0.8,
               "effectiveConfidence": 0.8,
-              "effectiveWeight": 0.0765,
-              "contribution": 0.0765,
+              "effectiveWeight": 0.0722,
+              "contribution": 0.0722,
               "flags": []
             },
             {
@@ -364,14 +364,14 @@
               "kind": "ordinal",
               "stance": -1,
               "fact": "fomc",
-              "note": "FOMC 9-3 동결, 매파 소수의견 지속 · Aug5 신규 변경 없음(persistent)",
+              "note": "FOMC 9-3 동결, 매파 소수의견 지속 · 신규 변경 없음(persistent, 아침 회차 이월)",
               "source": "CNBC/Investing.com 검색 2026-08-05",
               "asof": "2026-08-05T23:30:00Z",
               "weight": 0.18,
               "confidence": 0.6,
-              "effectiveConfidence": 0.6,
-              "effectiveWeight": 0.047,
-              "contribution": -0.047,
+              "effectiveConfidence": 0.5572,
+              "effectiveWeight": 0.0411,
+              "contribution": -0.0411,
               "flags": []
             },
             {
@@ -381,14 +381,14 @@
               "kind": "ordinal",
               "stance": 1,
               "fact": "gold_flows_aug",
-              "note": "중앙은행 매입 사상최대 속도 지속(1Q 244톤, +3%YoY, 보유국 비중 82%) · ETF는 2Q 순유출 -45톤이었으나 최근 대형 유입 재개(6월 +$1.1B, +$6.6B 유입 언급 기사도)",
+              "note": "중앙은행 매입 사상최대 속도 지속(1Q 244톤, +3%YoY) · ETF 최근 대형 유입 재개(6월 +$1.1B~+$6.6B 언급)(아침 회차 이월)",
               "source": "VTMarkets/Equiti 2026-08",
               "asof": "2026-08-05T23:30:00Z",
               "weight": 0.08,
               "confidence": 0.4,
-              "effectiveConfidence": 0.4,
-              "effectiveWeight": 0.032,
-              "contribution": 0.032,
+              "effectiveConfidence": 0.2974,
+              "effectiveWeight": 0.0238,
+              "contribution": 0.0238,
               "flags": []
             },
             {
@@ -397,15 +397,15 @@
               "block": "rates",
               "kind": "numeric",
               "stance": 0,
-              "value": 0,
+              "value": -1,
               "fact": "TIPS 미확인 지속, 명목 10Y로 대용",
-              "note": "미 10년물 4.627%(전일 동일, 변화 0bp) · 대용치라 confidence 0.6 이하로 제한",
+              "note": "미 10년물 4.617%(전일 4.627%, -1.0bp) · 대용치라 confidence 0.6 이하로 제한",
               "source": "Yahoo ^TNX (feed) 대용",
-              "asof": "2026-08-06T00:24:28",
+              "asof": "2026-08-06T08:30:55",
               "weight": 0.26,
               "confidence": 0.5,
               "effectiveConfidence": 0.5,
-              "effectiveWeight": 0.0565,
+              "effectiveWeight": 0.0533,
               "contribution": 0,
               "flags": []
             }
@@ -413,8 +413,8 @@
           "blocks": [
             {
               "id": "rates",
-              "score": 0.164,
-              "weight": 0.18,
+              "score": 0.187,
+              "weight": 0.1666,
               "factors": [
                 "realYield",
                 "dollar",
@@ -424,7 +424,7 @@
             {
               "id": "geo",
               "score": -1,
-              "weight": 0.088,
+              "weight": 0.0873,
               "factors": [
                 "safeHaven"
               ]
@@ -432,7 +432,7 @@
             {
               "id": "flows",
               "score": 1,
-              "weight": 0.032,
+              "weight": 0.0238,
               "factors": [
                 "flows"
               ]
@@ -470,7 +470,7 @@
               "note": "컨센서스 약 202k, 전주 197k",
               "blackoutStart": "2026-08-06T12:10:00.000Z",
               "blackoutEnd": "2026-08-06T13:00:00.000Z",
-              "minutesUntil": 799,
+              "minutesUntil": 318,
               "active": false
             }
           ],
@@ -481,13 +481,13 @@
             "note": "컨센서스 약 202k, 전주 197k",
             "blackoutStart": "2026-08-06T12:10:00.000Z",
             "blackoutEnd": "2026-08-06T13:00:00.000Z",
-            "minutesUntil": 799,
+            "minutesUntil": 318,
             "active": false
           },
-          "maxTier": 0,
+          "maxTier": 2,
           "activeBlackout": null,
           "nextBlackoutStart": "2026-08-06T12:10:00.000Z",
-          "convictionCap": 100,
+          "convictionCap": 65,
           "flags": []
         },
         "flags": [
@@ -499,9 +499,9 @@
       }
     },
     "USOIL": {
-      "direction": -2,
+      "direction": -1,
       "confidence": "중간",
-      "rationale": "요인 일치 · 재고 －·공급 차질 －·OPEC+ － → 강한 하락",
+      "rationale": "요인 일치 · 재고 －·공급 차질 －·OPEC+ － → 하락",
       "drivers": [
         {
           "name": "재고",
@@ -511,59 +511,59 @@
         {
           "name": "공급 차질",
           "read": "하락",
-          "note": "이란-오만 호르무즈 항로 공동성명 최종 검토 단계, 美 봉쇄 해제가 전제(미확정)"
+          "note": "이란-오만 호르무즈 항로 초안 완료, 하메네이 최종승인 대기 지속(미확정) · 오후 회차 스팟체크로 변화 없음 재확인"
         },
         {
           "name": "OPEC+",
           "read": "하락",
-          "note": "OPEC+ 8월 18.8만b/d 증산 시행 중, 9월 이후 연내 동결 시사 지속(persistent, 신규 확인 없음)"
+          "note": "OPEC+ 8월 18.8만b/d 증산 시행 중, 9월 이후 연내 동결 시사 지속(persistent, 아침 회차 이월)"
         }
       ],
       "event": "美 신규 실업수당청구(주간) 8. 6. 21:30 KST",
-      "asof": "8. 6. 08:11 KST",
-      "setAt": "2026-08-05T23:11:19.329Z",
+      "asof": "8. 6. 16:11 KST",
+      "setAt": "2026-08-06T07:11:45.074Z",
       "source": "scheduled",
       "fusion": {
         "asset": "USOIL",
         "mode": "macro-only",
         "levels": {
-          "last": 75.36,
+          "last": 74.99,
           "prevClose": 75.77,
-          "note": "WTI원유(CL) · 당일 -0.54%",
+          "note": "WTI원유(CL) · 당일 -1.03%",
           "source": "Yahoo CL=F (feed)"
         },
         "position": {
-          "score": -0.589,
-          "movePct": -0.541,
+          "score": -0.858,
+          "movePct": -1.029,
           "brokeResistance": false,
           "lostSupport": false,
-          "note": "전일 종가 -0.54%",
+          "note": "전일 종가 -1.03%",
           "flags": [],
           "relation": "확인",
           "multiplier": 1.15
         },
-        "direction": -2,
-        "conviction": 47,
+        "direction": -1,
+        "conviction": 41,
         "confidence": "중간",
-        "score": -1.001,
+        "score": -0.906,
         "regime": "ALIGNED",
         "weights": {
           "technical": 0,
           "macro": 1
         },
-        "playbook": "강한 하락 편향 · 재고 주도 · 반대 요인 달러 · 가격도 확인(전일 종가 -0.54%)",
-        "rationale": "요인 일치 · 재고 －·공급 차질 －·OPEC+ － → 강한 하락",
+        "playbook": "하락 편향 · 재고 주도 · 반대 요인 달러 · 가격도 확인(전일 종가 -1.03%)",
+        "rationale": "요인 일치 · 재고 －·공급 차질 －·OPEC+ － → 하락",
         "reanalyzeTriggers": [
           "美 신규 실업수당청구(주간) 21:30 발표 결과",
           "재고 방향 전환 시 즉시 재수집",
-          "16:00 스냅샷 만료"
+          "17:00 스냅샷 만료"
         ],
-        "validUntil": "2026-08-06T07:00:00.000Z",
+        "validUntil": "2026-08-06T08:00:00.000Z",
         "macro": {
-          "score": -1.001,
-          "confidence": 0.355,
-          "coverage": 0.502,
-          "dispersion": 0.489,
+          "score": -0.906,
+          "confidence": 0.318,
+          "coverage": 0.451,
+          "dispersion": 0.49,
           "factors": [
             {
               "key": "inventory",
@@ -578,9 +578,9 @@
               "asof": "2026-08-05T22:26:36",
               "weight": 0.22,
               "confidence": 0.75,
-              "effectiveConfidence": 0.7288,
-              "effectiveWeight": 0.1603,
-              "contribution": -0.3206,
+              "effectiveConfidence": 0.5354,
+              "effectiveWeight": 0.1178,
+              "contribution": -0.2356,
               "flags": []
             },
             {
@@ -590,14 +590,14 @@
               "kind": "ordinal",
               "stance": -1,
               "fact": "hormuz_aug5",
-              "note": "이란-오만 호르무즈 항로 공동성명 최종 검토 단계, 美 봉쇄 해제가 전제(미확정)",
-              "source": "Bloomberg/Al Jazeera/CNN 2026-08-05",
-              "asof": "2026-08-05T23:30:00Z",
+              "note": "이란-오만 호르무즈 항로 초안 완료, 하메네이 최종승인 대기 지속(미확정) · 오후 회차 스팟체크로 변화 없음 재확인",
+              "source": "Bloomberg/Al Jazeera/CNN 2026-08-06 재확인",
+              "asof": "2026-08-06T07:00:00Z",
               "weight": 0.24,
               "confidence": 0.55,
-              "effectiveConfidence": 0.55,
-              "effectiveWeight": 0.132,
-              "contribution": -0.132,
+              "effectiveConfidence": 0.5459,
+              "effectiveWeight": 0.131,
+              "contribution": -0.131,
               "flags": []
             },
             {
@@ -607,14 +607,14 @@
               "kind": "ordinal",
               "stance": -1,
               "fact": "opec_sep_hike",
-              "note": "OPEC+ 8월 18.8만b/d 증산 시행 중, 9월 이후 연내 동결 시사 지속(persistent, 신규 확인 없음)",
+              "note": "OPEC+ 8월 18.8만b/d 증산 시행 중, 9월 이후 연내 동결 시사 지속(persistent, 아침 회차 이월)",
               "source": "Worldoil/Enerdata 2026-08-02(검색 재확인 2026-08-05)",
               "asof": "2026-08-05T23:30:00Z",
               "weight": 0.18,
               "confidence": 0.6,
-              "effectiveConfidence": 0.6,
-              "effectiveWeight": 0.108,
-              "contribution": -0.108,
+              "effectiveConfidence": 0.5572,
+              "effectiveWeight": 0.1003,
+              "contribution": -0.1003,
               "flags": []
             },
             {
@@ -623,11 +623,11 @@
               "block": "fx",
               "kind": "numeric",
               "stance": 1,
-              "value": -0.21,
-              "fact": "달러인덱스 99.684 (전일 대비 -0.21%)",
-              "note": "DXY 99.684, 전일 대비 -0.21%",
+              "value": -0.2,
+              "fact": "달러인덱스 99.69 (전일 대비 -0.20%)",
+              "note": "DXY 99.69, 전일 대비 -0.20%",
               "source": "Yahoo DX-Y.NYB (feed)",
-              "asof": "2026-08-06T00:24:28",
+              "asof": "2026-08-06T08:30:55",
               "weight": 0.1,
               "confidence": 0.8,
               "effectiveConfidence": 0.8,
@@ -643,13 +643,13 @@
               "stance": -1,
               "fact": "hormuz_aug5",
               "note": "공급위험과 동일 사건(fact 공유)",
-              "source": "Bloomberg/Al Jazeera/CNN 2026-08-05",
-              "asof": "2026-08-05T23:30:00Z",
+              "source": "Bloomberg/Al Jazeera/CNN 2026-08-06 재확인",
+              "asof": "2026-08-06T07:00:00Z",
               "weight": 0.1,
               "confidence": 0.55,
-              "effectiveConfidence": 0.55,
-              "effectiveWeight": 0.022,
-              "contribution": -0.022,
+              "effectiveConfidence": 0.5459,
+              "effectiveWeight": 0.0218,
+              "contribution": -0.0218,
               "flags": [
                 "DUPLICATE_FACT:hormuz_aug5"
               ]
@@ -657,26 +657,26 @@
           ],
           "blocks": [
             {
-              "id": "inv",
-              "score": -2,
-              "weight": 0.1603,
-              "factors": [
-                "inventory"
-              ]
-            },
-            {
               "id": "supply",
               "score": -1,
-              "weight": 0.154,
+              "weight": 0.1528,
               "factors": [
                 "supplyRisk",
                 "geopolitics"
               ]
             },
             {
+              "id": "inv",
+              "score": -2,
+              "weight": 0.1178,
+              "factors": [
+                "inventory"
+              ]
+            },
+            {
               "id": "policy",
               "score": -1,
-              "weight": 0.108,
+              "weight": 0.1003,
               "factors": [
                 "opec"
               ]
@@ -692,7 +692,8 @@
           ],
           "flags": [
             "MISSING_FACTORS:demand",
-            "DUPLICATE_FACT:geopolitics<-supplyRisk"
+            "DUPLICATE_FACT:geopolitics<-supplyRisk",
+            "MACRO_COVERAGE_LOW"
           ]
         },
         "technical": {
@@ -721,7 +722,7 @@
               "note": "컨센서스 약 202k, 전주 197k",
               "blackoutStart": "2026-08-06T12:10:00.000Z",
               "blackoutEnd": "2026-08-06T13:00:00.000Z",
-              "minutesUntil": 799,
+              "minutesUntil": 318,
               "active": false
             }
           ],
@@ -732,36 +733,37 @@
             "note": "컨센서스 약 202k, 전주 197k",
             "blackoutStart": "2026-08-06T12:10:00.000Z",
             "blackoutEnd": "2026-08-06T13:00:00.000Z",
-            "minutesUntil": 799,
+            "minutesUntil": 318,
             "active": false
           },
-          "maxTier": 0,
+          "maxTier": 2,
           "activeBlackout": null,
           "nextBlackoutStart": "2026-08-06T12:10:00.000Z",
-          "convictionCap": 100,
+          "convictionCap": 65,
           "flags": []
         },
         "flags": [
           "MACRO_ONLY",
           "MISSING_FACTORS:demand",
-          "DUPLICATE_FACT:geopolitics<-supplyRisk"
+          "DUPLICATE_FACT:geopolitics<-supplyRisk",
+          "MACRO_COVERAGE_LOW"
         ]
       }
     },
     "EURUSD": {
       "direction": 0,
       "confidence": "낮음",
-      "rationale": "요인 중립 · 미-유로존 금리차 －·연준 스탠스 －·ECB 스탠스 ＋ → 중립",
+      "rationale": "요인 상충 · 미-유로존 금리차 －·연준 스탠스 －·ECB 스탠스 ＋ → 중립",
       "drivers": [
         {
           "name": "미-유로존 금리차",
           "read": "하락",
-          "note": "미-독 10Y 스프레드 148bp, 전일 144bp 대비 +3.9bp"
+          "note": "미-독 10Y 스프레드 147bp, 전일 144bp 대비 +2.9bp"
         },
         {
           "name": "연준 스탠스",
           "read": "하락",
-          "note": "FOMC 9-3 동결, 매파 소수의견 지속 · Aug5 신규 변경 없음(persistent)"
+          "note": "FOMC 9-3 동결, 매파 소수의견 지속 · 신규 변경 없음(persistent, 아침 회차 이월)"
         },
         {
           "name": "ECB 스탠스",
@@ -770,51 +772,50 @@
         }
       ],
       "event": "美 신규 실업수당청구(주간) 8. 6. 21:30 KST",
-      "asof": "8. 6. 08:11 KST",
-      "setAt": "2026-08-05T23:11:19.329Z",
+      "asof": "8. 6. 16:11 KST",
+      "setAt": "2026-08-06T07:11:45.074Z",
       "source": "scheduled",
       "fusion": {
         "asset": "EURUSD",
         "mode": "macro-only",
         "levels": {
-          "last": 1.1551,
-          "prevClose": 1.150735,
-          "note": "유로달러 · 당일 +0.38%",
+          "last": 1.1558,
+          "prevClose": 1.153243,
+          "note": "유로달러 · 당일 +0.22%",
           "source": "Yahoo EURUSD=X (feed)"
         },
         "position": {
-          "score": 0.956,
-          "movePct": 0.379,
+          "score": 0.804,
+          "movePct": 0.222,
           "brokeResistance": false,
           "lostSupport": false,
-          "note": "전일 종가 +0.38%",
+          "note": "전일 종가 +0.22%",
           "flags": [],
-          "relation": "반증",
-          "multiplier": 0.7
+          "relation": "중립",
+          "multiplier": 1
         },
         "direction": 0,
-        "conviction": 15,
+        "conviction": 14,
         "confidence": "낮음",
-        "score": -0.497,
-        "regime": "RANGE",
+        "score": -0.341,
+        "regime": "CONFLICT",
         "weights": {
           "technical": 0,
           "macro": 1
         },
-        "playbook": "뚜렷한 주도 요인 없음 — 다음 지표까지 방향 대기",
-        "rationale": "요인 중립 · 미-유로존 금리차 －·연준 스탠스 －·ECB 스탠스 ＋ → 중립",
+        "playbook": "요인 상충: ECB 스탠스(＋) vs 미-유로존 금리차(－) — 한쪽이 꺾이기 전까지 방향 없음",
+        "rationale": "요인 상충 · 미-유로존 금리차 －·연준 스탠스 －·ECB 스탠스 ＋ → 중립",
         "reanalyzeTriggers": [
-          "가격이 매크로 편향과 반대 — 둘 중 하나가 꺾이는 시점",
           "美 신규 실업수당청구(주간) 21:30 발표 결과",
           "미-유로존 금리차 방향 전환 시 즉시 재수집",
-          "16:00 스냅샷 만료"
+          "17:00 스냅샷 만료"
         ],
-        "validUntil": "2026-08-06T07:00:00.000Z",
+        "validUntil": "2026-08-06T08:00:00.000Z",
         "macro": {
-          "score": -0.497,
-          "confidence": 0.395,
-          "coverage": 0.533,
-          "dispersion": 0.432,
+          "score": -0.341,
+          "confidence": 0.341,
+          "coverage": 0.492,
+          "dispersion": 0.512,
           "factors": [
             {
               "key": "rateDiff",
@@ -822,11 +823,11 @@
               "block": "rates",
               "kind": "numeric",
               "stance": -1,
-              "value": 3.9,
-              "fact": "미 10년물 4.627% − 유로존 3.1463% = 148bp (전일 144bp)",
-              "note": "미-독 10Y 스프레드 148bp, 전일 144bp 대비 +3.9bp",
+              "value": 2.9,
+              "fact": "미 10년물 4.617% − 유로존 3.1463% = 147bp (전일 144bp)",
+              "note": "미-독 10Y 스프레드 147bp, 전일 144bp 대비 +2.9bp",
               "source": "Yahoo ^TNX / ECB Data Portal (feed)",
-              "asof": "2026-08-06T00:24:28",
+              "asof": "2026-08-06T08:30:55",
               "weight": 0.26,
               "confidence": 0.7,
               "effectiveConfidence": 0.7,
@@ -841,14 +842,14 @@
               "kind": "ordinal",
               "stance": -1,
               "fact": "fomc",
-              "note": "FOMC 9-3 동결, 매파 소수의견 지속 · Aug5 신규 변경 없음(persistent)",
+              "note": "FOMC 9-3 동결, 매파 소수의견 지속 · 신규 변경 없음(persistent, 아침 회차 이월)",
               "source": "CNBC/Investing.com 검색 2026-08-05",
               "asof": "2026-08-05T23:30:00Z",
               "weight": 0.18,
               "confidence": 0.6,
-              "effectiveConfidence": 0.6,
-              "effectiveWeight": 0.108,
-              "contribution": -0.108,
+              "effectiveConfidence": 0.5572,
+              "effectiveWeight": 0.1003,
+              "contribution": -0.1003,
               "flags": []
             },
             {
@@ -863,12 +864,30 @@
               "asof": "2026-08-02T00:00:00Z",
               "weight": 0.18,
               "confidence": 0.5,
-              "effectiveConfidence": 0.2448,
-              "effectiveWeight": 0.0441,
-              "contribution": 0.0882,
+              "effectiveConfidence": 0.2266,
+              "effectiveWeight": 0.0408,
+              "contribution": 0.0816,
               "flags": [
                 "DECAYED"
               ]
+            },
+            {
+              "key": "riskAppetite",
+              "label": "위험선호",
+              "block": "tape",
+              "kind": "numeric",
+              "stance": 1,
+              "value": -0.69,
+              "fact": "VIX 15.81 (전일 16.50)",
+              "note": "VIX 15.81, 전일 16.50 대비 -0.69pt",
+              "source": "Yahoo ^VIX (feed)",
+              "asof": "2026-08-06T08:30:55",
+              "weight": 0.1,
+              "confidence": 0.8,
+              "effectiveConfidence": 0.8,
+              "effectiveWeight": 0.08,
+              "contribution": 0.08,
+              "flags": []
             },
             {
               "key": "usData",
@@ -877,14 +896,14 @@
               "kind": "ordinal",
               "stance": -1,
               "fact": "us_data_aug",
-              "note": "ISM 제조업 55.6(예상 54.0 상회, 7개월 연속 확장) · 비농업고용 187k(예상 170k 상회)이나 실업률 3.5→3.8%·임금 예상 하회 · 전반적으로 상회 우세",
+              "note": "ISM 제조업 55.6(예상 54.0 상회) · 비농업고용 187k(예상 170k 상회)이나 실업률 3.5→3.8%·임금 예상 하회 · 전반적으로 상회 우세(아침 회차 이월)",
               "source": "TradingEconomics/Benzinga 2026-08",
               "asof": "2026-08-05T23:30:00Z",
               "weight": 0.14,
               "confidence": 0.45,
-              "effectiveConfidence": 0.45,
-              "effectiveWeight": 0.063,
-              "contribution": -0.063,
+              "effectiveConfidence": 0.3346,
+              "effectiveWeight": 0.0468,
+              "contribution": -0.0468,
               "flags": []
             },
             {
@@ -894,31 +913,13 @@
               "kind": "ordinal",
               "stance": 0,
               "fact": "ez_pmi_aug",
-              "note": "유로존 제조업 PMI 51.9(예상 52 소폭 하회) 그러나 산출 증가폭은 4년래 최대 · 컨센서스 대비 대체로 부합",
+              "note": "유로존 제조업 PMI 51.9(예상 52 소폭 하회) 그러나 산출 증가폭은 4년래 최대 · 대체로 부합(아침 회차 이월)",
               "source": "S&P Global/XTB 2026-08-03",
               "asof": "2026-08-05T23:30:00Z",
               "weight": 0.14,
               "confidence": 0.4,
-              "effectiveConfidence": 0.4,
-              "effectiveWeight": 0.056,
-              "contribution": 0,
-              "flags": []
-            },
-            {
-              "key": "riskAppetite",
-              "label": "위험선호",
-              "block": "tape",
-              "kind": "numeric",
-              "stance": 0,
-              "value": -0.21,
-              "fact": "VIX 16.29 (전일 16.50)",
-              "note": "VIX 16.29, 전일 16.50 대비 -0.21pt",
-              "source": "Yahoo ^VIX (feed)",
-              "asof": "2026-08-06T00:24:28",
-              "weight": 0.1,
-              "confidence": 0.8,
-              "effectiveConfidence": 0.8,
-              "effectiveWeight": 0.08,
+              "effectiveConfidence": 0.2974,
+              "effectiveWeight": 0.0416,
               "contribution": 0,
               "flags": []
             }
@@ -927,7 +928,7 @@
             {
               "id": "rates",
               "score": -1,
-              "weight": 0.29,
+              "weight": 0.2823,
               "factors": [
                 "rateDiff",
                 "fedPolicy"
@@ -935,7 +936,7 @@
             },
             {
               "id": "tape",
-              "score": 0,
+              "score": 1,
               "weight": 0.08,
               "factors": [
                 "riskAppetite"
@@ -944,7 +945,7 @@
             {
               "id": "usdata",
               "score": -1,
-              "weight": 0.063,
+              "weight": 0.0468,
               "factors": [
                 "usData"
               ]
@@ -952,7 +953,7 @@
             {
               "id": "ezdata",
               "score": 0,
-              "weight": 0.056,
+              "weight": 0.0416,
               "factors": [
                 "ezData"
               ]
@@ -960,13 +961,16 @@
             {
               "id": "ecb",
               "score": 2,
-              "weight": 0.0441,
+              "weight": 0.0408,
               "factors": [
                 "ecbPolicy"
               ]
             }
           ],
-          "flags": []
+          "flags": [
+            "MACRO_COVERAGE_LOW",
+            "MACRO_HIGH_DISPERSION"
+          ]
         },
         "technical": {
           "score": 0,
@@ -994,7 +998,7 @@
               "note": "컨센서스 약 202k, 전주 197k",
               "blackoutStart": "2026-08-06T12:10:00.000Z",
               "blackoutEnd": "2026-08-06T13:00:00.000Z",
-              "minutesUntil": 799,
+              "minutesUntil": 318,
               "active": false
             }
           ],
@@ -1005,17 +1009,19 @@
             "note": "컨센서스 약 202k, 전주 197k",
             "blackoutStart": "2026-08-06T12:10:00.000Z",
             "blackoutEnd": "2026-08-06T13:00:00.000Z",
-            "minutesUntil": 799,
+            "minutesUntil": 318,
             "active": false
           },
-          "maxTier": 0,
+          "maxTier": 2,
           "activeBlackout": null,
           "nextBlackoutStart": "2026-08-06T12:10:00.000Z",
-          "convictionCap": 100,
+          "convictionCap": 65,
           "flags": []
         },
         "flags": [
-          "MACRO_ONLY"
+          "MACRO_ONLY",
+          "MACRO_COVERAGE_LOW",
+          "MACRO_HIGH_DISPERSION"
         ]
       }
     }
@@ -1023,29 +1029,29 @@
   "scoreboard": {
     "window": 30,
     "total": {
-      "n": 9,
+      "n": 10,
       "hit": 3,
-      "rate": 0.333
+      "rate": 0.3
     },
     "byAsset": {
       "NAS100": {
         "n": 0,
         "hit": 0,
         "rate": null,
-        "neutralN": 11,
-        "neutralMoved": 5
+        "neutralN": 12,
+        "neutralMoved": 6
       },
       "XAUUSD": {
         "n": 0,
         "hit": 0,
         "rate": null,
-        "neutralN": 11,
+        "neutralN": 12,
         "neutralMoved": 8
       },
       "USOIL": {
-        "n": 9,
+        "n": 10,
         "hit": 3,
-        "rate": 0.333,
+        "rate": 0.3,
         "neutralN": 2,
         "neutralMoved": 2
       },
@@ -1053,7 +1059,7 @@
         "n": 0,
         "hit": 0,
         "rate": null,
-        "neutralN": 11,
+        "neutralN": 12,
         "neutralMoved": 2
       }
     },
@@ -1064,9 +1070,9 @@
         "rate": 0.333
       },
       "40-54": {
-        "n": 0,
+        "n": 1,
         "hit": 0,
-        "rate": null
+        "rate": 0
       },
       "55-69": {
         "n": 0,
@@ -1079,6 +1085,6 @@
         "rate": null
       }
     },
-    "updatedAt": "2026-08-05T23:11:19.329Z"
+    "updatedAt": "2026-08-06T07:11:45.074Z"
   }
 }
